@@ -23,7 +23,7 @@ module.exports = {
                 title: "JavaScript进阶",
                 collapsable: false,
                 children: [
-                  ["jsadvanced/",'课程导学'],
+                  ["jsadvanced/",'导学'],
                   ["jsadvanced/function",'函数'],
                   ["jsadvanced/asyncpro",'异步编程'],
                   ["jsadvanced/designpattern",'设计模式'],
