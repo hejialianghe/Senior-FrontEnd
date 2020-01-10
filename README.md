@@ -34,7 +34,10 @@
 
 ## 4.赞赏
 
-![](./seniorFrontEnd.png)
+<p align="center">
+      <img src="http://h5.youliaowu.com/assets/img/money.png"/>
+</p>
+
 ### 赞赏名单:art:
 | 昵称  |  赞赏时间  | 赞赏方式 | 赞赏金额 |   备注   |
 | :---: | :--------: | :------: | :------: | :------: |
