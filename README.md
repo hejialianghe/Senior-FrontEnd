@@ -1,6 +1,6 @@
 <p align="center">
-   <a href="https://nlrx-wjc.github.io/Learn-Vue-Source-Code/" target="_blank">
-      <img src="https://ws1.sinaimg.cn/large/8afbb32dly1gaa700gs27j20hs03eaa5.jpg"/>
+   <a href="https://github.com/hejialianghe/seniorFrontEnd" target="_blank">
+      <img src="https://hejialianghe.github.io/seniorFrontEnd.png"/>
    </a>
 </p>
 
