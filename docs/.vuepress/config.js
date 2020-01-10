@@ -1,3 +1,4 @@
+const path = require("path");
 module.exports = {
     title: '高级开发工程师必备',
     description: 'Hello, my friend!',
@@ -10,6 +11,13 @@ module.exports = {
     dest: './docs/.vuepress/dist',
     ga: '',
     evergreen: true,
+    configureWebpack: {
+      resolve: {
+        alias: {
+          '@': path.join(__dirname, 'public','assets')
+        }
+      }
+    },
     themeConfig: {
         sidebar: [
             {
