@@ -1,14 +1,19 @@
 const path = require("path");
 module.exports = {
-    title: '高级开发工程师必备',
+    title: '高级开发工程师必学',
     description: 'Hello, my friend!',
+    dest: "dist",
+    serviceWorker: true,
+    markdown: {
+      lineNumbers: true
+    },
     head: [
         ['link', {
             rel: 'icon',
             href: `/logo.jpeg`
         }]
     ],
-    dest: './docs/.vuepress/dist',
+    dest: 'dist',
     ga: '',
     evergreen: true,
     configureWebpack: {
@@ -19,7 +24,13 @@ module.exports = {
       }
     },
     themeConfig: {
-        sidebar: [
+      repo: "hejialianghe/seniorFrontEnd",
+      editLinks: true,
+      docsDir: "docs",
+      editLinkText: "在 GitHub 上编辑此页",
+      lastUpdated: "最新更新时间",
+      sidebarDepth: 1,
+        sidebar:[
             {
               title: "指南",
               collapsable: false,
