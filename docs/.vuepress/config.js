@@ -1,23 +1,36 @@
+const path = require("path");
 module.exports = {
     title: '高级开发工程师必备',
     description: 'Hello, my friend!',
-    base:"hejialianghe/seniorFrontEnd",
+    dest: "dist",
+    serviceWorker: true,
+    markdown: {
+      lineNumbers: true
+    },
     head: [
         ['link', {
             rel: 'icon',
             href: `/logo.jpeg`
         }]
     ],
-    dest: './docs/.vuepress/dist',
+    dest: 'dist',
     ga: '',
     evergreen: true,
+    configureWebpack: {
+      resolve: {
+        alias: {
+          "@": path.join(__dirname, "public", "assets")
+        }
+      }
+    },
     themeConfig: {
       repo: "hejialianghe/seniorFrontEnd",
       editLinks: true,
       docsDir: "docs",
       editLinkText: "在 GitHub 上编辑此页",
-      lastUpdated: "上次更新",
-        sidebar: [
+      lastUpdated: "最新更新时间",
+      sidebarDepth: 1,
+        sidebar:[
             {
               title: "指南",
               collapsable: false,
