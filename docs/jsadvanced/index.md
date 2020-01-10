@@ -60,17 +60,17 @@ javascript设计模式：
 
 1. 把握本质
 
-  🚀 javascript中引用类型的值是按引用访问的。
+   -  javascript中引用类型的值是按引用访问的。
 
-  🚀 javascript 在运行的时候始终是单线程的，不同的语句快是以队列的形式排列在EventLoop中按顺序执行的。
+   -  javascript 在运行的时候始终是单线程的，不同的语句快是以队列的形式排列在EventLoop中按顺序执行的。
 
  2. 思考差异（比较思考它们的区别和用途，加以深刻理解：）
 
-   🚀 Debounce VS Throttle。
+    -  Debounce VS Throttle。
 
-   🚀 宏任务 VS 微任务
+    -  宏任务 VS 微任务
 
-   🚀 代理模式 VS 装饰者模式
+    -  代理模式 VS 装饰者模式
 
 3. 在思考比较各种各种概念后，动手实现以便，加深理解
 
