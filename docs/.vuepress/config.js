@@ -1,6 +1,7 @@
 module.exports = {
     title: '高级开发工程师必备',
     description: 'Hello, my friend!',
+    base:"hejialianghe/seniorFrontEnd",
     head: [
         ['link', {
             rel: 'icon',
@@ -11,6 +12,11 @@ module.exports = {
     ga: '',
     evergreen: true,
     themeConfig: {
+      repo: "hejialianghe/seniorFrontEnd",
+      editLinks: true,
+      docsDir: "docs",
+      editLinkText: "在 GitHub 上编辑此页",
+      lastUpdated: "上次更新",
         sidebar: [
             {
               title: "指南",
