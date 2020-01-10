@@ -1,3 +1,9 @@
+<p align="center">
+   <a href="https://nlrx-wjc.github.io/Learn-Vue-Source-Code/" target="_blank">
+      <img src="https://ws1.sinaimg.cn/large/8afbb32dly1gaa700gs27j20hs03eaa5.jpg"/>
+   </a>
+</p>
+
 ## 1. 前言
 
 博主作为一个前端开发工程师，深知成长的重要，现市场上大多数是api工程师;就是只会用api，不了解原理，长此以往就成为了可替代的人，本博客就是给大家提供一个学习的机会，如何成为一个高级开发工程师！成为一个高级开发工程师需要会那些知识！
