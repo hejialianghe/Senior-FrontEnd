@@ -126,7 +126,7 @@
    - 方便协作开发
 
   🔥单元测试代码
-   1. 式例1
+   1. 案例1
 
    ``` javascript
         let add=(a,b)=>a+b //被测试的方法
@@ -138,7 +138,7 @@
         }
       // 最后输出：Uncaught Error: 1+2应该等于4,但结果确是3 
    ```
-  1. 式例2
+  1. 案例2
    ``` javascript
         //被测试的方法
           let add=(a,b)=>a+b
@@ -182,20 +182,20 @@
           add
       }
    ```
-   3. 在文件夹下创建math.test.js，这个文件写测试代码；如下
-    ``` javascript
-    const { add } = require('./math')
-    test ('加法测试',()=>{
-        expect(add(1,2)).toBe(3)
-    })
+   3. 在文件夹下创建math.test.js，这个文件写测试代码；如下。
+  ``` javascript
+        const { add } = require('./math')
+        test ('加法测试',()=>{
+            expect(add(1,2)).toBe(3)
+        })
    ```
-   4. 配置package.json里的script脚本
-    ``` javascript
+  4. 配置package.json里的script脚本
+  ``` javascript
         "scripts": {
          "test": "jest"
         }
   ```
-   5. 执行npm test，测试成功会出现以下信息
+  5. 执行npm test，测试成功会出现以下信息
   ``` bash
         PASS  ./math.test.js
         ✓ 加法测试 (3ms)
@@ -207,6 +207,38 @@
       Ran all test suites.
        
   ```
+  提示：具体代码可以在源码test/2.2/jest目录下查看
 
 
 ## 2.3 提高代码的可靠性
+
+### 2.3.1 函数式编程
+
+ 🔥含义：函数式编程是一种编程范式，是一种构建计算机程序结构和元素的风格，它把计算看作是对数据函数的评估，避免了状态的变化和数据的可变
+
+ 1. 案例1:对一个数组每项加+1
+   ``` javascript
+        // 初级程序员
+        let arr =[1,2,3,4]
+        let newArr=[]
+        for (var i=0;i<arr.length; i++){
+          newArr.push(arr[i]+1)
+        }
+        console.log(newArr) //[2, 3, 4, 5]
+  ```
+  ``` javascript
+      // 函数式编程
+        let arr =[1,2,3,4]
+        let newArr =(arr,fn)=>{
+            let res=[]
+          for (var i=0;i<arr.length; i++){
+            res.push(fn(arr[i]))
+           }
+           return res
+        }
+        let add= item=>item+1
+        let multi=item=>item*5 //每项乘5
+        let sum =newArr(arr,add)
+        let product =newArr(arr,multi)
+        console.log(sum,product); // [2, 3, 4, 5] [5, 10, 15, 20]
+  ```
