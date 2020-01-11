@@ -381,7 +381,7 @@
   ```
   🔥高阶函数的意义
   1. 参数为函数的高阶函数
-    ``` javascript
+  ``` javascript
         // 参数为函数的高阶函数
         function foo (f){
           // 判断是否为函数
@@ -389,27 +389,26 @@
             f()
           }
         }
-        foo(function(){})
-      
-    ```
-    2. 返回值为函数的高阶函数
-    ``` javascript
-        // 回值为函数的高阶函数
-        function foo (f){
-          rerutn function(){}
-        }
-        foo()   
-    ```
+        foo(function(){})   
+  ```
+  2. 返回值为函数的高阶函数
+  ``` javascript
+          // 回值为函数的高阶函数
+          function foo (f){
+            rerutn function(){}
+          }
+          foo()   
+  ```
    3. 高阶函数的实际作用
-    ``` javascript
-       let callback = (value)=>{
-         console.log(value)
-       }
-       let foo = (value,fn) =>{
-         if(typeof fn==='function'){
-           fn(value)
-         }
-       }
-       foo('hello',callback)
-    ```
+  ``` javascript
+        let callback = (value)=>{
+          console.log(value)
+        }
+        let foo = (value,fn) =>{
+          if(typeof fn==='function'){
+            fn(value)
+          }
+        }
+        foo('hello',callback)s
+  ```
     
