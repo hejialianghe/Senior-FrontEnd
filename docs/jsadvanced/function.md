@@ -311,3 +311,105 @@
       foo(data)
        console.log(data.cont) // 1
     ```
+    ## 2.4 compose函数pipe函数
+
+    ### 2.4.1 compose函数
+    🔥含义：
+    - 将需要嵌套执行的函数平铺
+    - 嵌套执行指的是一个函数的返回值将作为另一个函数的参数
+    🔥作用：实现函数式编程中的Pointfree,使我们专注于转换而不是数据（Pointfree不使用所有处理的值，只合成运算过程，即我们所指的无参数分割）
+    🔥案例，计算一个数加10在乘以10
+    ``` javascript
+      // 一般会这么做
+      let calculate => x => (x+10) * 10
+      console.log(calculate(10)) 
+
+    ```
+    ``` javascript
+      // 用compose函数实现
+        let add = x => x+10
+        let multiply = y => y*10
+        console.log(multiply(add(10)))
+
+        let compose=function (){
+            let args=[].slice.call(arguments)
+           
+            return function (x) {
+                return args.reduceRight(function (total,current) { //从右往左执行args里的函数
+                    console.log(total,current)
+                   return current(total)
+                },x)
+            }
+        }
+        let calculate = compose(multiply,add)
+        console.log(calculate,calculate(10)) // 200
+    // 用es6实现 
+    const compose = (...args) => x=> args.reduceRight((res,cb)=> cb(res),x)
+    ```
+    ### 2.4.1 pipe函数
+     pipe函数compose类似，只不过从左往右执行
+
+## 2.5 高阶函数
+  🔥含义：
+  - 高阶函数是对其他函数进行操作的函数，可以将它们作为参数或返回它们
+  - 简单来说，高阶函数是一个函数，它接收函数作为参数或将函数作为输出返回 
+
+  🔥map/reduce/filter
+
+  ``` javascript
+     // 用redece做累加
+      let arr =[1,2,3,4,5]
+      let sum =arr.reduce((pre,cur)=>{
+        return pre +cur
+      },10)
+
+    // 用redece做去重
+      let arr =[1,2,3,4,5,3,3,4]
+      let newArr =arr.reduce((pre,cur)=>{
+          pre.indexOf(cur)===-1 && pre.push(cur)
+        return pre
+      },[])
+    console.log(newArr) //[1, 2, 3, 4, 5]
+  ```
+  🔥flat
+  ``` javascript
+        let arr=[[1,2,3,[23,3,[1,2]]]]
+        let arr1=arr.flat(Infinity)   // 多维转一维数组
+        let arr2=arr.flat(2) // // 多维转二维数组,默认值是1
+        console.log(arr1,arr2)  // [1, 2, 3, 23, 3, 1, 2]  [1, 2, 3, 23, 3, Array(2)]
+      
+  ```
+  🔥高阶函数的意义
+  1. 参数为函数的高阶函数
+    ``` javascript
+        // 参数为函数的高阶函数
+        function foo (f){
+          // 判断是否为函数
+          if((typeof f)==="function"){
+            f()
+          }
+        }
+        foo(function(){})
+      
+    ```
+    2. 返回值为函数的高阶函数
+    ``` javascript
+        // 回值为函数的高阶函数
+        function foo (f){
+          rerutn function(){}
+        }
+        foo()   
+    ```
+   3. 高阶函数的实际作用
+    ``` javascript
+       let callback = (value)=>{
+         console.log(value)
+       }
+       let foo = (value,fn) =>{
+         if(typeof fn==='function'){
+           fn(value)
+         }
+       }
+       foo('hello',callback)
+    ```
+    
