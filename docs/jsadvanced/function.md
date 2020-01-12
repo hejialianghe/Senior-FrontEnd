@@ -411,4 +411,148 @@
         }
         foo('hello',callback)s
   ```
-    
+  ## 2.5 常用函数
+
+  ### 2.5.1 memozition（缓存函数）
+  🔥含义：缓存函数是指将上次的计算结果缓存起来，当下次调用时，如果遇到相同的参数，就直接返回缓存中的数据
+  ``` javascript
+      let add = (a ,b) => a+b
+      // 假设memoize函数可以实现缓存
+      let calculate = memoize(add)
+      calculate(10,20); // 30
+      calculate(10,20); // 相同的参数，第二次调用是，从缓存中取出数据，而并非重新计算一次
+  ```
+ 🔥实现原理：把参数和对应的结果数据存到一个对象中去，调用时，判断参数对应的数据是否存在，存在就返回对应的结果数据
+  ``` javascript
+  // 缓存函数
+     let memoize =function (func) {
+       let cache= {}
+       return function (key) {
+         if(!cache[key]){
+           cache[key] = func.apply(this,arguments)
+         }
+         return cache[key]
+       }
+     }
+  ```
+  ``` javascript
+     /*
+     *hasher也是个函数，是为了计算key，如果传入了hasher，就用hasher函数计算key；
+     否则就用memoize函数传入的第一个参数，接着就去判断如果这个key没有被求值过，就去执行，
+     最后我们将这个对象返回
+     */
+     let memoize =function (func,hasher) {
+       var memoize = function (key) {
+         var cache = memoize.cache
+         var address='' + (hasher ? hasher.apply(this,arguments) : key)
+         var (!cache[address]) chache[address] = func.apply(this,arguments)
+         return cache[address]
+       }
+       memoize.cache={}
+       return memoize
+     }
+     // 缓存函数可以是fei bo
+  ```
+  🔥案例：求斐波那且数列
+  ``` javascript
+      // 不用memoize的情况下，会执行453次
+      var count=0
+      var fibonacci= function (n) {
+          count++
+          return n < 2? n : fibonacci(n-1) + fibonacci(n-2)
+      }
+     for (var i=0;i<=10;i++){
+        fibonacci(i) //453 
+      }
+      console.log(count)
+
+    // 用memoize的情况下，会执行12次
+      let memoize =function (func,hasher) {
+       var memoize = function (key) {
+         var cache = memoize.cache
+         var address= '' + (hasher ? hasher.apply(this,arguments) : key);
+         if (!cache[address]) cache[address] = func.apply(this,arguments)
+         return cache[address]
+       }
+       memoize.cache={}
+       return memoize
+     }
+      fibonacci =memoize(fibonacci)  
+      for (var i=0;i<=10;i++){
+        fibonacci(i) //453 12
+      }
+      //缓存函数能应付大量重复计算，或者大量依赖之前的结果的运算场景
+      console.log(count)
+  ```
+  ### 2.5.2 curry(柯里化函数)
+  🔥含义：在数学和计算机科学中，柯里化是一种将使用多个参数的一个函数转换成一些列使用一个参数的函数技术（把接受多个参数的函数转换成几个单一参数的函数）
+   ``` javascript
+    // 没有柯里化的函数
+    function girl(name,age,single) {
+      return `${name}${age}${single}`
+    }
+     girl('张三')(180)('单身')
+     // 柯里化的函数
+     function girl(name) {
+       return function (age){
+          return function (single){
+            return `${name}${age}${single}`
+         }
+       }
+     }
+     girl('张三')(180)('单身')
+  ```
+  🔥案例1：检测字符串中是否有空格
+  ``` javascript
+     // 封装函数去检测
+     let matching = (reg,str) => reg.test(str)
+     matching(/\s+/g,'hello world') // true
+     matching(/\s+/g,'abcdefg') // false
+     
+     // 柯里化
+     let curry = (reg) => {
+       return (str) =>{
+         return reg.test(str)
+       }
+     }
+    let hasSpace = curry(/\s+/g)
+    hasSpace('hello word') // true
+    hasSpace('abcdefg') // false
+  ```
+  🔥案例2：获取数组对象中的age的属性值
+   ``` javascript
+     let persons = [
+       {name:'zs',age:21},
+       {name:'ls',age:22}
+     ]
+     // 不柯里化
+     let getage = persons.map(item=>{
+       return item.age
+     })
+     // 用loadsh的curry 来实现
+     const _=require('loadsh')
+     let getProp= _.curry((key,obj)=>{
+       return obj[key]
+     })
+    person.map(getProp('age'))
+
+  ```
+  🔥柯里化这个概念实现本身就难，平时写代码很难用到，关键理解其思想
+
+  ### 2.5.3 偏函数
+  🔥比较：
+  - 柯里化是将一个多参数函数转换成多个单参数的函数，也就是将一个n元函数转换成n个一元函数
+  - 偏函数则固定一个函数的一个或多个参数，也就是将一个n元函数转换成一个n-x元的函数
+
+  - 柯里化：f(a,b,c)=f(a)(b)(c)
+  - 偏函数：f(a,b,c)=f(a,b)(c)
+  ``` javascript
+    /*
+      用bind函数实现偏函数，bind的另一个用法使一个函数拥有预设的初始参数，将这些参数写在bind的第一个参数后，
+      当绑定函数调用时，会插入目标函数的初始位置，调用函数传入的参数会跟在bind传入的后面
+    */
+     let add = (x,y) => x+y
+     let rst =add.bind(null,1)
+     rst(2) //3
+  ```
+   ## 2.5 防抖和节流
