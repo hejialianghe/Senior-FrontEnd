@@ -568,8 +568,127 @@
     了事件，就重新开始延时，‘函数防抖’的关键在于，在一个动作发生一定时间之后，才会执行特定的事件
 
    ## 2.8 深拷贝和浅拷贝
-   ### 2.8.1 深拷贝&浅拷贝
 
+   ### 2.8.1 深拷贝&浅拷贝
+  对于原始数据类型，并没有深浅拷贝的区别，深浅拷贝都是对于引用数据类型而言，如果我们要赋值对象的所有属性都是引用类型可以用浅拷贝
+
+  🔥浅拷贝：只复制一层对象，当对象的属性是引用类型时，实质复制的是其引用，当引用值发生改变时，也会跟着改变
+
+  🔥深拷贝：深拷贝是另外申请了一块内存，内容和原来一样，更改原对象，拷贝对象不会发生改变
+
+   ### 2.8.2 浅拷贝实现
+  🔥for in 遍历实现
+  ``` javascript
+   
+      let shallCopy => obj=>{
+        let rst={}
+        for(let key in obj){
+          //只复制本身的属性（非继承过来的属性）枚举属性
+          if(obj.hasOwnProperty(key)){
+            rst[key]=obj[key]
+          }
+        }
+        return rst
+      }
+
+       let start ={
+        name:'古力娜扎',
+        age:'22',
+        friend:{
+          name:'邓超'
+        }
+      }
+      let copyStart=shallCopy(start)
+      copyStart.name="热巴"
+      copyStart.friend.name='黄渤'
+      // 拷贝的第一层层如果是引用类型，拷贝的其实是一个指针，所以拷贝对象改变会影响原对象
+      console.log(start.name,opyStart.friend.name) //古力娜扎 黄渤 
+  ```
+  🔥Object.assign(target,source) 可以把n个源对象拷贝到目标对象中去（拷贝的是可枚举属性）
+  ``` javascript
+      let start ={
+        name:'古力娜扎',
+        age:'22',
+        friend:{
+          name:'邓超'
+        }
+      }
+    let returnedTarget=Object.assign({},start)
+  
+  ```
+  🔥扩展运算符...
+  ``` javascript
+    let start = {name:"刘亦菲"}
+    let newStart={...start}
+    newStart.name='迪丽热巴'
+    console.log(start.name)  // 刘亦菲
+  ```
+   ### 2.8.3 深拷贝实现
+  🔥JSON.parse(JSON.string(obj))
+  ``` javascript
+        let obj = {
+              name: '小明',
+              dog: ['小花', '旺财']
+            }
+
+      let obj1 = JSON.parse(JSON.stringify(obj));
+      obj1.name = '小华';
+      obj1.dog[0] = '小白';
+      console.log(obj)   //  {name: "小明", dog: ['小花', '旺财']}
+      // 原数组并没有改变，说明实现了深拷贝
+   
+
+      let richGirl = [{
+        name:'开心',
+        car:['宝马','奔驰','保时捷'],
+        deive:function (){},
+        age:undefined
+      }]
+
+      let richBoy = JSON.parse(JSON.stringify(richGirl));
+      console.log(richBoy);
+      /*
+        当属性值为undefined，函数，Symbol,不能被JSON序列化，会丢失
+        纯的JSON数据，不包含循环引用
+      */
+  ```
+  🔥递归实现深拷贝
+  ``` javascript
+        let deepClone = obj => {
+          let newObj = Array.isArray(obj) ? [] : {};
+          if (obj && typeof obj === 'object') {
+            for (let key in obj) {
+              if (obj.hasOwnProperty(key)) {
+                if (obj[key] && typeof obj[key] === 'object') {
+                  newObj[key] = deepClone(obj[key]);
+                } else {
+                  // 如果不是对象直接拷贝
+                  newObj[key] = obj[key];
+                }
+              }
+            }
+          }
+          return newObj;
+        }
+
+        let richGirl = {
+          name: '开心',
+          car: ['宝马', '奔驰', '保时捷'],
+          deive: function () { },
+          age: undefined
+        }
+
+        let richBoy = deepClone(richGirl);
+
+        richBoy.deive = '渣男开大G';
+        richBoy.name = '小明';
+        richBoy.car = ['哈罗单车', '膜拜'];
+        richBoy.age = 20;
+
+        console.log(richGirl);
+        console.log(richBoy);
+  ```
+ ### 2.8.4 第三方库实现拷贝
 
 
 
