@@ -596,15 +596,18 @@
      let arr = [2,4,3,5,1,5]
     // 正向遍历
      function bubbleSort1(src) {
-      let arr=[...src] //做浅拷贝
-      for (let j=0; j<arr.length-1;j++){ //len - 1 - j; 这是因为数组后面的那段其实已经是排序好
-          for(let i=0;i<arr.length-1-j;i++){
-              if(arr[i]>arr[i+1]){
-                  [arr[i],arr[i+1]]=[arr[i+1],arr[i]]
-              }else{ //当前片段是否已经排好序，而不需要进行多余的循环判断
-                break
-              }        
+      let arr=[...src] //做浅拷贝，避免影响原数组
+      let flag=true
+      for (let i=0; j<arr.length-1;i++){ 
+        //为什么arr.length-1-j？因为每次遍历完后最大值肯定在最右边，数组的后面的那段其实已经是排序好，无需在排序
+          for(let j=0;j<arr.length-1-i;j++){
+              if(arr[j]>arr[j+1]){
+                  flag=false
+                  [arr[j],arr[j+1]]=[arr[j+1],arr[j]]
+              }     
           }
+        // 用flag判断，如果第一次循环，前面的参数没有大于后面的参数，说明数列无需排序，跳出循环
+          if(flag) break
        }
        return arr
      }
@@ -615,10 +618,9 @@
         - 改进之后，每次遍历后的最大值，次大值，等等都会固定在右侧，避免的重复比较
       */
       function bubbleSort2(src) {
-        let arr=[...src] //做浅拷贝
+        let arr=[...src] //做浅拷贝，避免影响原数组
           for (let i=arr.length-1;i>0;i--){
-          for(j=0;j<i;j++){
-              count++
+          for(let j=0;j<i;j++){
               if(arr[j]>arr[j+1]){
                 [arr[j],arr[j+1]]=[arr[j+1],arr[j]]
               }  
@@ -631,8 +633,8 @@
       //2个方法都会循环10次
   ```
   ### 2.9.2 插入排序
-  🔥个人理解：先把第二元素存起来，然后跟前面的元素进行比较，如果符合规则就插入比较元素的前面；然后在把第3个元素存起来，在跟前面的元素进行比较，如果符合规则就插入比较元素的前面；以此慢慢递进完成排序
-   插入就是每次新取一个数，然后倒序地往前找，找到后面比他大 前面比他小的
+  🔥个人理解：先把第二元素存起来，然后跟前面的元素进行比较，如果符合规则就插入比较元素的前面或后面；然后在把第3个元素存起来，在跟前面的元素进行比较，如果符合规则就插入比较元素的前面或后面；以此慢慢递进完成排序
+   （正序：插入就是每次新取一个数，然后倒序地往前找，找到比它小的就插入后面）
 
   🔥大佬理解：其实插入排序就和打扑克的时候抓牌一样，新摸一张，然后再已排好的队列里面去插入他
 
@@ -641,21 +643,28 @@
 
   🔥菜鸟教程给出生动的展示图：[点击我](https://www.runoob.com/w3cnote/insertion-sort.html)
 
+  🔥案例： 给数组`[2,4,3,5,1,5]`进行排序
   ``` javascript
       function insertionSort (src) {
-      let arr=[...src]
-      let current
-      let preIndex
-      for (let i =1; i<arr.length;i++){
-          current=arr[i]
-          preIndex=i-1
-          while (preIndex>=0 && current<arr[preIndex]){
-              arr[preIndex+1]=arr[preIndex]
-              preIndex--
-          }
-          arr[preIndex+1]=current
-      }
-      return arr
-  }
+        let arr=[...src]
+        let current
+        let preIndex
+        for (let i =1; i<arr.length;i++){
+            current=arr[i]
+            preIndex=i-1
+            while (preIndex>=0 && current<arr[preIndex]){
+                arr[preIndex+1]=arr[preIndex]
+                preIndex--
+            }
+          /*
+            不在进入while循环体了说明：1.说明preIndex<0了，比较到顶端了,不用在比较了
+                                     2.current<arr[preIndex]说明current已经大于比较值了，可以插入到比较值后面了
+
+          */
+            arr[preIndex+1]=current
+        }
+        return arr
+    }
+   console.log(bubbleSort2(arr)) // [ 1, 2, 3, 4, 5, 5 ]
   ```
-  总结：现在可以用sort排序，可以看v8的源码去了解它https://github.com/v8/v8/blob/master/third_party/v8/builtins/array-sort.tq
+  总结：现在可以用sort排序，可以看v8的源码去了解它[点击我](https://github.com/v8/v8/blob/master/third_party/v8/builtins/array-sort.tq)
