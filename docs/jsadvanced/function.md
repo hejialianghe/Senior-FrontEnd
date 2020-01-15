@@ -657,9 +657,9 @@
                 preIndex--
             }
           /*
-            不在进入while循环体了说明：1.说明preIndex<0了，比较到顶端了,不用在比较了
-                                     2.current<arr[preIndex]说明current已经大于比较值了，可以插入到比较值后面了
-
+            不在进入while循环体了说明：
+              1.说明preIndex<0了，比较到顶端了,不用在比较了
+              2.current<arr[preIndex]说明current已经大于比较值了，可以插入到比较值后面了
           */
             arr[preIndex+1]=current
         }
@@ -668,3 +668,5 @@
    console.log(bubbleSort2(arr)) // [ 1, 2, 3, 4, 5, 5 ]
   ```
   总结：现在可以用sort排序，可以看v8的源码去了解它[点击我](https://github.com/v8/v8/blob/master/third_party/v8/builtins/array-sort.tq)
+
+  ### 2.9.3 Floyd判圈算法
