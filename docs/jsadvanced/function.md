@@ -689,7 +689,22 @@
         console.log(richBoy);
   ```
  ### 2.8.4 第三方库实现拷贝
-
+  🔥lodash
+  ``` javascript
+  //cloneDeep： 深拷贝  clone：浅拷贝，此例子介绍浅拷贝
+    const _=require('lodash') //全部引入
+    const cloneDeep=require('lodash/cloneDeep') //引入单个方法，用的方法少建议用这种方式引入
+      let obj = {
+          name: '开心',
+          car: ['宝马', '奔驰', '保时捷'],
+          deive: function () { },
+          age: undefined
+        }
+        const newObj=cloneDeep(obj)
+        newObj.name='不开心'
+        newObj.car[0]='自行车'
+        console.log(obj,newObj) // 原对象不会改变
+  ```
 
 
    ## 2.9 算法
