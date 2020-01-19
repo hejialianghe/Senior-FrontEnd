@@ -441,7 +441,7 @@
      否则就用memoize函数传入的第一个参数，接着就去判断如果这个key没有被求值过，就去执行，
      最后我们将这个对象返回
      */
-     let memoize =function (func,hasher) {
+     var memoize =function (func,hasher) {
        var memoize = function (key) {
          var cache = memoize.cache
          var address='' + (hasher ? hasher.apply(this,arguments) : key)
@@ -467,7 +467,7 @@
       console.log(count)
 
     // 用memoize的情况下，会执行12次
-      let memoize =function (func,hasher) {
+      var memoize =function (func,hasher) {
        var memoize = function (key) {
          var cache = memoize.cache
          var address= '' + (hasher ? hasher.apply(this,arguments) : key);
@@ -691,7 +691,7 @@
  ### 2.8.4 第三方库实现拷贝
   🔥lodash
   ``` javascript
-  //cloneDeep： 深拷贝  clone：浅拷贝，此例子介绍浅拷贝
+  //cloneDeep： 深拷贝  clone：浅拷贝，此例子介绍深拷贝
     const _=require('lodash') //全部引入
     const cloneDeep=require('lodash/cloneDeep') //引入单个方法，用的方法少建议用这种方式引入
       let obj = {
@@ -860,4 +860,69 @@
       };
   ```
 
- 
+  ### 2.9.3 Floyd判圈算法
+  ### 2.9.4 遍历链表节点
+  链表：在React中的Fiber中采用链表树的数据结构来解决主线程阻塞的问题，我们一起来试着遍历一个简单的链表结构试试
+
+  🔥案例：遍历链表节点并对每个节点的value值求和
+  ``` javascript
+       // 链表
+        const NodeD = {
+            value: 4,
+            next: null
+          };
+
+          const NodeC = {
+            value: 3,
+            next: NodeD
+          };
+
+          const NodeB = {
+            value: 2,
+            next: NodeC
+          };
+
+          const NodeA = {
+            value: 1,
+            next: NodeB
+          };
+
+          const LinkedList = {
+            head: NodeA
+          };
+        let num = 0;
+        // 缓存函数
+        let momoize=(func,hasher)=>{
+            let cache ={}
+            return function (...args) {
+                let key= ""+(hasher?hasher.apply(this,args):args[0])
+                if(!cache[key]){
+                    cache[key]=func.apply(this,args)
+                }
+                console.log('cache',cache)
+                return cache[key]  
+            }
+        }
+        // 值相加函数
+        let run =(linkedList, callback)=>{
+            let head=linkedList.head
+            while(head){
+                callback(head.value)
+                head=head.next
+            }
+            return num
+        }
+
+        var _momoize=momoize(run)
+
+        function traversal(linkedList, callback) {
+            _momoize(linkedList, callback)
+        }
+
+        // 调用2次，第二次会读取缓存函数
+        traversal(LinkedList, current => (num += current));
+
+        traversal(LinkedList, current => (num += current));
+
+  ```
+   
