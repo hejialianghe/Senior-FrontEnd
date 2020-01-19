@@ -21,36 +21,36 @@ const NodeD = {
   const LinkedList = {
     head: NodeA
   };
-let sum = 0;
+let num = 0;
+// 缓存函数
 let momoize=(func,hasher)=>{
     let cache ={}
     return function (...args) {
-        console.log(99999999999,args)
-        let key= ""+(hasher?hasher.apply(this,args):'aa')
+        let key= ""+(hasher?hasher.apply(this,args):args[0])
         if(!cache[key]){
-            cache[key]=func(...args)
+            cache[key]=func.apply(this,args)
         }
-        
-
+        console.log('cache',cache)
         return cache[key]  
     }
 }
+// 值相加函数
 let run =(linkedList, callback)=>{
-
     let head=linkedList.head
     while(head){
         callback(head.value)
         head=head.next
     }
+    return num
 }
 
 var _momoize=momoize(run)
-function traversal(linkedList, callback) {
-   
-    _momoize(linkedList, callback)
 
+function traversal(linkedList, callback) {
+    _momoize(linkedList, callback)
 }
 
-traversal(LinkedList, current => (sum += current));
-traversal(LinkedList, current => (sum += current));
-console.log(sum)
+// 调用2次，第二次会读取缓存函数
+traversal(LinkedList, current => (num += current));
+
+traversal(LinkedList, current => (num += current));
