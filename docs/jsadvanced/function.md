@@ -804,8 +804,74 @@
    console.log(bubbleSort2(arr)) // [ 1, 2, 3, 4, 5, 5 ]
   ```
   总结：现在可以用sort排序，可以看v8的源码去了解它[点击我](https://github.com/v8/v8/blob/master/third_party/v8/builtins/array-sort.tq)
+  
+  ### 2.9.3 遍历链表节点
+  链表：在React中的Fiber中采用链表树的数据结构来解决主线程阻塞的问题，我们一起来试着遍历一个简单的链表结构试试
 
-  ### 2.9.3 Floyd判圈算法
+  🔥案例：遍历链表节点并对每个节点的value值求和
+  ``` javascript
+       // 链表
+        const NodeD = {
+            value: 4,
+            next: null
+          };
+
+          const NodeC = {
+            value: 3,
+            next: NodeD
+          };
+
+          const NodeB = {
+            value: 2,
+            next: NodeC
+          };
+
+          const NodeA = {
+            value: 1,
+            next: NodeB
+          };
+
+          const LinkedList = {
+            head: NodeA
+          };
+
+        // 以下是解题答案
+        let num = 0;
+        // 缓存函数
+        let momoize=(func,hasher)=>{
+            let cache ={}
+            return function (...args) {
+                let key= ""+(hasher?hasher.apply(this,args):args[0])
+                if(!cache[key]){
+                    cache[key]=func.apply(this,args)
+                }
+                console.log('cache',cache)
+                return cache[key]  
+            }
+        }
+        // 值相加函数
+        let run =(linkedList, callback)=>{
+            let head=linkedList.head
+            while(head){
+                callback(head.value)
+                head=head.next
+            }
+            return num
+        }
+
+        var _momoize=momoize(run)
+
+        function traversal(linkedList, callback) {
+            _momoize(linkedList, callback)
+        }
+
+        // 调用2次，第二次会读取缓存函数
+        traversal(LinkedList, current => (num += current));
+
+        traversal(LinkedList, current => (num += current));
+  ```
+
+  ### 2.9.4 Floyd判圈算法
    🔥含义： Floyd判圈算法(Floyd Cycle Detection Algorithm)，又称龟兔赛跑算法(Tortoise and Hare Algorithm)，是一个可以在有限状态机、迭代函数或者 链表上判断是否存在环，求出该环的起点与长度的算法。
     在图和树的数据结构在具体使用中，可能会出现循环依赖的情况，如何自动判断，是否存在循环，可以使用Floyd判圈算法
 
@@ -885,70 +951,5 @@
     };
 
   ```
-
-  ### 2.9.4 遍历链表节点
-  链表：在React中的Fiber中采用链表树的数据结构来解决主线程阻塞的问题，我们一起来试着遍历一个简单的链表结构试试
-
-  🔥案例：遍历链表节点并对每个节点的value值求和
-  ``` javascript
-       // 链表
-        const NodeD = {
-            value: 4,
-            next: null
-          };
-
-          const NodeC = {
-            value: 3,
-            next: NodeD
-          };
-
-          const NodeB = {
-            value: 2,
-            next: NodeC
-          };
-
-          const NodeA = {
-            value: 1,
-            next: NodeB
-          };
-
-          const LinkedList = {
-            head: NodeA
-          };
-
-        // 以下是解题答案
-        let num = 0;
-        // 缓存函数
-        let momoize=(func,hasher)=>{
-            let cache ={}
-            return function (...args) {
-                let key= ""+(hasher?hasher.apply(this,args):args[0])
-                if(!cache[key]){
-                    cache[key]=func.apply(this,args)
-                }
-                console.log('cache',cache)
-                return cache[key]  
-            }
-        }
-        // 值相加函数
-        let run =(linkedList, callback)=>{
-            let head=linkedList.head
-            while(head){
-                callback(head.value)
-                head=head.next
-            }
-            return num
-        }
-
-        var _momoize=momoize(run)
-
-        function traversal(linkedList, callback) {
-            _momoize(linkedList, callback)
-        }
-
-        // 调用2次，第二次会读取缓存函数
-        traversal(LinkedList, current => (num += current));
-
-        traversal(LinkedList, current => (num += current));
-  ```
+  ### 2.9.5 字符串算法
    
