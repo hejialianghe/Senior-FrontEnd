@@ -951,5 +951,34 @@
     };
 
   ```
-  ### 2.9.5 字符串算法
+  ### 2.9.5 字符串算法(最长公共子序列)
+
+  🔥案例： 求最长公共子序列
+
+  ``` javascript
+      const lcsamples = [
+      {
+        string1: "abcde",
+        string2: "ace",
+        count: 3
+      },
+      {
+        string1: "abc",
+        string2: "abc",
+        count: 3
+      },
+      {
+        string1: "abc",
+        string2: "def",
+        count: 0
+      }
+    ]
+    const longestCommonSubsequence = (string1,string2) => {
+      
+    }
+    lcsamples.forEach(({string1,string2,count})=>{
+       console.log(longestCommonSubsequence(string1,string2)===count)
+    })
+  ```
+
    
