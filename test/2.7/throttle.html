@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<button>点击</button>
+<script>
+    let obutton=document.getElementsByTagName('button')[0]
+    let btnClick = () =>{
+       console.log('我响应了')
+    }
+    let throttle = (fn,delay)=>{
+        let flag=false
+        return function (...args) {
+           if(flag) return
+           flag=true
+            setTimeout(()=>{
+                fn(...args)
+                flag=false 
+            },delay)
+        }
+    }
+    obutton.onclick=throttle(btnClick,1000)
+</script>
+</html>

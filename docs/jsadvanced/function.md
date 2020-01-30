@@ -562,13 +562,100 @@
      我们使用窗口的resize，scorll，mousemove，mousehover；输入框等校验时，如果事件处理函数调用无限制，会加剧浏览器的负担，尤其是执行了操作DOM的函数，那不仅造成计算资源的浪费，还会降低程序运行速度，甚至造成浏览的奔溃，影响用户体验。
      
    🔥区别
-   - 防抖：就是触发多次，最后一次执行
-   - 节流：隔一段时间执行一次
+   - 防抖：就是触发多次事件，最后一次执行事件处理函数
+   - 节流：隔一段时间执行一次事件处理函数
 
   ### 2.7.1 函数防抖(debounce)
-   🔥含义：当持续触发事件时，一定时间段内没有触发事件，事件处理函数才会执行一次，如果设定的时间到来之前，又一次触发
-    了事件，就重新开始延时，‘函数防抖’的关键在于，在一个动作发生一定时间之后，才会执行特定的事件
+   🔥含义：当持续触发事件时，一定时间段内没有触发事件，事件处理函数才会执行一次，如果设定的时间到来之前，又一次触发了事件，就重新开始延时，‘函数防抖’的关键在于，在一个动作发生一定时间之后，才会执行特定的事件
+   🔥案例：
+   ``` html
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Document</title>
+        <style>
+            *{
+                margin: 0;
+                padding: 0;
+            }
+            #content{
+                width: 200px;
+                height: 200px;
+                line-height: 200px;
+                background-color: #ccc;
+                margin:0 auto;
+                font-size: 60px;
+                text-align: center;
+                color: #000;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="content"></div>
+        <script>
+            let num=1
+            let oDiv= document.getElementById('content')
 
+            let changeNum=function () {
+                oDiv.innerHTML=num++
+            }
+            
+            let deBounce = function (fn,delay){
+              let timer=null
+              return function (..args) {
+                if(timer) clearTimeout(timer)
+                setTimeout(()=>{
+                  fn(..args)
+                },delay)
+              }
+            }
+            oDiv.onmousemove=deBounce(changeNum,500)
+        </script>
+    </body>
+    </html>
+        
+  ```
+
+
+  ### 2.7.1 函数节流(throttle)
+   🔥含义：当持续触发事件时，保证一定时间段内只调用一次事件处理函数
+  ``` html
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <meta http-equiv="X-UA-Compatible" content="ie=edge">
+          <title>Document</title>
+      </head>
+      <body>
+          
+      </body>
+      <button>点击</button>
+      <script>
+          let obutton=document.getElementsByTagName('button')[0]
+          let btnClick = () =>{
+            console.log('我响应了')
+          }
+          let throttle = (fn,delay)=>{
+            let flag=false
+            return function (...args) {
+              if(flag) return
+              flag=true
+              setTimeout(()=>{
+                fn(...args)
+                flag=false
+              },delay)
+            }
+          }
+          obutton.onclick=throttle(btnClick,1000)
+      </script>
+      </html>
+  ```
    ## 2.8 深拷贝和浅拷贝
 
    ### 2.8.1 深拷贝&浅拷贝
@@ -980,5 +1067,8 @@
        console.log(longestCommonSubsequence(string1,string2)===count)
     })
   ```
+### 2.9.6  莱温斯坦距离问题
+
+  🔥含义：莱文斯坦距离，又称Levenshtein距离，是编辑距离的一种，指两个字串之间，由一个转成另一个所需最少编辑操作次数
 
    
