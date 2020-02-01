@@ -597,6 +597,10 @@
     <body>
         <div id="content"></div>
         <script>
+          /*
+          连续onmousemove在最后一次触发changeNum函数，
+          多余的处理函数的都会被clearTimeout掉 
+          */
             let num=1
             let oDiv= document.getElementById('content')
 
@@ -621,7 +625,7 @@
   ```
 
 
-  ### 2.7.1 函数节流(throttle)
+  ### 2.7.2 函数节流(throttle)
    🔥含义：当持续触发事件时，保证一定时间段内只调用一次事件处理函数
   ``` html
       <!DOCTYPE html>
@@ -637,6 +641,9 @@
       </body>
       <button>点击</button>
       <script>
+        /*
+          连续点击只会1000执行一次btnClick函数 
+        */
           let obutton=document.getElementsByTagName('button')[0]
           let btnClick = () =>{
             console.log('我响应了')
@@ -655,6 +662,47 @@
           obutton.onclick=throttle(btnClick,1000)
       </script>
       </html>
+  ```
+  ### 2.7.3 防抖使用场景
+  ``` html
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <meta http-equiv="X-UA-Compatible" content="ie=edge">
+          <title>Document</title>
+      </head>
+      <body>
+          <input type="text"/>
+          <!-- 防抖场景 -->
+          <script>
+              //  防抖函数
+              let deBounce=(fn,delay)=>{
+                  let timer=null
+                  return function (...args){
+                      if(timer) clearTimeout(timer)
+                      timer = setTimeout(()=>{
+                          fn(...args)
+                      },delay)
+                  }
+              }
+              let oInput=document.getElementsByTagName('input')[0]
+              //  模拟请求
+              let ajax=(message)=>{
+                  let json={message}
+                  console.log(JSON.stringify(json))
+              }
+              let doAjax=deBounce(ajax,200)
+
+              // 键盘弹起执行
+              oInput.addEventListener('keyup',(e)=>{
+                  doAjax(e.target.value)
+              })
+          </script>
+      </body>
+      </html>
+  
   ```
    ## 2.8 深拷贝和浅拷贝
 
