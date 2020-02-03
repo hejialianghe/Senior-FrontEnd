@@ -623,10 +623,46 @@
     </html>
         
   ```
+  🔥underscore库debounce源码
+   
+  ```javascript
+        
+      _.debounce = function(func, wait, immediate) {
+        var timeout, result;
+
+        var later = function(context, args) {
+          timeout = null;
+          if (args) result = func.apply(context, args);
+        };
+
+        var debounced = restArguments(function(args) {
+          if (timeout) clearTimeout(timeout);
+          if (immediate) {
+            var callNow = !timeout;
+            timeout = setTimeout(later, wait);
+            if (callNow) result = func.apply(this, args);
+          } else {
+            timeout = _.delay(later, wait, this, args);
+          }
+
+          return result;
+        });
+
+        debounced.cancel = function() {
+          clearTimeout(timeout);
+          timeout = null;
+        };
+
+        return debounced;
+      };
+  ```
+
 
 
   ### 2.7.2 函数节流(throttle)
    🔥含义：当持续触发事件时，保证一定时间段内只调用一次事件处理函数
+   
+   🔥案例：
   ``` html
       <!DOCTYPE html>
       <html lang="en">
@@ -642,12 +678,17 @@
       <button>点击</button>
       <script>
         /*
-          连续点击只会1000执行一次btnClick函数 
+         * 连续点击只会1000执行一次btnClick函数 
         */
           let obutton=document.getElementsByTagName('button')[0]
-          let btnClick = () =>{
+          //  如果用箭头函数，箭头函数没有arguments，也不能通过apply改变this指向
+          function btnClick () {
             console.log('我响应了')
           }
+           /*
+              方法1: 定时器方式实现
+              缺点：第一次触发事件不会立即执行fn，需要等delay间隔过后才会执行
+           */
           let throttle = (fn,delay)=>{
             let flag=false
             return function (...args) {
@@ -659,9 +700,105 @@
               },delay)
             }
           }
+            /*
+              方法2:时间戳方式实现
+              缺点：最后一次触发回调与前一次的触发回调的时间差小于delay，则最后一次触发事件不会执行回调
+            */
+          let throttle=(fn,delay)=>{
+              let _start=Date.now()
+              return function (...args) {
+                  let _now=Date.now(),
+                      that=this
+              if (_now - _start>delay){
+                  fn.apply(that,args)
+                  start=Date.now()
+              }
+            }
+          }
+
+          // 方法3:时间戳与定时器结合
+          let throttle=(fn,delay)=>{
+             let _start=Date.now()
+             return function (...args) {
+                let _now=Date.now(),
+                    that=this,
+                    remainTime=delay-( _now-_start)
+                if(remainTime<=0){
+                   fn.apply(that,args)
+                }else {
+                  setTimeout(()=>{
+                   fn.apply(that,args)
+                  },remainTime)
+                }     
+
+             }
+          }
+          /*
+           方法4:requestAnimationFrame实现
+           优点：由系统决定回调函数的执行机制，60Hz的刷新频率，每次刷新都会执行一次回调函数，不
+           会引起丢帧和卡顿
+           缺点：1.有兼容性问题2.时间间隔有系统决定
+          */
+          let throttle=(fn,delay)=>{
+            let flag
+            return function (...args) {
+              if(!flag){
+                 requestAnimationFrame(function() {
+                   fn.apply(that,args)
+                   flag=false
+                 })
+              }
+              flag=true
+            }
+          }
+
           obutton.onclick=throttle(btnClick,1000)
       </script>
       </html>
+  ```
+  🔥underscore库throttle源码
+
+  ```javascript
+       _.throttle = function(func, wait, options) {
+        var timeout, context, args, result;
+        var previous = 0;
+        if (!options) options = {};
+
+        var later = function() {
+          previous = options.leading === false ? 0 : _.now();
+          timeout = null;
+          result = func.apply(context, args);
+          if (!timeout) context = args = null;
+        };
+
+        var throttled = function() {
+          var now = _.now();
+          if (!previous && options.leading === false) previous = now;
+          var remaining = wait - (now - previous);
+          context = this;
+          args = arguments;
+          if (remaining <= 0 || remaining > wait) {
+            if (timeout) {
+              clearTimeout(timeout);
+              timeout = null;
+            }
+            previous = now;
+            result = func.apply(context, args);
+            if (!timeout) context = args = null;
+          } else if (!timeout && options.trailing !== false) {
+            timeout = setTimeout(later, remaining);
+          }
+          return result;
+        };
+
+        throttled.cancel = function() {
+          clearTimeout(timeout);
+          previous = 0;
+          timeout = context = args = null;
+        };
+
+        return throttled;
+      };
   ```
   ### 2.7.3 防抖使用场景
   ``` html
