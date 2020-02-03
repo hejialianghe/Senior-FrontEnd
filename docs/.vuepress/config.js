@@ -63,12 +63,20 @@ module.exports = {
                 title: "Vue",
                 collapsable: false,
                 children: [
-                  ["vue/",'初识vue'],
+                  ["vue/",'前言'],
                   ["vue/",'探索vue的组件世界'],
                   ["vue/",'vue生态'],
                   ["vue/",'vue实战'],
                   ["vue/",'企业级组件系统架构'],
                   ["vue/",'Vue3.0']
+                ]
+              },
+              {
+                title: "Vue2.0源码",
+                collapsable: false,
+                children: [
+                  ["vue2.0/",'前言'],
+                  ["vue2.0/dataResponse",'响应式']
                 ]
               },
               {

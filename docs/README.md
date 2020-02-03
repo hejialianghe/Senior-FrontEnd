@@ -9,7 +9,7 @@ features:
 - title: 计算机网络
   details: 了解网络协议、网络请求、Axios源码分析、网络安全、模块加载、路由调度
 - title: Vue
-  details: 高可用组件设计、Composition API RFC、VUE3.0
+  details: 高可用组件设计、Composition API RFC、VUE3.0、vue2.0源码
 - title: React
   details: 可复用组件设计、React Fiber解密、TypeScript、数据管理、性能优化
 - title: Node.js进阶
