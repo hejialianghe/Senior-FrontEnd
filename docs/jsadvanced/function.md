@@ -493,7 +493,7 @@
     function girl(name,age,single) {
       return `${name}${age}${single}`
     }
-     girl('张三')(180)('单身')
+     girl('张三'，180，'单身')
      // 柯里化的函数
      function girl(name) {
        return function (age){
