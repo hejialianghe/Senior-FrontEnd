@@ -207,7 +207,7 @@
       Ran all test suites.
        
   ```
-  提示：具体代码可以在源码test/2.2/jest目录下查看
+  提示：具体代码可以在源码examples/2.2/jest目录下查看
 
 
 ## 2.3 提高代码的可靠性
