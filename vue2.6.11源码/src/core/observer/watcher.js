@@ -99,6 +99,7 @@ export default class Watcher {
    * Evaluate the getter, and re-collect dependencies.
    */
   get () {
+    // 把Watcher的实例对象设置在dep类上
     pushTarget(this)
     let value
     const vm = this.vm

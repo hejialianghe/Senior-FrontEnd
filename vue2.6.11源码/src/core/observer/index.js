@@ -1,6 +1,6 @@
 /* @flow */
 
-import Dep from './dep'
+import Dep from './dep'  
 import VNode from '../vdom/vnode'
 import { arrayMethods } from './array'
 import {
@@ -40,10 +40,16 @@ export class Observer {
   vmCount: number; // number of vms that have this object as root $data
 
   constructor (value: any) {
-    this.value = value
+    this.value = value  //传入的观测对象
     this.dep = new Dep()
     this.vmCount = 0
-    def(value, '__ob__', this)
+    /**
+     * 给value增加一个属性'__ob__'，值为该value的Observer的实例
+     * 这样是相当于在value上打一个补丁，避免重复操作
+     * 方法在util/lang.js
+     */
+    def(value, '__ob__', this) 
+    // 数组处理的方式
     if (Array.isArray(value)) {
       if (hasProto) {
         protoAugment(value, arrayMethods)
@@ -52,6 +58,7 @@ export class Observer {
       }
       this.observeArray(value)
     } else {
+      // 对象的处理方式，如果是对象就调用walk
       this.walk(value)
     }
   }
@@ -112,14 +119,18 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
     return
   }
   let ob: Observer | void
+  //通过‘__ob__’，判断是否有Observer实例，如果已经打过标记了，就直接拿出Observer的实例对象
   if (hasOwn(value, '__ob__') && value.__ob__ instanceof Observer) {
     ob = value.__ob__
   } else if (
-    shouldObserve &&
-    !isServerRendering() &&
-    (Array.isArray(value) || isPlainObject(value)) &&
-    Object.isExtensible(value) &&
-    !value._isVue
+    /**
+     * 确保value纯对象，且没有被是否Observer过
+     */
+    shouldObserve && //是否Observer过,通过toggleObserving来修改
+    !isServerRendering() && // 是否是服务端渲染
+    (Array.isArray(value) || isPlainObject(value)) && //isPlainObject判断类型是否是object
+    Object.isExtensible(value) && //isExtensible判断对象是否可以扩展
+    !value._isVue  // 避免vue实例被观察
   ) {
     ob = new Observer(value)
   }
@@ -133,14 +144,18 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
  * Define a reactive property on an Object.
  */
 export function defineReactive (
-  obj: Object,
-  key: string,
+  obj: Object, //要响应的对象
+  key: string, // 响应对象的键
   val: any,
   customSetter?: ?Function,
   shallow?: boolean
 ) {
+  // 定义一个dep对象
   const dep = new Dep()
-
+  /**
+   * Object.getOwnPropertyDescriptor 获取属性描述符
+   * configurable 表示能否重新定义和删除属性
+   */
   const property = Object.getOwnPropertyDescriptor(obj, key)
   if (property && property.configurable === false) {
     return
@@ -152,14 +167,16 @@ export function defineReactive (
   if ((!getter || setter) && arguments.length === 2) {
     val = obj[key]
   }
-
+    // 递归，针对子对象设置geter和setter，并返回子对象的Observer实例
   let childOb = !shallow && observe(val)
   Object.defineProperty(obj, key, {
-    enumerable: true,
-    configurable: true,
+    enumerable: true, //表示能否通过for in 循环属性
+    configurable: true, //是否可以删除或重新定义属性‘
     get: function reactiveGetter () {
+      // 如果有getter属性，调用一下
       const value = getter ? getter.call(obj) : val
       if (Dep.target) {
+        // 收集依赖
         dep.depend()
         if (childOb) {
           childOb.dep.depend()
