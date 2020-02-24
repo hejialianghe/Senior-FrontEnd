@@ -1302,8 +1302,19 @@
   ![](~@/jsasvanced/levenshtein2.png)
   最后一行最后一个字符相等情况，说明没有进行改变
   ![](~@/jsasvanced/levenshtein3.png)
+  计算两个单词horse和ros之间的编辑距离D，容易发现把单词变短会让问题变的简单，很自然利用D[n][m],表示单词长度n和m的编辑距离
+
+  具体来说D[i][j],表示horse前i个字母和ros的前j个字母的编辑距离
+
   按照动态规划，横坐标是HORSE，纵坐标是ROS进行展开，第一行第一列是0，空字符窜到空字符窜不需要操作，所以是0，空字符窜跟HORSE相比，不相同所以一直加1，空字符窜到ROS相比不相同所以一直加1，这就是初始化了，下图我们可以看作一个棋盘
   ![](~@/jsasvanced/levenshtein4.png)
+
+  如果两个子串的最后一个字母相同的情况下
+  D[i][j]=1+min(D[i−1][j],D[i][j−1],D[i−1][j−1]−1)
+  否则我们将考虑替换最后一个字符使得他们相同
+  D[i][j]=1+min(D[i−1][j],D[i][j−1],D[i−1][j−1])
+  ![](~@/jsasvanced/levenshtein6.png)
+  ![](~@/jsasvanced/levenshtein5.png)
  ``` javascript
  // 莱文斯坦距离问题
 const lsamples = [
