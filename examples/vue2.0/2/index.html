@@ -8,8 +8,30 @@
 </head>
 <body>
     <div id="id">
-        <p></p>
+        <p>{{name}}</p>
     </div>
+    <script src="./complies.js"></script>
     <script src="./tvue.js"></script>
+    <script>
+        const vm= new tvue({
+            el: "#app",
+            data: {
+                name: "I am test.",
+                age: 12,
+                html: "<button>这是一个按钮</button>"
+                },
+            created(){
+                setTimeout(()=>{
+                    this.name='我是测试'
+                },1500)
+            },
+            methods:{
+                changeName(){
+                    this.name='哈喽，我点击了'
+                    this.age=1
+                }
+            }
+        })
+    </script>
 </body>
 </html>
