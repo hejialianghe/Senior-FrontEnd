@@ -21,3 +21,4 @@ class tvue {
         }
     }
 }
+console.log([(new Array(6)).fill(0)])
