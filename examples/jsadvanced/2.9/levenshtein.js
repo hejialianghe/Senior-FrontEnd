@@ -29,19 +29,36 @@ const lsamples = [
         }else if(j===0){
           // 初始化第一列
           d[i][j]=i
-        }else if(word1.charAt(i-1)===word2.charAt(j-1)){
+        }else if(word1[i-1]===word2[j-1]){
           d[i][j]=d[i-1][j-1]
         }else {
           d[i][j]=Math.min(d[i-1][j-1],d[i][j-1],d[i-1][j])+1
         }
       }
     }
-    console.log(d)
     return d[n][m]
   }
 
+  var minDistance=function(word1,word2){
+    let dp=(new Array(word1.length+1)).fill(0).map((_,i)=>i)
+    let last,tmp;
+    for(let i=0;i<word2.length;i++){
+      last=dp[0]
+      dp[0]=i+1
+      for (let j=0;j<word1.length;j++){
+        if(word1[i]===word2[j]){
+          tmp=1+Math.min(dp[j+1],dp[j],last-1)
+        }else{
+          tmp = 1+Math.min(dp[j+1],dp[j],last)
+        }
+        last=dp[j+1]
+        dp[j+1]=tmp
+      }
+    }
+    return dp[dp.length-1]
+  }
   lsamples.forEach(({string1,string2,count})=>{
-      console.log(Levenshtein(string1,string2),count)
+      console.log(minDistance(string1,string2),count)
 
   })
                                      

@@ -1,3 +1,4 @@
+//递归求法
 function lcs(str1, str2) {
     let length1 = str1.length;
     let length2 = str2.length;
@@ -19,6 +20,8 @@ function lcs(str1, str2) {
   }
   
   let result = lcs('ABBCBDE', 'DBBCD');
+
+  // 动态规划求法
   const longestCommonSubsequence = (text1,text2) => {
      let dp=[(new Array(text2.length+1)).fill(0)] //初始化第一行
      for(let i=0;i<text1.length;i++){ //两个for循环遍历
@@ -33,10 +36,8 @@ function lcs(str1, str2) {
         }
        }
      }
+     console.log(dp)
      return dp[dp.length-1][dp[0].length-1]
   }
-  let count=longestCommonSubsequence('abcde','ace')
+  let count=longestCommonSubsequence('ace','bcw')
   console.log(count)
-
-
-  
