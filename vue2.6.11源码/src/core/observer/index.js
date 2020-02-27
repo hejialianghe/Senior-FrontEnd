@@ -176,7 +176,7 @@ export function defineReactive (
       // 如果有getter属性，调用一下
       const value = getter ? getter.call(obj) : val
       if (Dep.target) {
-        // 收集依赖
+        // 在getter收集依赖
         dep.depend()
         if (childOb) {
           childOb.dep.depend()
@@ -205,7 +205,8 @@ export function defineReactive (
         val = newVal
       }
       childOb = !shallow && observe(newVal)
-      dep.notify()
+      // 在setter中更新依赖
+      dep.notify() 
     }
   })
 }

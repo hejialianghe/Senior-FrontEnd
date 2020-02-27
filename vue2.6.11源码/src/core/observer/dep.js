@@ -19,21 +19,21 @@ export default class Dep {
     this.id = uid++
     this.subs = []
   }
-
+  // 把watch实例记录在依赖数组中
   addSub (sub: Watcher) {
     this.subs.push(sub)
   }
-
+// 把wathc实例从从依赖的数组中移除
   removeSub (sub: Watcher) {
     remove(this.subs, sub)
   }
-
+// Dep.target 上存放当前需要Watch实例，调用depend就用调用watcher实例上的addDep方法
   depend () {
     if (Dep.target) {
       Dep.target.addDep(this)
     }
   }
-
+  // 通知依赖数组中所有的 watchr进行更新操作
   notify () {
     // stabilize the subscriber list first
     const subs = this.subs.slice()
