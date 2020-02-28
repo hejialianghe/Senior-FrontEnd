@@ -5,8 +5,12 @@ class tvue {
         // 数据响应化
         this.$data=options.data
         this.observe(this.$data)
-   
+     
         new Compile(options.el,this)
+
+        if(options.created){
+            options.created.call(this)
+        }
     }
     observe(value){
       if(Array.isArray(value)){
@@ -35,8 +39,10 @@ class tvue {
                 return val
             },
             set:function reactiveSetter (newVal){
+                console.log(222, newVal)
+                val=newVal
                dep.notify()
-               val=newVal
+              
             }
         })
     }
@@ -46,7 +52,6 @@ class tvue {
               return this.$data[key]  
             },
             set(newVal){
-                console.log(222, newVal)
                 this.$data[key]=newVal
             }
         })
@@ -78,7 +83,7 @@ class Watcher {
         Dep.target=null
     }
     update(){
-        console.log('通知了')
         this.cb.call(this.vm,this.vm[this.key])
     }
+    
 }
