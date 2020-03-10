@@ -34,6 +34,7 @@ export function toggleObserving (value: boolean) {
  * object's property keys into getter/setters that
  * collect dependencies and dispatch updates.
  */
+// 观察者类,对每个对象设置getter和setter，进行依赖收集和发送更新
 export class Observer {
   value: any;
   dep: Dep;
@@ -68,6 +69,7 @@ export class Observer {
    * getter/setters. This method should only be called when
    * value type is Object.
    */
+  //  遍历每个对象设置getter和setter
   walk (obj: Object) {
     const keys = Object.keys(obj)
     for (let i = 0; i < keys.length; i++) {

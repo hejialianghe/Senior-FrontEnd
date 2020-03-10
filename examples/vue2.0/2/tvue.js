@@ -84,6 +84,5 @@ class Watcher {
     }
     update(){
         this.cb.call(this.vm,this.vm[this.key])
-    }
-    
+    } 
 }
