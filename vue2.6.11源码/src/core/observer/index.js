@@ -116,7 +116,13 @@ function copyAugment (target: Object, src: Object, keys: Array<string>) {
  * returns the new observer if successfully observed,
  * or the existing observer if the value already has one.
  */
+    /*
+    * 给值创建观察者实例
+    * 如果观察成功就返回新的观察者实例
+    * 如果已经观察过了,就返回现有的
+    */
 export function observe (value: any, asRootData: ?boolean): Observer | void {
+  // 如果不是对象或者是VNode实例，就不必设置getter好和setter
   if (!isObject(value) || value instanceof VNode) {
     return
   }
@@ -136,6 +142,7 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
   ) {
     ob = new Observer(value)
   }
+  // 根数据就计数
   if (asRootData && ob) {
     ob.vmCount++
   }
@@ -163,6 +170,10 @@ export function defineReactive (
     return
   }
 
+  /**
+   * 如果该对象没有设置了getter，也未传入val，就设置val的值
+   * 如果设置了getter和setter，也未传入val，就将其执行
+   */
   // cater for pre-defined getter/setters
   const getter = property && property.get
   const setter = property && property.set
@@ -224,11 +235,13 @@ export function set (target: Array<any> | Object, key: any, val: any): any {
   ) {
     warn(`Cannot set reactive property on undefined, null, or primitive value: ${(target: any)}`)
   }
+
   if (Array.isArray(target) && isValidArrayIndex(key)) {
     target.length = Math.max(target.length, key)
     target.splice(key, 1, val)
     return val
   }
+
   if (key in target && !(key in Object.prototype)) {
     target[key] = val
     return val

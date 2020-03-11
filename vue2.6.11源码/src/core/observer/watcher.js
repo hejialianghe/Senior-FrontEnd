@@ -98,6 +98,10 @@ export default class Watcher {
   /**
    * Evaluate the getter, and re-collect dependencies.
    */
+  /**
+   * 把watch实例放在Dep的静态属性target上
+   * 调用getter添加依赖
+   */
   get () {
     // 把Watcher的实例对象设置在dep类上
     pushTarget(this)
@@ -126,6 +130,10 @@ export default class Watcher {
   /**
    * Add a dependency to this directive.
    */
+  /**
+   * 
+   *添加依赖关系到Dep集合中去
+   */
   addDep (dep: Dep) {
     const id = dep.id
     if (!this.newDepIds.has(id)) {
@@ -139,6 +147,9 @@ export default class Watcher {
 
   /**
    * Clean up for dependency collection.
+   */
+  /**
+   * 清理依赖项集合
    */
   cleanupDeps () {
     let i = this.deps.length
@@ -162,13 +173,18 @@ export default class Watcher {
    * Subscriber interface.
    * Will be called when a dependency changes.
    */
+  /**
+   * 更新函数
+   */
   update () {
     /* istanbul ignore else */
     if (this.lazy) {
       this.dirty = true
     } else if (this.sync) {
+      // 同步执行run函数渲染视图
       this.run()
     } else {
+      // 异步放到观察者队列中,等下一个tick时调用
       queueWatcher(this)
     }
   }

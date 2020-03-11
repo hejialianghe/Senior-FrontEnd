@@ -37,7 +37,7 @@ class Compile {
             // 遍历元素的属性
             Array.from(nodeAttrs).forEach(attr=>{
                 const attrName=attr.name; //属性名
-                const exp=attr.value; //属性值
+                const exp=attr.value; //属性值,形如v-text=1,1是属性值
                 // 如果是自定义指令t-text 或t-html
                 if(this.isDirective(attrName)){ 
                     const dir = attrName.substring(2);
