@@ -42,7 +42,7 @@ export class Observer {
 
   constructor (value: any) {
     this.value = value  //传入的观测对象
-    this.dep = new Dep()
+    this.dep = new Dep() //实例化一个依赖管理器，用来收集数组的依赖
     this.vmCount = 0
     /**
      * 给value增加一个属性'__ob__'，值为该value的Observer的实例
@@ -52,12 +52,12 @@ export class Observer {
     def(value, '__ob__', this) 
     // 数组处理的方式
     if (Array.isArray(value)) {
-      if (hasProto) {
+      if (hasProto) { //数组是否支持‘__proto__’属性
         protoAugment(value, arrayMethods)
       } else {
         copyAugment(value, arrayMethods, arrayKeys)
       }
-      this.observeArray(value)
+      this.observeArray(value) //给数组下面的子元素转换给响应式
     } else {
       // 对象的处理方式，如果是对象就调用walk
       this.walk(value)
@@ -92,6 +92,7 @@ export class Observer {
 /**
  * Augment a target Object or Array by intercepting
  * the prototype chain using __proto__
+ * 支持__proto__直接赋值替换
  */
 function protoAugment (target, src: Object) {
   /* eslint-disable no-proto */
@@ -104,6 +105,7 @@ function protoAugment (target, src: Object) {
  * hidden properties.
  */
 /* istanbul ignore next */
+// 不支持__proto__的直接修改相关属性方法
 function copyAugment (target: Object, src: Object, keys: Array<string>) {
   for (let i = 0, l = keys.length; i < l; i++) {
     const key = keys[i]
