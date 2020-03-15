@@ -192,7 +192,7 @@
     class Watcher {
         constructor(vm,expOrFn,cb){
             this.vm=vm //vue实例
-            this.getter = expOrFn //视图中用到的数据
+            this.getter = expOrFn //要观察的表达式
             this.cb=cb //回调函数
 
             if (typeof expOrFn === 'function') {
@@ -217,24 +217,6 @@
            //  触发回调，更新视图
            this.cb.call(this.vm, value, oldValue)
         } 
-    }
-
-    /**
-     * Parse simple path.
-     */
-    const bailRE = new RegExp(`[^${unicodeRegExp.source}.$_\\d]`)
-    export function parsePath (path: string): any {
-    if (bailRE.test(path)) {
-        return
-    }
-    const segments = path.split('.')
-    return function (obj) {
-        for (let i = 0; i < segments.length; i++) {
-        if (!obj) return
-        obj = obj[segments[i]]
-        }
-        return obj
-    }
     }
 
 
