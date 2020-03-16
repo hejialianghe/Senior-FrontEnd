@@ -9,11 +9,7 @@ const arrayProto = Array.prototype
 
 
 /**
- * copy一份数组的原型方法，防止污染原数组
- * arrayMethods={
- *  push:fn
- *  ......
- * }
+ * copy一份数组的原型方法，防止污染原数组原型
  */
 export const arrayMethods = Object.create(arrayProto)
 
@@ -43,21 +39,21 @@ methodsToPatch.forEach(function (method) {
   def(arrayMethods, method, function mutator (...args) {
 
     const result = original.apply(this, args)
-
+    // __ob__存的是Observer实例
     const ob = this.__ob__
     let inserted
-    //对数组新增元素和删除元素进行转换成响应式
+    //对数组新增元素进行转换成响应式
     switch (method) {
       case 'push':
       case 'unshift':
         inserted = args
         break
       case 'splice':
-        inserted = args.slice(2) //splice(开始位置,个数,替换的元素)，所有下标为2的是新加的元素
+        inserted = args.slice(2) //args是个数组，splice(开始位置,个数,替换的元素)，所以参数下标为2的是新加的元素
         break
     }
-    if (inserted) ob.observeArray(inserted) //转换为相应式
-    // notify change
+    if (inserted) ob.observeArray(inserted) //对新增元素转换为相应式
+    // 通知更新
     ob.dep.notify()
     return result
   })

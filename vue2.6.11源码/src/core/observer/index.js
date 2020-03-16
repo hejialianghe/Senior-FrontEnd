@@ -119,12 +119,13 @@ function copyAugment (target: Object, src: Object, keys: Array<string>) {
  * or the existing observer if the value already has one.
  */
     /*
-    * 给值创建观察者实例
+    * 给值value创建观察者实例
     * 如果观察成功就返回新的观察者实例
     * 如果已经观察过了,就返回现有的
     */
 export function observe (value: any, asRootData: ?boolean): Observer | void {
-  // 如果不是对象或者是VNode实例，就不必设置getter好和setter
+  // 如果不是Object或者是VNode实例，就不必设置getter好和setter
+  // obj !== null && typeof obj === 'object'
   if (!isObject(value) || value instanceof VNode) {
     return
   }
@@ -161,7 +162,7 @@ export function defineReactive (
   customSetter?: ?Function,
   shallow?: boolean
 ) {
-  // 定义一个dep对象
+  // 实例化一个依赖管理器，来收集数组的依赖
   const dep = new Dep()
   /**
    * Object.getOwnPropertyDescriptor 获取属性描述符
@@ -194,7 +195,9 @@ export function defineReactive (
         // 在getter收集依赖
         dep.depend()
         if (childOb) {
+          // 子对象进行依赖收集
           childOb.dep.depend()
+          // 如果是数组，对每个成员都进行依赖收集，如果数组成员还是数组则递归
           if (Array.isArray(value)) {
             dependArray(value)
           }

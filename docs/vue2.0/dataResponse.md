@@ -29,7 +29,7 @@
  ```
  从上面的案例可以看出，我们读取数据时会进入get函数中；我们设置数据时会进入set函数中，这样数据就变得可观测了，用户读取和设置数据我们都会知道。
 
- vue中的源码，目录`src/core/observer/index.js`
+ vue中的源码目录`src/core/observer/index.js`
  ```javascript
  // Observer观察者类,对每个对象设置getter和setter，进行依赖收集和发送更新
  
@@ -72,7 +72,7 @@
 
       const dep = new Dep() //创建一个依赖管理器
     // 递归，针对子对象设置geter和setter，并返回子对象的Observer实例
-        let childOb = !shallow && observe(val)
+        let childOb = observe(val)
 
         Object.defineProperty(obj, key, {
             enumerable: true, //表示能否通过for in 循环属性
@@ -239,7 +239,7 @@
 
  宏观流程是这样，具体细节还要自己去看
 
- ### 2.2.3 响应式2.0和3.0的对比
+ ### 2.2.5 响应式2.0和3.0的对比
 
  2.0 Object.defineProperty
 
@@ -255,3 +255,290 @@
 
  
 ## 2.3 Array的响应
+
+ ### 2.3.1 Array的观测
+由于Array没有defineProperty属性，所以不能像Object一样进行监听属性变化，然而vue实现了特有的方法去监听Array的变化，下面让我们看看一个例子。
+
+```javascript
+    let arr=[]
+    arr.__proto__.newPush=function mutator (val){
+    console.log('访问到了') //访问到了
+    this.push.call(this,val)
+    }
+    arr.newPush(8)
+    console.log(arr) //[ 8 ]
+```
+从上面的例子我们可以看出，我们只要修改Array原型上的方法，就能知道什么修改了数据；同样vue中就是这么实现的，然后看vue源码的实现
+
+```javascript
+   // 源码目录 src/core/observer/array.js
+    import { def } from '../util/index'
+
+    const arrayProto = Array.prototype
+
+    export const arrayMethods = Object.create(arrayProto)
+    /**
+     * copy一份数组的原型方法，防止污染Array的原型
+     */
+
+    // 改变数组的7个方法
+    const methodsToPatch = [
+    'push',
+    'pop',
+    'shift',
+    'unshift',
+    'splice',
+    'sort',
+    'reverse'
+    ]
+
+    /**
+     * Intercept mutating methods and emit events
+     */
+    methodsToPatch.forEach(function (method) {
+
+    // 缓存原生方法
+    const original = arrayProto[method]
+    /**
+        *  通过def给对象赋值，并设置描述符
+        *  Object.defineProperty(obj,key,{
+        *   value:val
+        *  })
+    */
+    def(arrayMethods, method, function mutator (...args) {
+
+        const result = original.apply(this, args)
+        // __ob__存的是Observer实例
+        const ob = this.__ob__
+        let inserted
+        //对数组新增元素和删除元素进行转换成响应式
+        switch (method) {
+        case 'push':
+        case 'unshift':
+            inserted = args
+            break
+        case 'splice':
+            inserted = args.slice(2) //args是个数组，splice(开始位置,个数,替换的元素)，所以参数下标为2的是新加的元素
+            break
+        }
+        if (inserted) ob.observeArray(inserted) //对新增元素转换为响应式
+        // 通知更新
+        ob.dep.notify()
+        return result
+    })
+    })
+
+
+```
+  上面的源码可以看出，vue先拷贝了一份原型上的方法，避免污染Array的原型，然后创建一个对象并指定了原型；在arrayMethods上定义了7个方法并给7个方法指定了函数
+  如果有新增元素，转换成响应式并触发更新
+
+  vue通过创建一个数组拦截器，在拦截器里重写了操作数组的方法，放操作数组是，从拦截器就可以观测的到操作数组
+
+
+
+  ### 2.3.2 把拦截器挂载到数组实例上
+
+```javascript
+/*
+ *vue中的源码目录`src/core/observer/index.js`
+ */
+ export class Observer {
+    value: any;
+
+    constructor (value: any) {
+        this.value = value
+  
+    /**
+     * 给value增加一个属性'__ob__'，值为该value的Observer的实例
+     * 这样是相当于在value上打一个补丁，避免重复操作
+     * 方法在util/lang.js
+     */
+        def(value, '__ob__', this)
+        
+        if (Array.isArray(value)) {   // 数组逻辑
+            if (hasProto) { //数组是否支持"__proto__"属性 const hasProto = '__proto__' in {}
+                protoAugment(value, arrayMethods)  
+            } else {
+                copyAugment(value, arrayMethods, arrayKeys) 
+            }   
+            this.observeArray(value) //深度监测，给数组下面的子元素转换给响应式
+        } else {
+        // 操作对象的逻辑
+         this.walk(value)
+        }
+
+ 
+    //直接替换原型
+    function protoAugment (target, src: Object) {
+        /* eslint-disable no-proto */
+        target.__proto__ = src
+        /* eslint-enable no-proto */
+    }}
+
+    // 直接添加到对象上
+    function copyAugment (target: Object, src: Object, keys: Array<string>) {
+        for (let i = 0, l = keys.length; i < l; i++) {
+            const key = keys[i]
+            def(target, key, src[key])
+        }
+    }
+    //对数组的成员进行observe
+    observeArray (items: Array<any>) {
+    for (let i = 0, l = items.length; i < l; i++) {
+      observe(items[i])
+    }
+  } 
+}
+
+    /*
+    * 给值value创建观察者实例
+    * 如果观察成功就返回新的观察者实例
+    * 如果已经观察过了,就返回现有的
+    */
+   function observe (value: any, asRootData: ?boolean): Observer | void {
+    // 如果不是对象，就不必设置getter好和setter
+    if (!isObject(value) {
+        return
+    }
+    let ob: Observer | void
+    //通过‘__ob__’，判断是否有Observer实例，如果已经打过标记了，就直接拿出Observer的实例对象
+    if (hasOwn(value, '__ob__') && value.__ob__ instanceof Observer) {
+        ob = value.__ob__
+    } else if (
+        /**
+         * 确保value纯对象，且没有被是否Observer过
+         */
+        shouldObserve && //是否Observer过,通过toggleObserving来修改
+        (Array.isArray(value) || isPlainObject(value)) && //isPlainObject判断类型是否是object
+        Object.isExtensible(value) && //isExtensible判断对象是否可以扩展
+        !value._isVue  // 避免vue实例被观察
+    ) {
+        ob = new Observer(value)
+    }
+     return ob
+    }
+```
+上面代码中先判断浏览器是否支持`__proto__`属性，如果支持就把数据的`__proto__`属性设置为`arrayMethods`；如果不支持直接则循环把方法加到value上
+
+ ### 2.3.3 何时收集依赖和触发依赖？
+
+ 收集依赖：在getter中
+
+ 触发依赖：在重写操作数组的方法中（arrayMethods）
+
+为什么说收集依赖也在getter函数中，这不是操作的对象的吗？
+
+ ```javascript
+  new vue({
+      data(){
+          return {
+              test:[1,2,3,4]
+          }
+      }
+  })
+ ```
+ 我们对data return出来的这个对象转换成响应式进行观测；我们获取数组时，肯定是obj.test;这样的话肯定会走obj的getter中，所以我们收集依赖也是在
+ getter中
+
+ 🔥收集依赖
+  ```javascript
+    export class Observer {
+        constructor (value) {
+            this.value = value
+            // 创建一个依赖管理器，用来收集数组依赖
+            this.dep = new Dep()    
+            if (Array.isArray(value)) {
+        
+            } else {
+            this.walk(value)
+            }
+        }
+    }
+
+     //在对象上定义反应属性
+    export function defineReactive (
+        obj: Object, //要响应的对象
+        key: string, // 响应对象的键
+        val: any,    // 对象的值
+        ) {
+
+    
+        // 递归，针对子对象设置geter和setter，并返回子对象的Observer实例
+            let childOb =  observe(val)
+
+            Object.defineProperty(obj, key, {
+                enumerable: true, //表示能否通过for in 循环属性
+                configurable: true, //是否可以删除或重新定义属性
+
+                // 在这里可以知道获取了值
+                get: function reactiveGetter () {
+                if (Dep.target) {
+                    if (childOb) {
+                    // 子对象进行依赖收集
+                    childOb.dep.depend()
+                    // 如果是数组，对每个成员都进行依赖收集，如果数组成员还是数组则递归；例如二维数组
+                    if (Array.isArray(val)) {
+                        dependArray(val)
+                    }
+                }
+                 return val
+                },
+
+                // 在这里可以知道更改了值
+                set: function reactiveSetter (newVal) {
+                dep.notify() // 通知所有依赖这个对象观察者进行更新
+                val=newVal
+                }
+            })
+        }
+    // __ob__是否转换成响应式了
+    function dependArray (value: Array<any>) {
+        for (let e, i = 0, l = value.length; i < l; i++) {
+            e = value[i]
+            e && e.__ob__ && e.__ob__.dep.depend()
+            if (Array.isArray(e)) {
+            dependArray(e)
+            }
+        }
+    }
+ ```
+  <font color="red">**举个例子：**</font>
+
+ ```javascript
+  new vue({
+      data(){
+          return {
+              test:[1,2,3,4]
+          }
+      }
+  })
+ ```
+ 分析一下整个流程
+ 1. 我们 new Observer()时候，会进去defineReactive 这个函数中，执行了observe(val)获取到了Observer 实例；并给该对象设置了getter和setter（observe(val此时传入的是数组test）
+ 2. 当调用该对象的getter的时候，我们对数组进行依赖收集，如果子对象中还有数组则对递归收集
+
+  🔥通知依赖
+   ```javascript
+    methodsToPatch.forEach(function (method) {
+    def(arrayMethods, method, function mutator (...args) {
+
+        const result = original.apply(this, args)
+        // __ob__存的是Observer实例
+        const ob = this.__ob__
+        // 通知更新
+        ob.dep.notify()
+        return result
+    })
+    })
+ ```
+ 此时我们想通知依赖，首先要能访问到依赖，这里的关键就是this，此时的this指向的是被响应的数据value，数据value上会绑定一个`__ob__`属性；
+ `__ob__`的值是Observer实例，我们在实例中就可以访问到依赖管理器，然后只需要调用dep.notify()就可以去通知依赖了
+
+ ### 2.3.4 不足
+
+```javascript
+    arr[0]=0
+    arr.length=0
+ ```
+ 不足的地方就是用下标去更改数据无法监测，无法用length置空数组，vue提供set方法和delete去更改数据
