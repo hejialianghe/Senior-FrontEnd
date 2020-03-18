@@ -83,3 +83,7 @@ vue源码中出现的flow语法
 1. 响应式
 
     `vue`如何实现数据的响应式，从而用数据驱动视图
+
+2. vittualdom和DIff
+
+    `vittualdom`及 `DIff `算法

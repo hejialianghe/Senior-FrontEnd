@@ -15,6 +15,8 @@ import {
   resolveAsset
 } from '../util/index'
 
+//isDef 在packages\vue-server-renderer\build.dev.js
+
 import {
   normalizeChildren,
   simpleNormalizeChildren
@@ -25,6 +27,19 @@ const ALWAYS_NORMALIZE = 2
 
 // wrapper function for providing a more flexible interface
 // without getting yelled at by flow
+
+/**
+ * 
+ *function isPrimitive (value: any): boolean %checks {
+  return (
+    typeof value === 'string' ||
+    typeof value === 'number' ||
+    // $flow-disable-line
+    typeof value === 'symbol' ||
+    typeof value === 'boolean'
+  )
+}
+ */
 export function createElement (
   context: Component,
   tag: any,
@@ -33,6 +48,7 @@ export function createElement (
   normalizationType: any,
   alwaysNormalize: boolean
 ): VNode | Array<VNode> {
+  // 兼容不传data情况
   if (Array.isArray(data) || isPrimitive(data)) {
     normalizationType = children
     children = data
@@ -51,6 +67,12 @@ export function _createElement (
   children?: any,
   normalizationType?: number
 ): VNode | Array<VNode> {
+  /**
+   * 如果存在data.__ob__说明被observer过,不能作为虚拟节点的data;需要抛出警告,并返回一个空节点
+   * 
+   * 被监控的data不能被用作vnode渲染的数据的原因:
+   * data在vnode的渲染过程中可能会被改变,这样会触发监控,导致不符合预期的操作
+   */
   if (isDef(data) && isDef((data: any).__ob__)) {
     process.env.NODE_ENV !== 'production' && warn(
       `Avoid using observed data object as vnode data: ${JSON.stringify(data)}\n` +
@@ -59,6 +81,10 @@ export function _createElement (
     )
     return createEmptyVNode()
   }
+
+  /**
+   * 当前组件的is属性是一个假值,vue不知道渲染成什么,所以渲染一个空节点
+   */
   // object syntax in v-bind
   if (isDef(data) && isDef(data.is)) {
     tag = data.is
@@ -79,6 +105,7 @@ export function _createElement (
       )
     }
   }
+   // 作用域插槽
   // support single function children as default scoped slot
   if (Array.isArray(children) &&
     typeof children[0] === 'function'

@@ -1,5 +1,5 @@
 /* @flow */
-
+// 通过vNode类，实例化出不同的虚拟DOM节点
 export default class VNode {
   tag: string | void;
   data: VNodeData | void;
@@ -39,26 +39,26 @@ export default class VNode {
     componentOptions?: VNodeComponentOptions,
     asyncFactory?: Function
   ) {
-    this.tag = tag
-    this.data = data
-    this.children = children
-    this.text = text
-    this.elm = elm
-    this.ns = undefined
-    this.context = context
-    this.fnContext = undefined
-    this.fnOptions = undefined
+    this.tag = tag // 当前节点标签名
+    this.data = data // 当前节点的数据对象，也就是标签上的属性；具体包含的字段可以参考/types/vnode.d.ts
+    this.children = children //数组类型，包含当前节点的子节点
+    this.text = text // 当前节点的文本
+    this.elm = elm // 当前虚拟节点对应的真实的dom节点
+    this.ns = undefined // 节点的namespace（命名空间）
+    this.context = context // 编译作用域，当前节点对应的vue实例
+    this.fnContext = undefined // 函数组件化的作用域，当前组件对应的vue实例
+    this.fnOptions = undefined 
     this.fnScopeId = undefined
-    this.key = data && data.key
-    this.componentOptions = componentOptions
+    this.key = data && data.key // 节点的key属性，用作节点的标识，有利于patch优化
+    this.componentOptions = componentOptions // 创建组件实例时会用到的选项信息
     this.componentInstance = undefined
-    this.parent = undefined
-    this.raw = false
-    this.isStatic = false
-    this.isRootInsert = true
-    this.isComment = false
-    this.isCloned = false
-    this.isOnce = false
+    this.parent = undefined //组件的占位节点
+    this.raw = false // 是否为原生HTML或只是普通文本，innerHTML的时候为true，textContent的时候为false
+    this.isStatic = false //静态节点标识
+    this.isRootInsert = true // 是否作为根节点插入被<transition>包裹的节点，该属性的值为false
+    this.isComment = false //当前节点是否是注释节点
+    this.isCloned = false //当前节点是否为克隆节点
+    this.isOnce = false // 当前节点是否有v-once指令
     this.asyncFactory = asyncFactory
     this.asyncMeta = undefined
     this.isAsyncPlaceholder = false
@@ -70,14 +70,15 @@ export default class VNode {
     return this.componentInstance
   }
 }
-
+// 创建注释节点
 export const createEmptyVNode = (text: string = '') => {
   const node = new VNode()
   node.text = text
-  node.isComment = true
+  node.isComment = true //isComment为true，说明是一个注释节点
   return node
 }
 
+// 创建文本节点
 export function createTextVNode (val: string | number) {
   return new VNode(undefined, undefined, undefined, String(val))
 }
@@ -86,6 +87,8 @@ export function createTextVNode (val: string | number) {
 // used for static nodes and slot nodes because they may be reused across
 // multiple renders, cloning them avoids errors when DOM manipulations rely
 // on their elm reference.
+
+// 创建克隆节点
 export function cloneVNode (vnode: VNode): VNode {
   const cloned = new VNode(
     vnode.tag,

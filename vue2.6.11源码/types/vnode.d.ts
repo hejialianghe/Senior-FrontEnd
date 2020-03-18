@@ -11,7 +11,7 @@ export type ScopedSlotChildren = VNode[] | undefined;
 // Relaxed type compatible with $createElement
 export type VNodeChildren = VNodeChildrenArrayContents | [ScopedSlot] | string | boolean | null | undefined;
 export interface VNodeChildrenArrayContents extends Array<VNodeChildren | VNode> {}
-
+// interface只声明成员方法，不做实现
 export interface VNode {
   tag?: string;
   data?: VNodeData;
