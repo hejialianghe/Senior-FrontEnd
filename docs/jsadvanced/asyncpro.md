@@ -119,12 +119,69 @@ test();
  1. 防抖节流
  2. 到计时
  3. 动画 （有丢帧问题）
+
 ## 3.2 Event Loop机制
 以前js是在浏览器环境中运行，由于chrome对v8做了开源；所以js有机会在服务端运行；浏览器和node都是js的运行环境，它们相当于是一个宿主，宿主能提供一个能力能帮助js实现Event Loop
 
- 🔥浏览器的Event Loop
- 
- 🔥node.js的Event Loop
+ ### 3.2.1 浏览器的Event Loop
+
+  🔥异步实现
+
+  1. 宏观：浏览器多线程（从宏观来看是多线程实现了异步）
+  2. 微观：Event Loop，事件循环（Event Loop翻译是事件循环，是实现异步的一种机制）
+
+  🔥先看一个例子
+ ```javascript
+
+    console.log(1)
+    setTimeout(function () {
+    console.log(2)
+    },0)
+    Promise.resolve().then(function (){
+    console.log(3)
+    })
+    console.log(4)
+    // 1 4 3 2
+ ```
+ ![](~@/asyncpro/eventlooptest1.png)
+  1和4肯定是最先执行，现在要看的是`promise`为什么在定时器前面执行，因为`promise`优先级比较高，它的回调是先执行的；异步任务是放在任务队列中，那为什么`promise`后放入，为什么先执行呢？那是因为Event Loop的机制是有微任务的说法的；现在往下看。
+
+   🔥宏任务（普通任务）和微任务
+
+   ![](~@/asyncpro/taskandmicrotask.png)
+   <font color="red">**宏任务（task）**</font>：
+
+   1. script：script全局的执行
+   2. setImmediate：node的一个方法
+   3. UI rendering：ui渲染
+
+   ......
+
+   <font color="red">**宏任务（microtask）**</font>：
+
+   1. Object.observe:监听对象变化的一个方法
+   1. MutationObserver:可以监听Dom结构变化的一个api
+   1. postMessgae:window对象通信的一个方法
+   
+  🔥Event Loop的运行过程
+
+  ![](~@/asyncpro/eventloopfn.png)
+   线程都有自己的数据存储空间，上图可以看见`堆`和`栈`，堆的空间比较大，所以存储一些对象；栈的空间比较小，
+   所以存储一些基础数据类型、对象的引用、函数的调用；函数调用就入栈，出栈就是执行，这就是我们所说的调用栈；
+   栈是一个先进后出的数据结构，当最里面的函数出栈的时候，这个栈就空了；当我们调用时候会调用一些异步函数，
+   这个异步函数会找他们的异步处理模块，这个异步模块包括定时器、promise、ajax等，异步处理模块会找它们各自
+   对应的线程，线程向任务队列中添加事件，看我们的蓝色箭头，表示在任务队列中添加事件，橘色的箭头是从任务队列
+   中取事件，取出这个事件去执行对应的回调函数；
+   有3个点要注意
+   1.我们整个大的script的执行是全局任务也是一个宏任务的范畴，
+   2 当宏任务执行完，会去执行所有的微任务，
+   微任务全部执行完在去执行下一个宏任务，那什么时候去执行一个微任务呢，是等调用栈为空的时候，
+   调用栈不为空的时候，任务队列的微任务一直等待；微任务执行完又去取任务队列里的宏任务，去依次
+   执行宏任务，执行宏任务的时候就要检查当前有没有微任务，如果又微任务就去执行完所有微任务，然后
+   再去执行后续的宏任务
+
+
+ ### 3.2.12 node.js的Event Loop
 
 ## 3.3 异步编程方法-发布/订阅
 ## 3.4 深入理解promise
