@@ -47,11 +47,11 @@ export default class VNode {
     this.ns = undefined // 节点的namespace（命名空间）
     this.context = context // 编译作用域，当前节点对应的vue实例
     this.fnContext = undefined // 函数组件化的作用域，当前组件对应的vue实例
-    this.fnOptions = undefined 
+    this.fnOptions = undefined  // 函数式组件Option选项
     this.fnScopeId = undefined
     this.key = data && data.key // 节点的key属性，用作节点的标识，有利于patch优化
     this.componentOptions = componentOptions // 创建组件实例时会用到的选项信息
-    this.componentInstance = undefined
+    this.componentInstance = undefined //当前组件节点对应的vue实例
     this.parent = undefined //组件的占位节点
     this.raw = false // 是否为原生HTML或只是普通文本，innerHTML的时候为true，textContent的时候为false
     this.isStatic = false //静态节点标识
