@@ -124,6 +124,7 @@ test();
 以前js是在浏览器环境中运行，由于chrome对v8做了开源；所以js有机会在服务端运行；浏览器和node都是js的运行环境，它们相当于是一个宿主，宿主能提供一个能力能帮助js实现Event Loop
 
  ### 3.2.1 浏览器的Event Loop
+ Event Loop是什么？
 
   🔥异步实现
 
