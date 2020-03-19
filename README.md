@@ -26,7 +26,7 @@
 
 💗 根据自己的理解记录下来，以写博客的方式去讲解给别人听，不会写博客可以克隆博主的源码进行参考。
 
-💗 用到实际项目中去，没有项目可以做博客去练手，可以参照用node写的博客[前台项目](http://youliaowu.com/)[后台项目](http://youliaowu.com/dr-admin)[源码地址](https://github.com/doramart/DoraCMS)
+💗 用到实际项目中去，没有项目可以做博客去练手。
 
     
 
