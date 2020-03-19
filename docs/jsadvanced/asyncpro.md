@@ -1,3 +1,36 @@
+## 预习资料
+### 《3.1-理解异步》预习资料
+| 预习资料名称  |  链接  | 备注 |
+| :---: | :--------: | :------: |
+|  官方图解：Chrome 快是有原因的，现代浏览器的多进程架构！ | [阅读地址](https://juejin.im/post/5bd7c761518825292d6b0217)  |  学习这篇文章可以了解浏览器的架构以及每个模块负责的工作，宏观上了解浏览器的工作原理。  |
+|  进程与线程的一个简单解释 | [阅读地址](https://www.ruanyifeng.com/blog/2013/04/processes_and_threads.html)  |  文章生动形象的比喻了进程和线程，将抽象的概念形象化了 |
+|  浏览器进程？线程？傻傻分不清楚 | [阅读地址](https://imweb.io/topic/58e3bfa845e5c13468f567d5)  |  文重点讲解线程、进程的区别，以及浏览器内核的多线程 |
+|  定时器标准| [阅读地址](https://html.spec.whatwg.org/multipage/timers-and-user-prompts.html#timers  )  |  规范对定时器的说明 |
+### 《3.2-Event Loop机制》预习资料
+| 预习资料名称  |  链接  | 备注 |
+| :---: | :--------: | :------: |
+|  Event Loops标准 | [阅读地址](https://html.spec.whatwg.org/multipage/webappapis.html#event-loops )  |  标准对Event Loops的说明  |
+|  Node.js 事件循环，定时器和 process.nextTick() | [阅读地址](https://nodejs.org/zh-cn/docs/guides/event-loop-timers-and-nexttick/#what-is-the-event-loop)  |  介绍了nodejs的事件循环和定时器 |
+|  调用栈 | [阅读地址](https://developer.mozilla.org/zh-CN/docs/Glossary/Call_stack)  |  介绍js运行调用栈 |
+|  JS中的栈内存堆内存 | [阅读地址](https://juejin.im/post/5d116a9df265da1bb47d717b)  |  --- |
+### 3.3-异步编程方法-发布/订阅》拓展学习资料
+| 预习资料名称  |  链接  | 备注 |
+| :---: | :--------: | :------: |
+|  EventEmitter实现源码 | [阅读地址](https://github.com/nodejs/node/blob/master/lib/events.js)  |  阅读文档后在看  |
+|  FsWatch实现源码 | [阅读地址](https://github.com/nodejs/node/blob/master/lib/internal/fs/watchers.js )  | 阅读文档后在看 |
+### 《3.4-深入理解promise》预习资料
+| 预习资料名称  |  链接  | 备注 |
+| :---: | :--------: | :------: |
+|  promise 基础 | [阅读地址](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Promise)  |  ---  |
+|  promises A+规范| [阅读地址](https://github.com/promises-aplus/promises-spec)  | --- |
+|  promises A+规范测试工具用例工具 | [阅读地址](https://github.com/promises-aplus/promises-tests)  | --- |
+### 《3.5-Generator函数及其异步的应用》预习资料
+| 预习资料名称  |  链接  | 备注 |
+| :---: | :--------: | :------: |
+|  可迭代协议 迭代器协议 | [阅读地址](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Iteration_protocols#%E5%8F%AF%E8%BF%AD%E4%BB%A3%E5%8D%8F%E8%AE%AE)  |  介绍可迭代协议和迭代器协议  |
+|  协程 | [阅读地址](https://cnodejs.org/topic/58ddd7a303d476b42d34c911)  | 介绍协程 |
+|  co源码| [阅读地址](https://github.com/tj/co  )  | 分析源码 |
+
 ## 3.1 理解异步
 ### 3.1.1 同步与异步
 🔥先看2段代码
@@ -173,7 +206,7 @@ js就是采用了这种机制，来解决单线程带来的问题。
 
    ......
 
-   <font color="red">**宏任务（microtask）**</font>：
+   <font color="red">**微任务（microtask）**</font>：
 
    1. Object.observe:监听对象变化的一个方法
    1. MutationObserver:可以监听Dom结构变化的一个api
@@ -186,29 +219,115 @@ js就是采用了这种机制，来解决单线程带来的问题。
    所以存储一些基础数据类型、对象的引用、函数的调用；函数调用就入栈，执行完函数体里的代码就自动从栈中移除这个函数，这就是我们所说的调用栈；
    栈是一个先进后出的数据结构，当最里面的函数出栈的时候，这个栈就空了；当我们调用时候会调用一些异步函数，
    这个异步函数会找他们的异步处理模块，这个异步模块包括定时器、promise、ajax等，异步处理模块会找它们各自
-   对应的线程，线程向任务队列中添加事件，看我们的蓝色箭头，表示在任务队列中添加事件，橘色的箭头是从任务队列
-   中取事件，取出这个事件去执行对应的回调函数；
+   对应的线程，线程向任务队列中添加事件，看我们的蓝色箭头，表示在任务队列中添加事件，橘色的箭头是从任务队列中取事件，取出这个事件去执行对应的回调函数；
+
    有3个点要注意
-   1.我们整个大的script的执行是全局任务也是一个宏任务的范畴，
-   2 当宏任务执行完，会去执行所有的微任务，
-   微任务全部执行完在去执行下一个宏任务，那什么时候去执行一个微任务呢，是等调用栈为空的时候，
+   1. 我们整个大的script的执行是全局任务也是一个宏任务的范畴，
+   2. 当宏任务执行完，会去执行所有的微任务，
+   3. 微任务全部执行完在去执行下一个宏任务，那什么时候去执行一个微任务呢，是等调用栈为空的时候，
    调用栈不为空的时候，任务队列的微任务一直等待；微任务执行完又去取任务队列里的宏任务，去依次
    执行宏任务，执行宏任务的时候就要检查当前有没有微任务，如果又微任务就去执行完所有微任务，然后
    再去执行后续的宏任务
 
-  注意一点：
+🔥代码示例1
 
-  宏任务需要多次事件循环才能执行完，微任务是一次性执行完的；
+![](~@/asyncpro/eventlooptest2.png)
 
-  主程序和和settimeout都是宏任务，两个promise是微任务
-
-  第一个宏任务（主程序）执行完，执行全部的微任务（两个promise），再执行下一个宏任务（settimeout
-
+<font color="red">**执行步骤**</font>：
+1. 大的script是个宏任务，检查任务队列是否为空，当前不为空，然后执行1和8行代码；那么打印出了1和4
+2. 执行完1和8行代码后去检查微任务队列，微任务队列不为空，执行了Promise的回调，此时打印出了3
+3. 执行完Promise的回调后，在检查微任务队列，现在微任务队列为空，进行重新渲染一便
+4. 在去检查任务队列，现在任务队列中有了定时器的事件，又打印出了2
  
- ### 3.2.12 node.js的Event Loop
+<font color="red">**注意点**</font>：
+1. 一个Event Loop有一个或多个task queue（任务队列）
+2. 每个个Event Loop有一个microtask queue（微任务队列）
+3. requestAnimationFrame 不在任务队列也不在为任务队列，是在渲染阶段执行的
+4. 任务需要多次事件循环才能执行完，微任务是一次性执行完的
+5. 主程序和和settimeout都是宏任务，一个promise是微任务，第一个宏任务（主程序）执行完，执行全部的微任务（一个promise），再执行下一个宏任务（settimeout）
+
+🔥代码示例2
+
+ ```javascript
+
+   console.log("start");
+
+    setTimeout(() => {
+    console.log("setTimeout");
+    new Promise(resolve => {
+        console.log("promise inner1");
+        resolve();
+    }).then(() => {
+        console.log("promise then1");
+    });
+    }, 0);
+
+    new Promise(resolve => {
+    console.log("promise inner2"); //同步执行的
+    resolve();
+    }).then(() => {
+    console.log("promise then2");
+    });
+
+    // 打应结果
+    /*
+     start
+     promise inner2
+     promise then2
+     setTimeout
+     promise inner1
+     promise then1
+    */
+
+ ```
+🔥代码示例3
+
+ ```javascript
+    async function async1() {
+    console.log("async1 start");
+    await async2();
+    console.log("async1 end");
+    }
+
+    async function async2() {
+    return Promise.resolve().then(_ => {
+        console.log("async2 promise");
+    });
+    }
+
+    console.log("start");
+    setTimeout(function() {
+    console.log("setTimeout");
+    }, 0);
+
+    async1();
+
+    new Promise(function(resolve) {
+    console.log("promise1");
+    resolve();
+    }).then(function() {
+    console.log("promise2");
+    });
+
+    /*
+        start
+        async1 start
+        promise1
+        async2 promise
+        promise2
+        async1 end
+        setTimeout
+    */
+ ```
+<font color="red">**执行步骤**</font>：
+1. 先执行主线程的同步任务（也是宏任务） start、async1 start 、promise1
+2. 在检查微任务队列，根据先后顺序，执行了promise的回调，打印了async2 promise、promise2
+3. 然后打印了了async1 end，await相当于等待的意思，是上一个回调函数中的回调函数
+3. 在检查任务队列，执行了宏任务setTimeout的回调，打印了setTimeout
+
+### 3.2.12 node.js的Event Loop
 
 ## 3.3 异步编程方法-发布/订阅
 ## 3.4 深入理解promise
 ## 3.5 Generator函数及其异步的应用
 ## 3.6 深入理解async/await
-4 1 3 6 8 2 7 5
