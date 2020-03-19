@@ -322,7 +322,7 @@ js就是采用了这种机制，来解决单线程带来的问题。
 <font color="red">**执行步骤**</font>：
 1. 先执行主线程的同步任务（也是宏任务） start、async1 start 、promise1
 2. 在检查微任务队列，根据先后顺序，执行了promise的回调，打印了async2 promise、promise2
-3. 然后打印了了async1 end，await相当于等待的意思，是上一个回调函数中的回调函数
+3. <font color="blue">**然后打印了了async1 end，await相当于等待的意思，是上一个回调函数中的回调函数**</font>
 3. 在检查任务队列，执行了宏任务setTimeout的回调，打印了setTimeout
 
 ### 3.2.12 node.js的Event Loop
