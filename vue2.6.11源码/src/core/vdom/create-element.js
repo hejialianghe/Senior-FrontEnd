@@ -114,15 +114,19 @@ export function _createElement (
     data.scopedSlots = { default: children[0] }
     children.length = 0
   }
+  //normalizationType的值，选择不同的处理方法
   if (normalizationType === ALWAYS_NORMALIZE) {
     children = normalizeChildren(children)
   } else if (normalizationType === SIMPLE_NORMALIZE) {
     children = simpleNormalizeChildren(children)
   }
   let vnode, ns
+  // 如果标签名是字符串类型
   if (typeof tag === 'string') {
     let Ctor
+      // 获取标签名的命名空间
     ns = (context.$vnode && context.$vnode.ns) || config.getTagNamespace(tag)
+      // 判断是否为保留标签
     if (config.isReservedTag(tag)) {
       // platform built-in elements
       if (process.env.NODE_ENV !== 'production' && isDef(data) && isDef(data.nativeOn)) {
@@ -131,33 +135,42 @@ export function _createElement (
           context
         )
       }
+       // 如果是保留标签,就创建一个这样的vnode
       vnode = new VNode(
         config.parsePlatformTagName(tag), data, children,
         undefined, undefined, context
       )
+      // 如果不是保留标签，那么我们将尝试从vm的components上查找是否有这个标签的定义
     } else if ((!data || !data.pre) && isDef(Ctor = resolveAsset(context.$options, 'components', tag))) {
       // component
+      // 如果找到了这个标签的定义，就以此创建虚拟组件节点
       vnode = createComponent(Ctor, data, context, children, tag)
     } else {
       // unknown or unlisted namespaced elements
       // check at runtime because it may get assigned a namespace when its
       // parent normalizes children
+      // 兜底方案，正常创建一个vnode
       vnode = new VNode(
         tag, data, children,
         undefined, undefined, context
       )
     }
   } else {
+    // 当tag不是字符串的时候，我们认为tag是组件的构造类
+    // 所以直接创建
     // direct component options / constructor
     vnode = createComponent(tag, data, context, children)
   }
+   // 如果有vnode
   if (Array.isArray(vnode)) {
     return vnode
   } else if (isDef(vnode)) {
+    // 如果有namespace，就应用下namespace，然后返回vnode
     if (isDef(ns)) applyNS(vnode, ns)
     if (isDef(data)) registerDeepBindings(data)
     return vnode
   } else {
+    // 否则，返回一个空节点
     return createEmptyVNode()
   }
 }

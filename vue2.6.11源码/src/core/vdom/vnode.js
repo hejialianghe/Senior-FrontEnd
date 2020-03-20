@@ -40,7 +40,7 @@ export default class VNode {
     asyncFactory?: Function
   ) {
     this.tag = tag // 当前节点标签名
-    this.data = data // 当前节点的数据对象，也就是标签上的属性；具体包含的字段可以参考/types/vnode.d.ts
+    this.data = data // 当前节点的数据对象，也就是标签上的属性；包括attrs,style,hook等具体包含的字段可以参考/types/vnode.d.ts
     this.children = children //数组类型，包含当前节点的子节点
     this.text = text // 当前节点的文本
     this.elm = elm // 当前虚拟节点对应的真实的dom节点
