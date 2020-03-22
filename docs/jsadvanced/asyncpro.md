@@ -325,9 +325,216 @@ js就是采用了这种机制，来解决单线程带来的问题。
 3. <font color="blue">**然后打印了了async1 end，await相当于等待的意思，是上一个回调函数中的回调函数**</font>
 3. 在检查任务队列，执行了宏任务setTimeout的回调，打印了setTimeout
 
-### 3.2.12 node.js的Event Loop
+### 3.2.2 node.js的Event Loop
+🔥node.js架构
+
+![](~@/asyncpro/nodeframework.png)
+<font color="red">**有3层组成**</font>
+1. 第一层：node-core是node.js api的核心库。
+2. 第二层：包装和暴露libuv和js的其他低级功能。
+3. 第三层：v8和libuv这个库属于第三层的东西，v8引擎是chrome开源的js引擎，也是js运行服务端的基础，libuv是第三方的库，是nodejs异步编程
+的基础，是node底层的io引擎，是c语言编写的事件驱动的库；负责node api的执行，它会将不通的任务分配给不同的线程，从而形成了Event Loop事件
+循环；它以异步的方式将任务的执行结果返回给v8引擎；那我们说node是非阻塞io单线程，实现这个非阻塞的原因就在与libuv，node.js的Event Loop都是这个库实现的。
+
+🔥node.js的Event Loop
+
+![](~@/asyncpro/nodeeventloop.png)
+<font color="red">**执行的几个阶段**</font>
+1. <font color="blue">**timers阶段：执行setTimeout和setInterval的回调**</font>
+2. pending callbacks：系统操作的回调
+3. idle，pepare：内部使用
+4.  <font color="blue">**poll：等待新的I/O事件进来**</font>
+5. <font color="blue">**check：执行setImmediate回调**</font>
+6. close callbacks：内部使用
+
+<font color="red">**只需关注1、4、5阶段**</font>
+
+<font color="blue">每个阶段都有一个callbacks的先进先出的队列需要执行，当event loop运行到一个指定阶段时，该阶段的
+fifo队列将会被执行，当队列callback执行完或者执行的callbacks数量超过该阶段的上限时，event loop会转入下一个阶段。
+</font>
+
+🔥poll阶段
+
+![](~@/asyncpro/poll.png)
+1. 先判断poll队列是否空或受到限制，否的话执行poll队列的callback；循环执行，直到空为止；是的话执行下一步
+2. 等待callback加入poll阶段，在poll阶段空闲的时候，检查timer是否到时间
+
+🔥案例1
+
+ ```javascript
+
+const fs = require('fs');
+
+function someAsyncOperation(callback) {
+  fs.readFile(__dirname, callback);
+}
+
+const timeoutScheduled = Date.now();
+
+setTimeout(() => {
+  const delay = Date.now() - timeoutScheduled;
+  console.log(`${delay}ms have passed since I was scheduled`);
+}, 100);
+
+someAsyncOperation(() => {
+  const startCallback = Date.now();
+  while (Date.now() - startCallback < 200) {
+    // do nothing
+  }
+});
+ // 打印结果 202ms have passed since I was scheduled
+ ```
+ 1. 读文件进入`poll`阶段，然后进入会回调，读文件一般会需要几毫秒，我们这里用了2毫秒，在回调了我们使用了while循环；
+ 延迟了200毫秒
+ 2. 执行完poll队列，现在是空闲状态，检查有没有到时间的定时器；然后有setTimeout，就执行了setTimeout的回调
+
+🔥案例2
+
+```javascript
+
+const fs = require('fs');
+fs.readFile(__filename, _ => {
+    setTimeout(_ => {
+        console.log("setTimeout");
+      }, 0);
+      setImmediate(_ => {
+          console.log("setImmediate");
+      });
+}); 
+/*
+  打印结果 setImmediate
+          setTimeout
+*/
+ ```
+ 可以根据`poll阶段`的图来看，check阶段比timer阶段先执行，执行到读取文件的回调时，先看是否设置了setImmediate的回调，如果有就进去check阶段，在等待callbakc加入poll队列空闲的时候才会检测是否有timer；所以`setImmediate`比`setTimeout`先执行
+
+ 🔥process.nextTick()
+
+ `process`进程的意思，process.nextTick()是一个异步的node API，但不属于event loop的阶段，它的作用是当调用这个方法的时候，event loop会先停下来，先执行这个方法的回调
+
+ ```javascript
+
+const fs = require('fs');
+fs.readFile(__filename, _ => {
+    setTimeout(_ => {
+        console.log("setTimeout");
+      }, 0);
+      setImmediate(_ => {
+          console.log("setImmediate");
+      });
+}); 
+/*
+  打印结果 nextTick1
+          setImmediate
+          nextTick2
+          setTimeout
+*/
+ ```
+ 1. 首先`fs.readFile`的回调进入poll阶段，遇到`process.nextTick()`会暂停event loop，先打印其回调；
+ 2. 打印`process.nextTick()`回调之后，会进入`setimmediate`的check阶段，然后打印setImmediate，然后`process.nextTick()`又打印了nextTick2
+ 3. 在检测有没有到时间的定时器，然后进入timer阶段，打印了setTimeout
 
 ## 3.3 异步编程方法-发布/订阅
+
+### 3.3.1 理解发布/订阅
+
+🔥异步编程的几种方式
+
+![](~@/asyncpro/asyncpro.png)
+
+🔥回调的形式实现请求
+
+```javascript
+function ajax(url, callback) {
+    // 实现省略
+}
+ajax("./test1.json", function(data) {
+    console.log(data);
+    ajax("./test2.json", function(data) {
+        console.log(data);
+        ajax("./test3.json", function(data) {
+            console.log(data);
+        });
+    });
+});
+ ```
+🔥发布订阅的形式
+ ```javascript
+// 发布订阅应用
+function ajax(url, callback) {
+    // 实现省略
+}
+
+const pbb = new PubSub();
+ajax("./test1.json", function(data) {
+    pbb.publish("test1Success", data);
+});
+pbb.subscribe("test1Success", function(data) {
+    console.log(data);
+    ajax("./test2.json", function(data) {
+        pbb.publish("test2Success", data);
+    });
+});
+pbb.subscribe("test2Success", function(data) {
+    console.log(data);
+    ajax("./test3.json", function(data) {
+        pbb.publish("test3Success", data);
+    });
+});
+pbb.subscribe("test2Success", function(data) {
+    console.log(data);
+});
+ ```
+ 1. 我们通过 `pbb.publish`这个方法发布`test1Success`这个事件
+ 2. 然后去订阅这个事件
+
+ 🔥发布和订阅图例
+ ![](~@/asyncpro/publisher.png)
+
+### 3.3.2 实现事件发布/订阅
+🔥发布和订阅类的实现
+ ```javascript
+class PubSub {
+    constructor() {
+        this.events = {};
+    }
+    // 发出一个事件
+    publish(eventName, data) {
+        if(this.events[eventName]){
+            this.events[eventName].forEach(cb => {
+                cb.apply(this, data)
+            });
+        }
+    }
+    // 订阅一个事件
+    subscribe(eventName, callback) {
+        if (this.events[eventName]) {
+            this.events[eventName].push(callback);
+        } else {
+            this.events[eventName] = [callback];
+        }
+    }
+    // 取消一个事件
+    unSubcribe(eventName, callback) {
+        if (this.events[eventName]) {
+            this.events[eventName] = this.events[eventName].filter(
+                cb => cb !== callback
+            );
+        }
+    }
+}
+```
+🔥发布和订阅的优缺点
+优点
+- 松耦合
+- 灵活（多次去订阅一个事件）
+缺点
+- 无法确保消息被触发或者触发几次
+
+<font color="red">**发布订阅是promise之前的一个主流的解决异步的方案**</font>
+
+### 3.3.3 node.js的发布/订阅
+
 ## 3.4 深入理解promise
 ## 3.5 Generator函数及其异步的应用
 ## 3.6 深入理解async/await
