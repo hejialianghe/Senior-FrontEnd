@@ -67,6 +67,7 @@ function createKeyToOldIdx (children, beginIdx, endIdx) {
   return map
 }
 
+/** 创建patch方法 */
 export function createPatchFunction (backend) {
   let i, j
   const cbs = {}
@@ -96,6 +97,7 @@ export function createPatchFunction (backend) {
     return remove
   }
 
+  // 删除节点
   function removeNode (el) {
     const parent = nodeOps.parentNode(el)
     // element may have already been removed due to v-html / v-text
@@ -122,6 +124,14 @@ export function createPatchFunction (backend) {
 
   let creatingElmInVPre = 0
 
+  /**
+   * 
+    function isDef (v) {
+      return v !== undefined && v !== null
+    }
+
+    创建节点
+   */
   function createElm (
     vnode,
     insertedVnodeQueue,
@@ -148,7 +158,8 @@ export function createPatchFunction (backend) {
     const data = vnode.data
     const children = vnode.children
     const tag = vnode.tag
-    if (isDef(tag)) {
+
+    if (isDef(tag)) {  //判断是否有tag标签
       if (process.env.NODE_ENV !== 'production') {
         if (data && data.pre) {
           creatingElmInVPre++
@@ -165,7 +176,7 @@ export function createPatchFunction (backend) {
 
       vnode.elm = vnode.ns
         ? nodeOps.createElementNS(vnode.ns, tag)
-        : nodeOps.createElement(tag, vnode)
+        : nodeOps.createElement(tag, vnode) //创建元素节点
       setScope(vnode)
 
       /* istanbul ignore if */
@@ -180,12 +191,12 @@ export function createPatchFunction (backend) {
           }
           insert(parentElm, vnode.elm, refElm)
         }
-        createChildren(vnode, children, insertedVnodeQueue)
+        createChildren(vnode, children, insertedVnodeQueue) //创建元素节点的子节点
         if (appendAsTree) {
           if (isDef(data)) {
             invokeCreateHooks(vnode, insertedVnodeQueue)
           }
-          insert(parentElm, vnode.elm, refElm)
+          insert(parentElm, vnode.elm, refElm) // 插入到dom中
         }
       } else {
         createChildren(vnode, children, insertedVnodeQueue)
@@ -198,12 +209,22 @@ export function createPatchFunction (backend) {
       if (process.env.NODE_ENV !== 'production' && data && data.pre) {
         creatingElmInVPre--
       }
+
+     /*
+      * isTrue
+      * function isTrue (v) {
+      *    return v === true
+        }
+
+        有isComment这个属性，说明是注释节点
+      */
     } else if (isTrue(vnode.isComment)) {
-      vnode.elm = nodeOps.createComment(vnode.text)
-      insert(parentElm, vnode.elm, refElm)
+      vnode.elm = nodeOps.createComment(vnode.text)  //创建注释节点
+      insert(parentElm, vnode.elm, refElm) //插入DOM中
     } else {
-      vnode.elm = nodeOps.createTextNode(vnode.text)
-      insert(parentElm, vnode.elm, refElm)
+      // 如果元素节点也不是注释节点，那就是文本节点
+      vnode.elm = nodeOps.createTextNode(vnode.text) //创建注释节点
+      insert(parentElm, vnode.elm, refElm)//插入DOM中
     }
   }
 

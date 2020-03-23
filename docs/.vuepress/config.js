@@ -77,7 +77,7 @@ module.exports = {
                 children: [
                   ["vue2.0/",'前言'],
                   ["vue2.0/dataResponse",'响应式'],
-                  ["vue2.0/vittualdom",'vittualdom和DIff']
+                  ["vue2.0/vittualdomAndDiff",'vittualdom和DIff']
                 ]
               },
               {

@@ -1,4 +1,5 @@
-## 3.1 前言
+## 3.1 虚拟DOM
+### 3.1.1 前言
 
 🔥 操作真实DOM的代价
   ```javascript
@@ -44,8 +45,7 @@
    </div>
     
  ```
-## 3.2 虚拟DOM
-### 3.2.1  VNode类
+### 3.1.2  VNode类
 
  ```javascript
 // 源码地址：src/core/vdom/vnode.js
@@ -97,7 +97,7 @@ export default class VNode {
  ```
 VNode类中包含了描述一个真实dom节点所需要的一系列属性，通过 VNode类可以描述各种真实dom节点
 
-### 3.2.2 VNode类能描述的类型节点
+### 3.1.3 VNode类能描述的类型节点
 
 - EmptyVNode: 没有内容的注释节点
 
@@ -106,6 +106,8 @@ VNode类中包含了描述一个真实dom节点所需要的一系列属性，通
 - CloneVNode: 克隆节点，可以是以上任意类型的节点，唯一的区别在于isCloned属性为true
 
 - ComponentVNode: 组件节点
+
+- FunctionalComponent: 函数式组件节点
 
 - ElementVNode: 普通元素节点
 
@@ -169,5 +171,32 @@ export function cloneVNode (vnode: VNode): VNode {
 
 4. ComponentVNode（组件节点）
 
-5. ElementVNode（普通元素节点）
+   源码地址：src/core/vdom/create-component.js
+
+   组件节点除了有普通元素节点的属性之外，还有2个私有的属性
+   - componentOptions  创建组件实例时会用到的选项信息
+   - componentInstance 当前组件节点对应的vue实例
+
+5. FunctionalComponent（函数式组件节点）
+
+   源码地址：src/core/vdom/create-functional-component.js
+
+    函数式组件2个私有的属性
+   - fnContext  函数组件化的作用域，当前组件对应的vue实例
+   - fnOptions  函数式组件Option选项
+
+6. ElementVNode（普通元素节点）
+
+   源码地址：src/core/vdom/create-element.js
+
+### 3.1.4  VNode类的作用
+
+在vue初始化阶段，我们把`template`模板用`vnode`类实例化成js对象并缓存下来，当数据发生变化重新渲染页面的时候，我们把数据发生变化后用`vnode`类实例化的js对象与前一次缓存下来描述dom节点的js对象进行对比，找出差异；然后根据有差异的节点创建出真实的节点插入视图当中
+
+### 3.1.3  总结
+
+ 虚拟dom就是用以对象的形式去描述真实的dom，用js计算的性能换取操作真实dom所消耗的性能
+
 ## 3.2 diff算法
+
+
