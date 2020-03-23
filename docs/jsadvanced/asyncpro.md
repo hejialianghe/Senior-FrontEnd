@@ -537,5 +537,48 @@ class PubSub {
 ### 3.3.3 node.js的发布/订阅
 
 ## 3.4 深入理解promise
+### 3.4.1 promise规范
+🔥术语
+- promise 一个有then方法的对象或函数，行为符合本规范
+- thenable 一个定义了then方法的对象或函数
+- 值，value 任何javaScript的合法值
+- 异常，exception throw语句抛出的值
+- 拒绝原因，reason 一个标示promise被拒绝原因的值
+
+🔥promise的状态
+![](~@/asyncpro/promisestatus.png)
+pending：等待
+fulfilled：完成
+rejected：拒绝
+一个promise的状态被改变了，就不能在改变了
+
+🔥promise的then方法
+
+```javascript
+const promise2=promise1.then(onFulfilled,onRejected); 
+```
+ - then 方法的参数
+      - 两个函数参数
+      - onFulfilled在promise完成后被调用，onRejected在promise被拒绝执行后调用
+ - then方法的调用：可以调用多次
+ - then方法的返回值：promise
+
+  then方法必须返回一个promise，它实现了链式调用，它的返回值必须有then方法，所以它返回的是一个promise；
+  既然then方法返回一个promise，那么这个返回的promise的值是怎么确定后的呢？加入我们返回的promsie是promise2
+  那规范中分了3种情况；我们根据这3种情况来确定promsie2的值和状态是什么？
+
+  1. onFulfilled 不是函数，promise1的状态是fulfilled
+   state：fulfilled
+   value：同promise1
+  2. onRejected不是函数，promise1的状态是rejected
+  state：rejected
+  reason：同promise1
+  3. onFullfilled或者onRejected，return x
+  
+### 3.4.2 ES6 Promise API
+
+### 3.4.3 promise实践
+
+
 ## 3.5 Generator函数及其异步的应用
 ## 3.6 深入理解async/await
