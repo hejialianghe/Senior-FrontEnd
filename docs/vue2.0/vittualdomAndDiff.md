@@ -191,12 +191,67 @@ export function cloneVNode (vnode: VNode): VNode {
 
 ### 3.1.4  VNode类的作用
 
-在vue初始化阶段，我们把`template`模板用`vnode`类实例化成js对象并缓存下来，当数据发生变化重新渲染页面的时候，我们把数据发生变化后用`vnode`类实例化的js对象与前一次缓存下来描述dom节点的js对象进行对比，找出差异；然后根据有差异的节点创建出真实的节点插入视图当中
+VNode类用js对象形式描述真实的dom，在vue初始化阶段，我们把`template`模板用`vnode`类实例化成js对象并缓存下来，当数据发生变化重新渲染页面的时候，我们把数据发生变化后用`vnode`类实例化的js对象与前一次缓存下来描述dom节点的js对象进行对比，找出差异；然后根据有差异的节点创建出真实的节点插入视图当中
 
 ### 3.1.3  总结
 
  虚拟dom就是用以对象的形式去描述真实的dom，用js计算的性能换取操作真实dom所消耗的性能
 
 ## 3.2 diff算法
+
+### 3.2.1 前言
+
+上章我们学习了虚拟dom，知道了渲染真实dom的开销很大，如果我们修改了某个数据，如果直接渲染到真实的dom上会引起整个dom树的重绘和重排；
+有没有可能我们只更新修改的那一块dom，diff算法能帮到我们，我们先根据真实的dom生成一个virtual DOM树，当virtual dom树的某个节点发生变化后生成一个新的vnode，然后Vnode和oldVnode进行对比，一边比较一边给真实DOM打补丁，找出差异的过程就是diff的过程。
+
+<font color="black">**vnode：数据变化后要渲染的虚拟的dom节点**</font>
+
+<font color="black">**oldVnode：数据变化前视图对应的虚拟dom节点**</font>
+
+### 3.2.2 patch
+
+初始化时，通过render函数生成vNode，同时也进行了Watcher的绑定，当数据发生变化时，会执行_update方法，生成一个新的VNode对象，然后调用
+__patch__方法，比较VNode和oldNode，最后将节点的差异更新到真实的DOM树上
+
+<font color="blue">**patch的过程就是以新的Vnode为基准，去改造旧的oldNode，让其跟新的一样；有人会说了，直接把旧的替换成新的就行了吗，如果这样做的话就是更新整个视图，而我们现在想做的是哪里变化了更新哪里。**</font>
+
+
+🔥 patch的的特点
+
+   pach的过程只会进行同级比较，不会跨级
+
+![](~@/vue2.0/patch.png)
+
+🔥 patch的过程就是做3件事情
+- 创建节点：Vnode里有的，oldNode没有，那么就在oldNode里创建
+- 删除节点：Vnode里没有，oldNode有，那么旧在oldNode删除
+- 更新节点：Vnode和oldNode都有，那么以Vnode基准去更新oldNode
+
+vue在update的时候会调用以下函数
+  ```javascript
+   export function lifecycleMixin (Vue: Class<Component>) {
+    Vue.prototype._update = function (vnode: VNode, hydrating?: boolean) {
+        const vm: Component = this
+        const prevEl = vm.$el
+        const prevVnode = vm._vnode
+        const restoreActiveInstance = setActiveInstance(vm)
+        vm._vnode = vnode
+        // Vue.prototype.__patch__ is injected in entry points
+        // based on the rendering backend used.
+        if (!prevVnode) {
+          // initial render
+          vm.$el = vm.__patch__(vm.$el, vnode, hydrating, false /* removeOnly */)
+        } else {
+          // updates
+          vm.$el = vm.__patch__(prevVnode, vnode)
+        }
+      }
+
+   }
+        
+ ```
+而其中的vm._patch_才是进行vnode diff的核心
+
+
 
 
