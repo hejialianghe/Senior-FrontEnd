@@ -537,7 +537,7 @@ class PubSub {
 ### 3.3.3 node.js的发布/订阅
 
 ## 3.4 深入理解promise
-### 3.4.1 promise规范
+### 3.4.1 promise A+规范
 🔥术语
 - promise 一个有then方法的对象或函数，行为符合本规范
 - thenable 一个定义了then方法的对象或函数
@@ -564,8 +564,10 @@ const promise2=promise1.then(onFulfilled,onRejected);
  - then方法的返回值：promise
 
   then方法必须返回一个promise，它实现了链式调用，它的返回值必须有then方法，所以它返回的是一个promise；
-  既然then方法返回一个promise，那么这个返回的promise的值是怎么确定后的呢？加入我们返回的promsie是promise2
+  既然then方法返回一个promise，那么这个返回的promise的值是怎么确定的呢？假如我们返回的promsie是promise2
   那规范中分了3种情况；我们根据这3种情况来确定promsie2的值和状态是什么？
+
+  返回的primise2的值和状态是怎样确定的？A+规范分了3种情况
 
   1. onFulfilled 不是函数，promise1的状态是fulfilled
    state：fulfilled
@@ -573,8 +575,8 @@ const promise2=promise1.then(onFulfilled,onRejected);
   2. onRejected不是函数，promise1的状态是rejected
   state：rejected
   reason：同promise1
-  3. onFullfilled或者onRejected，return x
-  
+  3. onFullfilled或者onRejected，return x（onFullfilled或者onRejected有一个返回值，这个返回值是x）
+
 ### 3.4.2 ES6 Promise API
 
 ### 3.4.3 promise实践
