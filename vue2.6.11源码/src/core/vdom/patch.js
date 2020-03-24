@@ -99,10 +99,10 @@ export function createPatchFunction (backend) {
 
   // 删除节点
   function removeNode (el) {
-    const parent = nodeOps.parentNode(el)
+    const parent = nodeOps.parentNode(el) //获取父节点
     // element may have already been removed due to v-html / v-text
     if (isDef(parent)) {
-      nodeOps.removeChild(parent, el)
+      nodeOps.removeChild(parent, el) // 调用父节点的removeChild方法 
     }
   }
 
@@ -222,7 +222,7 @@ export function createPatchFunction (backend) {
       vnode.elm = nodeOps.createComment(vnode.text)  //创建注释节点
       insert(parentElm, vnode.elm, refElm) //插入DOM中
     } else {
-      // 如果元素节点也不是注释节点，那就是文本节点
+      // 如果不是元素节点也不是注释节点，那就是文本节点
       vnode.elm = nodeOps.createTextNode(vnode.text) //创建注释节点
       insert(parentElm, vnode.elm, refElm)//插入DOM中
     }
@@ -519,6 +519,7 @@ export function createPatchFunction (backend) {
     }
   }
 
+  // 更新节点
   function patchVnode (
     oldVnode,
     vnode,
@@ -527,6 +528,7 @@ export function createPatchFunction (backend) {
     index,
     removeOnly
   ) {
+    // vnode和oldVode是完全一样，如果是就退出程序
     if (oldVnode === vnode) {
       return
     }
@@ -551,6 +553,7 @@ export function createPatchFunction (backend) {
     // note we only do this if the vnode is cloned -
     // if the new node is not cloned it means the render functions have been
     // reset by the hot-reload-api and we need to do a proper re-render.
+    // 如果vnode和oldVnode都是静态节点就退出程序
     if (isTrue(vnode.isStatic) &&
       isTrue(oldVnode.isStatic) &&
       vnode.key === oldVnode.key &&
@@ -568,25 +571,41 @@ export function createPatchFunction (backend) {
 
     const oldCh = oldVnode.children
     const ch = vnode.children
+
     if (isDef(data) && isPatchable(vnode)) {
       for (i = 0; i < cbs.update.length; ++i) cbs.update[i](oldVnode, vnode)
       if (isDef(i = data.hook) && isDef(i = i.update)) i(oldVnode, vnode)
     }
+    // vnode有没有text属性，如果没有
     if (isUndef(vnode.text)) {
+      // 如果vnode的子节点和oldVnode的子节点是否都存在
       if (isDef(oldCh) && isDef(ch)) {
+        // 如果都存在，子节点若不同，则更新子节点
         if (oldCh !== ch) updateChildren(elm, oldCh, ch, insertedVnodeQueue, removeOnly)
+        // 若只有vnode存在子节点
       } else if (isDef(ch)) {
         if (process.env.NODE_ENV !== 'production') {
           checkDuplicateKeys(ch)
         }
+        /**
+         * 判断oldVnode是否有文本，如果有则清空dom中的文本，再把vnode的子节点添加到真实的DOM中
+         * 如果没有，则把vnode的子节点添加到真实的DOM中
+         */
         if (isDef(oldVnode.text)) nodeOps.setTextContent(elm, '')
         addVnodes(elm, null, ch, 0, ch.length - 1, insertedVnodeQueue)
+
+        // 若只有oldVnode存在子节点
       } else if (isDef(oldCh)) {
+        // 清空dom中的节点
         removeVnodes(oldCh, 0, oldCh.length - 1)
+        // 如果oldVnode和node都没有子节点，但oldVnode有text
       } else if (isDef(oldVnode.text)) {
+        // 那么清空oldVnode文本
         nodeOps.setTextContent(elm, '')
       }
+    // 如果vnode有text属性，但是oldVnode和vnode的text不相同
     } else if (oldVnode.text !== vnode.text) {
+      // 不相同则用vnode.text替换真实的dom文本
       nodeOps.setTextContent(elm, vnode.text)
     }
     if (isDef(data)) {
@@ -717,8 +736,15 @@ export function createPatchFunction (backend) {
       return node.nodeType === (vnode.isComment ? 8 : 3)
     }
   }
-
+  /**
+   * oldVnode 旧的真实的DOM节点
+   * vnode  新的Vnode
+   * hydrating  是否要和真实DOM混合
+   * removeOnly  特殊的flag，用于<transition-group>
+   */
+  //patch 函数，进行打补丁
   return function patch (oldVnode, vnode, hydrating, removeOnly) {
+    // 如果vnode不存在，oldVnode存在，需要销毁旧节点，则调用invokeDestroyHook(oldVnode)
     if (isUndef(vnode)) {
       if (isDef(oldVnode)) invokeDestroyHook(oldVnode)
       return
@@ -726,15 +752,16 @@ export function createPatchFunction (backend) {
 
     let isInitialPatch = false
     const insertedVnodeQueue = []
-
+      // 如果oldVnode不存在，Vnode存在，那么旧创建新节点，则调用createElm(
     if (isUndef(oldVnode)) {
       // empty mount (likely as component), create new root element
       isInitialPatch = true
       createElm(vnode, insertedVnodeQueue)
+      // 当Vnode和oldVnode都存在时
     } else {
       const isRealElement = isDef(oldVnode.nodeType)
       if (!isRealElement && sameVnode(oldVnode, vnode)) {
-        // patch existing root node
+        // patch existing root node  更新节点
         patchVnode(oldVnode, vnode, insertedVnodeQueue, null, null, removeOnly)
       } else {
         if (isRealElement) {
