@@ -577,8 +577,56 @@ const promise2=promise1.then(onFulfilled,onRejected);
   reason：同promise1
   3. onFullfilled或者onRejected，return x（onFullfilled或者onRejected有一个返回值，这个返回值是x）
 
-### 3.4.2 ES6 Promise API
+  🔥案例
+  ```javascript
+  const promise = Promise.
+    resolve(1).
+    then(2).
+    then(Promise.resolve(3)).
+    then(console.log);
+     // 或
+    const promise1 = Promise.resolve(1);
+    const promise2 = promise1.then(2);
+    const promise3 = promise2.then(Promise.resolve(3));
+    const promise4 = promise3.then(console.log); 
 
+    // 1
+ ```
+ Promise1是resolved状态，它的value是1，then方法对不函数的参数会忽略掉；promise2的状态也是resolved状态；Value也是1；
+ 第三步的参数还是会忽略掉，promise3的状态也是resolved状态；Value也是1；第四步console.log是个函数，所以会打印出1.
+
+
+### 3.4.2 ES6 Promise API
+🔥Promise构造函数
+ ```javascript
+  new Promise( function(resolve,reject){
+    // resolve(value)
+    // reject(reson)
+  })
+
+  // 函数作为参数
+  resolve函数将promise的状态从pending变成resolved（fulfilled）
+  reject函数将promise状态从pending变成rejected
+ ```
+🔥Promise的静态方法
+
+| 方法  |  说明  |
+| :---: | :--------: |
+| Promise.resolve(param) | 等同于 new Promise(function (resolve.,reject){resolve(param)})  |
+| Promise.reject(reason) | 等同于 new Promise(function (resolve.,reject){reject(reason)}) |
+| Promise.all([p1,...,pn])| 输入一组promise返回一个新的promise，全部promise都是fulfilled结果才是fulfilled状态 |
+| Promise.allSettled([p1,...,pn])| 输入一组promise返回一个新的promise，所有的promise状态改变后，结果promise变成fulfilled |
+| Promise.race([p1,...,pn])| 输入一组promise返回一个新的promise，结果promise的状态跟随第一个变化的promsie状态 |
+
+🔥Promise的实例方法
+
+| 方法  |  说明  |
+| :---: | :--------: |
+| promise.then（onFulfilled，onRejected） | promise状态改变之后的回调，返回新的promise对想 |
+| Promise.catch(reason) | 同promise.then(null,onRejected),promise状态为rejected回调 |
+| Promise.finally(function（reason）{ // test })| 不管promise的状态如何都会执行 |
+
+ then和catch都会返回一个新的promise，链式调用的时候catch会冒泡到最后一层
 ### 3.4.3 promise实践
 
 
