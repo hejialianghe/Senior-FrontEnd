@@ -186,6 +186,10 @@ export function mountComponent (
       measure(`vue ${name} patch`, startTag, endTag)
     }
   } else {
+    // vm._render 会根据我们的html模板和vm上的数据生成一个 新的 VNode
+    // vm._update 会将新的 VNode 与 旧的 Vnode 进行对比，执行 __patch__ 方法打补丁，并更新真实 dom
+    // 初始化时，肯定没有旧的 Vnode 咯，这个时候就会全量更新 dom
+
     updateComponent = () => {
       vm._update(vm._render(), hydrating)
     }
@@ -194,6 +198,12 @@ export function mountComponent (
   // we set this to vm._watcher inside the watcher's constructor
   // since the watcher's initial patch may call $forceUpdate (e.g. inside child
   // component's mounted hook), which relies on vm._watcher being already defined
+
+  /**
+   * 
+   *  执行 updateComponent 函数会访问 data 中的数据，相当于触发 data 中数据的 get 属性
+   *  触发 data 中数据的 get 属性，就相当于触发了 依赖收集 
+   */
   new Watcher(vm, updateComponent, noop, {
     before () {
       if (vm._isMounted && !vm._isDestroyed) {
