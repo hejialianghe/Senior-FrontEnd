@@ -53,12 +53,17 @@ export default class Dep {
 // This is globally unique because only one watcher
 // can be evaluated at a time.
 Dep.target = null
+
+// 维护一个栈结构，用于存储和删除 Dep.target
 const targetStack = []
 
+// pushTarget 会在 new Watcher 时被调用
 export function pushTarget (target: ?Watcher) {
   targetStack.push(target)
   Dep.target = target
 }
+
+// popTarget 会在 new Watcher 时被调用
 
 export function popTarget () {
   targetStack.pop()

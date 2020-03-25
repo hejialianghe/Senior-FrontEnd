@@ -30,9 +30,18 @@ export function def (obj: Object, key: string, val: any, enumerable?: boolean) {
 
 /**
  * Parse simple path.
+ *  把一个形如'data.a.b.c'的字符串路径所表示的值，从真实的data对象中取出来
+ * 例如：
+ * data = {a:{b:{c:2}}}
+ * parsePath('a.b.c')(data)  // 2
  */
 const bailRE = new RegExp(`[^${unicodeRegExp.source}.$_\\d]`)
 export function parsePath (path: string): any {
+/**
+ * Parse simple path.
+ *  如果 path 参数，不包含 字母 或 数字 或 下划线，或者不包含 `.`、`$` ，直接返回
+ * 也就是说 obj-a, obj/a, obj*a 等值，会直接返回
+ */
   if (bailRE.test(path)) {
     return
   }

@@ -31,15 +31,20 @@ import {
 export const emptyNode = new VNode('', {}, [])
 
 const hooks = ['create', 'activate', 'update', 'remove', 'destroy']
-
+/**
+ * 判断2个节点是否是同一个节点
+ * 
+ */
 function sameVnode (a, b) {
   return (
+    // key值
     a.key === b.key && (
       (
-        a.tag === b.tag &&
-        a.isComment === b.isComment &&
+        a.tag === b.tag && //标签名
+        a.isComment === b.isComment && // 是否是注释节点
+        // 是否都定义了data，data中包含一些具体信息，例如：class，style
         isDef(a.data) === isDef(b.data) &&
-        sameInputType(a, b)
+        sameInputType(a, b)  // 当标签是input的时候，type必须相同
       ) || (
         isTrue(a.isAsyncPlaceholder) &&
         a.asyncFactory === b.asyncFactory &&
@@ -130,7 +135,7 @@ export function createPatchFunction (backend) {
       return v !== undefined && v !== null
     }
 
-    创建节点
+    创建一个节点
    */
   function createElm (
     vnode,
@@ -151,6 +156,7 @@ export function createPatchFunction (backend) {
     }
 
     vnode.isRootInsert = !nested // for transition enter check
+    // 创建一个组件节点
     if (createComponent(vnode, insertedVnodeQueue, parentElm, refElm)) {
       return
     }
@@ -199,11 +205,11 @@ export function createPatchFunction (backend) {
           insert(parentElm, vnode.elm, refElm) // 插入到dom中
         }
       } else {
-        createChildren(vnode, children, insertedVnodeQueue)
+        createChildren(vnode, children, insertedVnodeQueue) //创建元素子节点
         if (isDef(data)) {
           invokeCreateHooks(vnode, insertedVnodeQueue)
         }
-        insert(parentElm, vnode.elm, refElm)
+        insert(parentElm, vnode.elm, refElm) // 插入DOM中
       }
 
       if (process.env.NODE_ENV !== 'production' && data && data.pre) {
@@ -227,7 +233,7 @@ export function createPatchFunction (backend) {
       insert(parentElm, vnode.elm, refElm)//插入DOM中
     }
   }
-
+// 创建一个组件
   function createComponent (vnode, insertedVnodeQueue, parentElm, refElm) {
     let i = vnode.data
     if (isDef(i)) {
@@ -358,7 +364,7 @@ export function createPatchFunction (backend) {
       nodeOps.setStyleScope(vnode.elm, i)
     }
   }
-
+// 添加节点
   function addVnodes (parentElm, refElm, vnodes, startIdx, endIdx, insertedVnodeQueue) {
     for (; startIdx <= endIdx; ++startIdx) {
       createElm(vnodes[startIdx], insertedVnodeQueue, parentElm, refElm, false, vnodes, startIdx)
@@ -379,6 +385,7 @@ export function createPatchFunction (backend) {
     }
   }
 
+  // 移除节点
   function removeVnodes (vnodes, startIdx, endIdx) {
     for (; startIdx <= endIdx; ++startIdx) {
       const ch = vnodes[startIdx]
@@ -421,7 +428,7 @@ export function createPatchFunction (backend) {
       removeNode(vnode.elm)
     }
   }
-
+//循环更新子节点
   function updateChildren (parentElm, oldCh, newCh, insertedVnodeQueue, removeOnly) {
     let oldStartIdx = 0
     let newStartIdx = 0
@@ -512,12 +519,14 @@ export function createPatchFunction (backend) {
     }
   }
 
+  // oldChildren中寻找与node相同的节点id
   function findIdxInOld (node, oldCh, start, end) {
     for (let i = start; i < end; i++) {
       const c = oldCh[i]
       if (isDef(c) && sameVnode(node, c)) return i
     }
   }
+
 
   // 更新节点
   function patchVnode (

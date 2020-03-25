@@ -186,7 +186,7 @@
     /**
      * 使一个对象转化成可观测对象
      * @param { Component } vm vue实例
-     * @param { string | Function } expOrFn 表达式，获取某个对象的getter，从而去添加依赖
+     * @param { string | Function } expOrFn 表达式，要watch 的属性名称
      * @param { Function } cb 更新视图的回调函数
      */
     class Watcher {
@@ -194,6 +194,10 @@
             this.vm=vm //vue实例
             this.getter = expOrFn //要观察的表达式
             this.cb=cb //回调函数
+
+            // expOrFn可以是字符串或者函数
+            // 什么时候会是字符串，例如我们正常使用的时候，watch: { x: fn }, Vue内部会将 `x` 这个key 转化为字符串
+            // 什么时候会是函数，其实 Vue 初始化时，就是传入的渲染函数 new Watcher(vm, updateComponent, ...);
 
             if (typeof expOrFn === 'function') {
               this.getter = expOrFn
@@ -219,7 +223,33 @@
         } 
     }
 
-
+/**
+ * 源码地址 src/core/util/lang.js
+ * Parse simple path.
+ * 把一个形如'data.a.b.c'的字符串路径所表示的值，从真实的data对象中取出来
+ * 例如：
+ * data = {a:{b:{c:2}}}
+ * parsePath('a.b.c')(data)  // 2
+ */
+const bailRE = new RegExp(`[^${unicodeRegExp.source}.$_\\d]`)
+export function parsePath (path: string): any {
+/**
+ * Parse simple path.
+ *  如果 path 参数，不包含 字母 或 数字 或 下划线，或者不包含 `.`、`$` ，直接返回
+ * 也就是说 obj-a, obj/a, obj*a 等值，会直接返回
+ */
+  if (bailRE.test(path)) {
+    return
+  }
+  const segments = path.split('.')
+  return function (obj) {
+    for (let i = 0; i < segments.length; i++) {
+      if (!obj) return
+      obj = obj[segments[i]]
+    }
+    return obj
+  }
+}
 ```
 
  ### 2.2.4 梳理一下宏观的整个流程

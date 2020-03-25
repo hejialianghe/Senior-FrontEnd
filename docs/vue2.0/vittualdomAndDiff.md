@@ -210,9 +210,6 @@ VNode类用js对象形式描述真实的dom，在vue初始化阶段，我们把`
 
 ### 3.2.2 patch
 
-初始化时，通过render函数生成vNode，同时也进行了Watcher的绑定，当数据发生变化时，会执行_update方法，生成一个新的VNode对象，然后调用
-__patch__方法，比较VNode和oldNode，最后将节点的差异更新到真实的DOM树上
-
 <font color="blue">**patch的过程就是以新的Vnode为基准，去改造旧的oldNode，让其跟新的一样；有人会说了，直接把旧的替换成新的就行了吗，如果这样做的话就是更新整个视图，而我们现在想做的是哪里变化了更新哪里。**</font>
 
 
@@ -227,16 +224,74 @@ __patch__方法，比较VNode和oldNode，最后将节点的差异更新到真�
 - 删除节点：Vnode里没有，oldNode有，那么旧在oldNode删除
 - 更新节点：Vnode和oldNode都有，那么以Vnode基准去更新oldNode
 
+### 3.2.3 创建节点
+从上章我们知道通过Vnode类可以创建6种描述的dom节点的实例，是实际只有3种会被创建，并插入dom当中，3种分别是：元素节点、注释节点、文本节点
+```javascript
+// 源码位置: /src/core/vdom/patch.js
+function isDef (v) {
+   return v !== undefined && v !== null
+}
+
+function createElm (vnode, parentElm, refElm) {
+    const data = vnode.data
+    const children = vnode.children
+    const tag = vnode.tag
+    if (isDef(tag)) { //判断是否有tag标签
+      vnode.elm = nodeOps.createElement(tag, vnode)   // 创建元素节点
+      createChildren(vnode, children, insertedVnodeQueue) // 创建元素节点的子节点
+      insert(parentElm, vnode.elm, refElm)       // 插入到DOM中
+    } else if (isTrue(vnode.isComment)) {  //判断注释属性是否是true
+      vnode.elm = nodeOps.createComment(vnode.text)  // 创建注释节点
+      insert(parentElm, vnode.elm, refElm)           // 插入到DOM中
+    } else { // 如果不是元素节点和注释节点，那么就是文本节点
+      vnode.elm = nodeOps.createTextNode(vnode.text)  // 创建文本节点
+      insert(parentElm, vnode.elm, refElm)           // 插入到DOM中
+    }
+  }
+
+        
+```
+### 3.2.4 删除节点
+删除节点比较简单，只需调用删除元素的父元素的removeChild方法
+```javascript
+// 源码位置: /src/core/vdom/patch.js
+function isDef (v) {
+   return v !== undefined && v !== null
+}
+
+function removeNode (el) {
+    const parent = nodeOps.parentNode(el) //获取父节点
+    // element may have already been removed due to v-html / v-text
+    if (isDef(parent)) {
+      nodeOps.removeChild(parent, el) // 调用父节点的removeChild方法 
+    }
+  }
+
+```
+### 3.2.5 更新节点
+更新节点是vNode和oldVnode都存在时
+```javascript
+// 源码位置: /src/core/vdom/patch.js
+
+
+```
+这个函数做了一下事情
+- 找到真实的dom，称之为elm
+- 判断vNode和oldnode是否是同一个对象，如果是直接return
+- 如果他们都有文本节点且文本节点不相同，则将elm的文本节点设置为vnode的文本节点
+- 如果vnode没有文本节点
+     - 2者都有子节点，则执行updateChildren比较子节点
+     - 若只有vnode存在子节点，oldVnode没有子节点，在判断来节点
+### 3.2.3 patch过程
+初始化时，通过render函数生成vNode，同时也进行了Watcher的绑定，当数据发生变化时，会执行_update方法，生成一个新的VNode对象，然后调用 __patch__方法，比较VNode和oldNode，最后将节点的差异更新到真实的DOM树上
 vue在update的时候会调用以下函数
   ```javascript
-   export function lifecycleMixin (Vue: Class<Component>) {
+   export function lifecyclm._vnode
+        vm._vnode = vnode
+        // Vue.prototype.__eMixin (Vue: Class<Component>) {
     Vue.prototype._update = function (vnode: VNode, hydrating?: boolean) {
         const vm: Component = this
-        const prevEl = vm.$el
-        const prevVnode = vm._vnode
-        const restoreActiveInstance = setActiveInstance(vm)
-        vm._vnode = vnode
-        // Vue.prototype.__patch__ is injected in entry points
+        const prevVnode = vpatch__ is injected in entry points
         // based on the rendering backend used.
         if (!prevVnode) {
           // initial render
@@ -250,8 +305,34 @@ vue在update的时候会调用以下函数
    }
         
  ```
-而其中的vm._patch_才是进行vnode diff的核心
+而其中的vm._patch_才是进行vnode diff的核心，来看看patch是怎么打补丁的（代码只保留核心部分）
+  ```javascript
+ /**
+   * oldVnode 旧的真实的DOM节点
+   * vnode  节点变化后生成新的Vnode
+   */
+ function patch (oldVnode, vnode) {
 
+    // 如果vnode不存在，oldVnode存在，需要销毁旧节点，则调用invokeDestroyHook(oldVnode)
+    if (isUndef(vnode)) {
+      if (isDef(oldVnode)) invokeDestroyHook(oldVnode)
+      return
+    }
+
+    let isInitialPatch = false
+    const insertedVnodeQueue = []
+      // 如果oldVnode不存在，Vnode存在，那么旧创建新节点，则调用createElm()
+    if (isUndef(oldVnode)) {
+      // empty mount (likely as component), create new root element
+      isInitialPatch = true
+      createElm(vnode, insertedVnodeQueue)
+      // 当Vnode和oldVnode都存在时
+    } else {
+
+    }
+ }
+        
+ ```
 
 
 
