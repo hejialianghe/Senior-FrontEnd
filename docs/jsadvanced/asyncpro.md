@@ -575,7 +575,15 @@ const promise2=promise1.then(onFulfilled,onRejected);
   2. onRejected不是函数，promise1的状态是rejected
   state：rejected
   reason：同promise1
-  3. onFullfilled或者onRejected，return x（onFullfilled或者onRejected有一个返回值，这个返回值是x）
+  3. onFullfilled或者onRejected，return x（onFullfilled或者onRejected有一个返回值，这个返回值是x，这个时候规范定义了一个解析过程）
+
+  promise解析过程
+  - 抽象模型resolve(promise,x)
+  - 如果promise和x指向相同的值
+    如果他们指向相同的值，就形成了循环引用；所以就return resolve(promise,new TypeError('cant be the same'))
+  - 如果x是一个promsie,状态有3种
+  - 如果x是一个对象或一个函数
+  - 如果x不是对象也不是函数
 
   🔥案例
   ```javascript
@@ -631,4 +639,18 @@ const promise2=promise1.then(onFulfilled,onRejected);
 
 
 ## 3.5 Generator函数及其异步的应用
+### 3.5.1 Generator函数
+🔥先看2个概念：迭代器vs生成器
+ - 迭代器
+   - 有next方法，执行返回结果对象
+ 结果对象包含：1.value  2.done
+ 
+ 用es5自己写一个迭代器，让大家看的更清楚
+ ```javascript
+  function createIterator(item) {
+    var i=0
+  }
+ ```
+### 3.5.2 Thunk函数
+
 ## 3.6 深入理解async/await
