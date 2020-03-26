@@ -224,13 +224,27 @@ VNode类用js对象形式描述真实的dom，在vue初始化阶段，我们把`
 - 删除节点：Vnode里没有，oldNode有，那么旧在oldNode删除
 - 更新节点：Vnode和oldNode都有，那么以Vnode基准去更新oldNode
 
+🔥 了解一下oldVnode有哪些属性
+  ```javascript
+// body下的 <div id="test" class="main"><div> 
+// 对应的 oldVnode 就是
+
+{
+  elm:  div  //对真实的节点的引用，本例中就是document.querySelector('v#test.main')
+  tagName: 'DIV',   //节点的标签
+  sel: 'div#test.main'  //节点的选择器
+  data: null,       // 一个存储节点属性的对象，对应节点的el[prop]属性，例如onclick , style
+  children: [], //存储子节点的数组，每个子节点也是vnode结构
+  text: null,    //如果是文本节点，对应文本节点的textContent，否则为null
+}
+ 
+ ```
+ 需要注意的是，el属性引用的是此virtual dom对应的真实dom，patch的vnode参数的elm最初是null，因为patch之前它还没有对应的真实dom      
+
 ### 3.2.3 创建节点
 从上章我们知道通过Vnode类可以创建6种描述的dom节点的实例，是实际只有3种会被创建，并插入dom当中，3种分别是：元素节点、注释节点、文本节点
 ```javascript
 // 源码位置: /src/core/vdom/patch.js
-function isDef (v) {
-   return v !== undefined && v !== null
-}
 
 function createElm (vnode, parentElm, refElm) {
     const data = vnode.data
@@ -240,7 +254,7 @@ function createElm (vnode, parentElm, refElm) {
       vnode.elm = nodeOps.createElement(tag, vnode)   // 创建元素节点
       createChildren(vnode, children, insertedVnodeQueue) // 创建元素节点的子节点
       insert(parentElm, vnode.elm, refElm)       // 插入到DOM中
-    } else if (isTrue(vnode.isComment)) {  //判断注释属性是否是true
+    } else if (isTrue(vnode.isComment)) {  //判断注释属性是否是true，true的话就是注释节点
       vnode.elm = nodeOps.createComment(vnode.text)  // 创建注释节点
       insert(parentElm, vnode.elm, refElm)           // 插入到DOM中
     } else { // 如果不是元素节点和注释节点，那么就是文本节点
@@ -248,17 +262,14 @@ function createElm (vnode, parentElm, refElm) {
       insert(parentElm, vnode.elm, refElm)           // 插入到DOM中
     }
   }
-
-        
+function isDef (v) {
+   return v !== undefined && v !== null
+}       
 ```
 ### 3.2.4 删除节点
 删除节点比较简单，只需调用删除元素的父元素的removeChild方法
 ```javascript
 // 源码位置: /src/core/vdom/patch.js
-function isDef (v) {
-   return v !== undefined && v !== null
-}
-
 function removeNode (el) {
     const parent = nodeOps.parentNode(el) //获取父节点
     // element may have already been removed due to v-html / v-text
@@ -267,22 +278,105 @@ function removeNode (el) {
     }
   }
 
+function isDef (v) {
+   return v !== undefined && v !== null
+}
+
 ```
 ### 3.2.5 更新节点
-更新节点是vNode和oldVnode都存在时
+更新节点是vNode和oldVnode都存在时，我们需要细致的找出不同的地方
+
+🔥 先了解一下静态节点
+
+  ```html
+      <div>标题<div> 
+ ```
+像上面的节点就是静态节点，就是不用变化的节点，没有绑定任何变量，第一次渲染后，以后就不会变化了
+
+🔥 这个函数做了一下事情
+1. 找到真实的dom节点，称之为elm
+2. 判断vNode和oldnode如果是同一个对象，则直接return
+3. 如果vNode和oldnode都是静态节点，则直接return
+3. 如果vnode没有文本节点
+     - 2者都有子节点且不相同，则执行updateChildren比较子节点
+     - 若只有vnode存在子节点，在判断oldVnode是否有文本，如果有就清除，然后将vnode的子节点替换到真实的dom中去
+     - 若只有oldVnode存在子节点，则清空dom种子节点的存在
+     - 若2者都没有子节点，则oldnode种有文本，则清空oldnode的文本
+4. 如果vnode和oldVnode都有文本节点且不相同：
+则将elm的文本节点设置为vnode的文本节点(文本节点就是text对应的值)
+
 ```javascript
 // 源码位置: /src/core/vdom/patch.js
+  function patchVnode (
+    oldVnode,
+    vnode,
+    insertedVnodeQueue,
+    ownerArray,
+    index,
+    removeOnly
+  ) {
+    // vnode和oldVode是完全一样，说明引用一致，没有什么变化；如果是就退出程序
+    if (oldVnode === vnode) {
+      return
+    }
+ 
+    // 让vnode.elm引用到现在的真实dom上，当elm修改时，vnode.elm会同步变化
+    const elm = vnode.elm = oldVnode.elm
 
+    // 如果vnode和oldVnode都是静态节点就退出程序，静态节点，无论数据发生任何变化都与它无关
+    if (isTrue(vnode.isStatic) &&
+      isTrue(oldVnode.isStatic) &&
+      vnode.key === oldVnode.key &&
+      (isTrue(vnode.isCloned) || isTrue(vnode.isOnce))
+    ) {
+      vnode.componentInstance = oldVnode.componentInstance
+      return
+    }
+
+    const oldCh = oldVnode.children
+    const ch = vnode.children
+ 
+    // vnode如果没有text属性
+    if (isUndef(vnode.text)) {
+      // 如果vnode的子节点和oldVnode的子节点都存在
+      if (isDef(oldCh) && isDef(ch)) {
+        //  若都存在且不相同，则更新子节点，这是diff的核心
+        if (oldCh !== ch) updateChildren(elm, oldCh, ch, insertedVnodeQueue, removeOnly)
+      } 
+      // 若只有vnode存在子节点
+      else if (isDef(ch)) {
+        if (process.env.NODE_ENV !== 'production') {
+          checkDuplicateKeys(ch)
+        }
+         // 判断oldVnode是否有文本，如果有则清空dom中的文本，再把vnode的子节点添加到真实的DOM中
+        if (isDef(oldVnode.text)) nodeOps.setTextContent(elm, '')
+        addVnodes(elm, null, ch, 0, ch.length - 1, insertedVnodeQueue)
+   
+      } 
+      // 若只有oldVnode存在子节点
+      else if (isDef(oldCh)) {
+        // 清空dom中的节点
+        removeVnodes(oldCh, 0, oldCh.length - 1)
+     
+      } 
+      // 如果oldVnode和node都没有子节点，但oldVnode有text
+      else if (isDef(oldVnode.text)) {
+        // 那么清空oldVnode文本
+        nodeOps.setTextContent(elm, '')
+      }
+
+    // 如果vnode和oldVnode有text属性，但是oldVnode和vnode的text不相同
+    } else if (oldVnode.text !== vnode.text) {
+      // 不相同则用vnode.text替换真实的dom文本
+      nodeOps.setTextContent(elm, vnode.text)
+    }
+  
+  }
 
 ```
-这个函数做了一下事情
-- 找到真实的dom，称之为elm
-- 判断vNode和oldnode是否是同一个对象，如果是直接return
-- 如果他们都有文本节点且文本节点不相同，则将elm的文本节点设置为vnode的文本节点
-- 如果vnode没有文本节点
-     - 2者都有子节点，则执行updateChildren比较子节点
-     - 若只有vnode存在子节点，oldVnode没有子节点，在判断来节点
-### 3.2.3 patch过程
+
+### 3.2.3 diff的流程
+从上面看下来,我们了解到了patch要做些什么,无非就是创建
 初始化时，通过render函数生成vNode，同时也进行了Watcher的绑定，当数据发生变化时，会执行_update方法，生成一个新的VNode对象，然后调用 __patch__方法，比较VNode和oldNode，最后将节点的差异更新到真实的DOM树上
 vue在update的时候会调用以下函数
   ```javascript
