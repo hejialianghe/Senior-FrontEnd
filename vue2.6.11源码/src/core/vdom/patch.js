@@ -9,6 +9,7 @@
  * Not type-checking this because this file is perf-critical and the cost
  * of making flow understand it is not worth it.
  */
+// 代码中的nodeOps是Vue为了跨平台兼容性，对所有节点操作进行了封装，例如nodeOps.createTextNode()在浏览器端等同于document.createTextNode()
 
 import VNode, { cloneVNode } from './vnode'
 import config from '../config'
@@ -391,6 +392,7 @@ export function createPatchFunction (backend) {
       const ch = vnodes[startIdx]
       if (isDef(ch)) {
         if (isDef(ch.tag)) {
+        // 存在tag时,tag就是标签名
           removeAndInvokeRemoveHook(ch)
           invokeDestroyHook(ch)
         } else { // Text node
@@ -537,7 +539,7 @@ export function createPatchFunction (backend) {
     index,
     removeOnly
   ) {
-    // vnode和oldVode是完全一样，如果是就退出程序
+    // vnode和oldVode是完全一样，说明引用一致，没有什么变化；如果是就退出程序
     if (oldVnode === vnode) {
       return
     }
@@ -546,7 +548,7 @@ export function createPatchFunction (backend) {
       // clone reused vnode
       vnode = ownerArray[index] = cloneVNode(vnode)
     }
-
+    // 让vnode.elm引用到现在的真实dom上，当elm修改时，vnode.elm会同步变化
     const elm = vnode.elm = oldVnode.elm
 
     if (isTrue(oldVnode.isAsyncPlaceholder)) {
@@ -562,7 +564,7 @@ export function createPatchFunction (backend) {
     // note we only do this if the vnode is cloned -
     // if the new node is not cloned it means the render functions have been
     // reset by the hot-reload-api and we need to do a proper re-render.
-    // 如果vnode和oldVnode都是静态节点就退出程序
+    // 如果vnode和oldVnode都是静态节点就退出程序，静态节点，无论数据发生任何变化都与它无关
     if (isTrue(vnode.isStatic) &&
       isTrue(oldVnode.isStatic) &&
       vnode.key === oldVnode.key &&
@@ -589,7 +591,7 @@ export function createPatchFunction (backend) {
     if (isUndef(vnode.text)) {
       // 如果vnode的子节点和oldVnode的子节点是否都存在
       if (isDef(oldCh) && isDef(ch)) {
-        // 如果都存在，子节点若不同，则更新子节点
+        // 如果都存在，子节点若不同，则更新子节点，这是diff的核心
         if (oldCh !== ch) updateChildren(elm, oldCh, ch, insertedVnodeQueue, removeOnly)
         // 若只有vnode存在子节点
       } else if (isDef(ch)) {
