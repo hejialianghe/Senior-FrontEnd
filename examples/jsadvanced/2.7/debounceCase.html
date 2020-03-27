@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <input type="text"></input>
+     <!-- 防抖场景 -->
+     <script>
+        //  防抖函数
+         let deBounce=(fn,delay)=>{
+            let timer=null
+            return function (...args){
+                if(timer) clearTimeout(timer)
+                timer = setTimeout(()=>{
+                    fn(...args)
+                },delay)
+            }
+         }
+         let oInput=document.getElementsByTagName('input')[0]
+        //  模拟请求
+         let ajax=(message)=>{
+             let json={message}
+             console.log(JSON.stringify(json))
+         }
+         let doAjax=deBounce(ajax,200)
+
+        // 键盘弹起执行
+         oInput.addEventListener('keyup',(e)=>{
+            doAjax(e.target.value)
+         })
+     </script>
+</body>
+</html>

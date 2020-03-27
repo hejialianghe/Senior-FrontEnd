@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<button>点击</button>
+<script>
+    let obutton=document.getElementsByTagName('button')[0]
+      //  如果用箭头函数，箭头函数没有arguments，不能通过apply改变this指向，
+    function btnClick (args) {
+       console.log('我响应了')
+    }
+    // setTimeout方式实现
+    // let throttle = (fn,delay)=>{
+    //     let flag=false
+    //     return function (...args) {
+    //        if(flag) return
+    //        flag=true
+    //         setTimeout(()=>{
+    //             fn(...args)
+    //             flag=false 
+    //         },delay)
+    //     }
+    // }
+    // 时间戳方式实现
+    let throttle=(fn,delay)=>{
+        let start=Date.now()
+        return function (...args) {
+            let now=Date.now(),
+                that=this
+         if (now-start>delay){
+            fn.apply(that,args)
+            start=Date.now()
+         }
+        }
+    }
+    obutton.onclick=throttle(btnClick,1000)
+</script>
+</html>

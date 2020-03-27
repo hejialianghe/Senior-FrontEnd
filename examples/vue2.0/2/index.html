@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app">
+        <!-- 插值绑定 -->
+        <p>{{name}}</p>
+        <!-- 指令解析 -->
+        <p t-text="name"></p>
+        <p>{{age}}</p>
+        <!-- 双向绑定 -->
+        <input type="text" t-model="name">
+        <!-- 事件处理 -->
+        <button @click="changeName">点击</button>
+        <!-- html内容解析 -->
+        <div t-html="html"></div>
+    </div>
+    <script src="./complie.js"></script>
+    <script src="./tvue.js"></script>
+    <script>
+        const vm= new tvue({
+            el: "#app",
+            data: {
+                name: "I am test.",
+                age: 12,
+                html: "<button>这是一个按钮</button>"
+                },
+            created(){
+                setTimeout(()=>{
+                    this.name='我是测试'
+                    console.log('我进入了created')
+                },1500)
+            },
+            methods:{
+                changeName(){
+                    this.name='哈喽，我点击了'
+                    this.age=1
+                }
+            }
+        })
+    </script>
+</body>
+</html>

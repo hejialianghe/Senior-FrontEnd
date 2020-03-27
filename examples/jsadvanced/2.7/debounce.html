@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        #content{
+            width: 200px;
+            height: 200px;
+            line-height: 200px;
+            background-color: #ccc;
+            margin:0 auto;
+            font-size: 60px;
+            text-align: center;
+            color: #000;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="content"></div>
+    <script>
+        let num=1
+        let oDiv= document.getElementById('content')
+
+        let changeNum=function (...args) {
+            oDiv.innerHTML=num++
+        }
+        let deBounce=function (fn,delay) {
+            let timer=null
+           return function (...args){
+           if(timer) clearTimeout(timer)
+             timer = setTimeout(()=>{
+               fn(...args)
+            },delay)
+           }
+           
+        }
+        oDiv.onmousemove=deBounce(changeNum,500)
+    </script>
+</body>
+</html>

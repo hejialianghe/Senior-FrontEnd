@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        let add=(a,b)=>a+b
+        let  expect = (res)=>{
+            return {
+                toBe:(actual)=>{
+                    if(res!==actual){
+                    throw new Error(`预期值和实际值不符`)
+                  }
+                }
+            }
+        }
+
+     // expect(add(1,2)).toBe(4)
+     let test =(desc,fn)=>{
+         try{
+             fn()
+             console.log(`${desc}通过`); 
+         }catch(err){
+             console.log(`${desc}没有通过`);           
+       }
+     }
+     test('加法测试',()=>{
+        expect(add(1,2)).toBe(3)
+     })
+
+    </script>
+</body>
+</html>

@@ -1,17 +1,36 @@
+const path = require("path");
 module.exports = {
-    title: '高级开发工程师必备',
+    title: '高级开发工程师必学',
     description: 'Hello, my friend!',
+    dest: "dist",
+    serviceWorker: true,
+    markdown: {
+      lineNumbers: true
+    },
     head: [
         ['link', {
             rel: 'icon',
             href: `/logo.jpeg`
         }]
     ],
-    dest: './docs/.vuepress/dist',
+    dest: 'dist',
     ga: '',
     evergreen: true,
+    configureWebpack: {
+      resolve: {
+        alias: {
+          '@': path.join(__dirname, 'public','assets')
+        }
+      }
+    },
     themeConfig: {
-        sidebar: [
+      repo: "hejialianghe/seniorFrontEnd",
+      editLinks: true,
+      docsDir: "docs",
+      editLinkText: "在 GitHub 上编辑此页",
+      lastUpdated: "最新更新时间",
+      sidebarDepth: 1,
+        sidebar:[
             {
               title: "指南",
               collapsable: false,
@@ -33,75 +52,84 @@ module.exports = {
                 title: "计算机网络",
                 collapsable: false,
                 children: [
-                  ["jsadvanced/",'网络协议'],
-                  ["jsadvanced/function",'网络请求'],
-                  ["jsadvanced/asyncpro",'网络安全'],
-                  ["jsadvanced/asyncpro",'模块加载'],
-                  ["jsadvanced/asyncpro",'路由']
+                  ["computerNetwork/",'网络协议'],
+                  ["computerNetwork/",'网络请求'],
+                  ["computerNetwork/",'网络安全'],
+                  ["computerNetwork/",'模块加载'],
+                  ["computerNetwork/",'路由']
                 ]
               },
               {
                 title: "Vue",
                 collapsable: false,
                 children: [
-                  ["jsadvanced/",'初识vue'],
-                  ["jsadvanced/function",'探索vue的组件世界'],
-                  ["jsadvanced/asyncpro",'vue生态'],
-                  ["jsadvanced/asyncpro",'vue实战'],
-                  ["jsadvanced/asyncpro",'企业级组件系统架构'],
-                  ["jsadvanced/asyncpro",'Vue3.0']
+                  ["vue/",'前言'],
+                  ["vue/",'探索vue的组件世界'],
+                  ["vue/",'vue生态'],
+                  ["vue/",'vue实战'],
+                  ["vue/",'企业级组件系统架构'],
+                  ["vue/",'Vue3.0']
+                ]
+              },
+              {
+                title: "Vue2.0源码",
+                collapsable: false,
+                children: [
+                  ["vue2.0/",'前言'],
+                  ["vue2.0/dataResponse",'响应式'],
+                  ["vue2.0/vittualdomAndDiff",'vittualdom和DIff']
                 ]
               },
               {
                 title: "react",
                 collapsable: false,
                 children: [
-                  ["jsadvanced/",'入门介绍'],
-                  ["jsadvanced/function",'JSX介绍'],
-                  ["jsadvanced/asyncpro",'组件基础知识'],
-                  ["jsadvanced/asyncpro",'组件进阶'],
-                  ["jsadvanced/asyncpro",'实战应用1'],
-                  ["jsadvanced/asyncpro",'react生态-路由'],
-                  ["jsadvanced/asyncpro",'react生态-企业应用'],
-                  ["jsadvanced/asyncpro",'react原理'],
-                  ["jsadvanced/asyncpro",'react-hooks'],
-                  ["jsadvanced/asyncpro",'react高级实战与性能优化'],
-                  ["jsadvanced/asyncpro",'状态管理'],
-                  ["jsadvanced/asyncpro",'实战应用2']
+                  ["react/",'入门介绍'],
+                  ["react/",'JSX介绍'],
+                  ["react/",'组件基础知识'],
+                  ["react/",'组件进阶'],
+                  ["react/",'实战应用1'],
+                  ["react/",'react生态-路由'],
+                  ["react/",'react生态-企业应用'],
+                  ["react/",'react原理'],
+                  ["react/",'react-hooks'],
+                  ["react/",'react高级实战与性能优化'],
+                  ["react/",'状态管理'],
+                  ["react/",'实战应用2']
                 ]
               },
               {
                 title: "Node.js进阶",
                 collapsable: false,
                 children: [
-                  ["jsadvanced/",'Node.js基础'],
-                  ["jsadvanced/function",'Web服务及koa'],
-                  ["jsadvanced/asyncpro",'企业级Nodejs框架'],
+                  ["node/",'Node.js基础'],
+                  ["node/",'Web服务及koa'],
+                  ["node/",'企业级Nodejs框架'],
                 ]
               },
               {
                 title: "工程化",
                 collapsable: false,
                 children: [
-                  ["jsadvanced/",'脚本世界'],
-                  ["jsadvanced/function",'规范先行'],
-                  ["jsadvanced/asyncpro",'质量代码'],
-                  ["jsadvanced/asyncpro",'工程设计'],
-                  ["jsadvanced/asyncpro",'构建艺术'],
-                  ["jsadvanced/asyncpro",'持续集成与部署'],
-                  ["jsadvanced/asyncpro",'Git操作'],
-                  ["jsadvanced/asyncpro",'效率工具']
+                  ["engineering/",'脚本世界'],
+                  ["engineering/",'规范先行'],
+                  ["engineering/",'质量代码'],
+                  ["engineering/",'工程设计'],
+                  ["engineering/",'构建艺术'],
+                  ["engineering/",'持续集成与部署'],
+                  ["engineering/",'Git操作'],
+                  ["engineering/",'效率工具']
                 ]
               },
               {
                 title: "项目实战",
                 collapsable: false,
                 children: [
-                  ["jsadvanced/",'认识同构及原理'],
-                  ["jsadvanced/function",'实现一个同步的demo'],
-                  ["jsadvanced/asyncpro",'同构如何获取数据'],
-                  ["jsadvanced/asyncpro",'Nextjs'],
-                  ["jsadvanced/asyncpro",'同构如何获取数据']
+                  ["projectPractice/",'认识同构及原理'],
+                  ["projectPractice/",'实现一个同步的demo'],
+                  ["projectPractice/",'同构如何获取数据'],
+                  ["projectPractice/",'Nextjs'],
+                  ["projectPractice/",'同构如何获取数据']
                 ]
               }
         ]
