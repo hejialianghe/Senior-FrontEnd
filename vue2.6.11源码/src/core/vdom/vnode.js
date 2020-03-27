@@ -88,6 +88,7 @@ export function createTextVNode (val: string | number) {
 // multiple renders, cloning them avoids errors when DOM manipulations rely
 // on their elm reference.
 
+
 // 创建克隆节点
 export function cloneVNode (vnode: VNode): VNode {
   const cloned = new VNode(
