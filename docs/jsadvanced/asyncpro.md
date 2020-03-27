@@ -166,6 +166,7 @@ test();
   所有任务都在一个线程上完成，一旦遇到大量任务或遇到一个耗时的任务，网页就可能出现假死，也无法响应用户的行为
 
 🔥Event Loop是什么
+
 Event Loop是一个程序结构，用于等待和发送信息和事件。
 简单说就是在程序中设置2个线程，一个负责程序本身的运行，称为“主线程”；另一个负责主线程和其他进程（主要是各种I/O操作）的通信
 被称为“Event Loop线程”（也可以翻译为消息线层）
@@ -531,10 +532,125 @@ class PubSub {
 缺点
 - 无法确保消息被触发或者触发几次
 
-<font color="red">**发布订阅是promise之前的一个主流的解决异步的方案**</font>
+<font color="red">**发布订阅是promise之前的一个主流的解决请求高耦合的方案**</font>
 
 ### 3.3.3 node.js的发布/订阅
 
 ## 3.4 深入理解promise
+### 3.4.1 promise A+规范
+🔥术语
+- promise 一个有then方法的对象或函数，行为符合本规范
+- thenable 一个定义了then方法的对象或函数
+- 值，value 任何javaScript的合法值
+- 异常，exception throw语句抛出的值
+- 拒绝原因，reason 一个标示promise被拒绝原因的值
+
+🔥promise的状态
+![](~@/asyncpro/promisestatus.png)
+pending：等待
+fulfilled：完成
+rejected：拒绝
+一个promise的状态被改变了，就不能在改变了
+
+🔥promise的then方法
+
+```javascript
+const promise2=promise1.then(onFulfilled,onRejected); 
+```
+ - then 方法的参数
+      - 两个函数参数
+      - onFulfilled在promise完成后被调用，onRejected在promise被拒绝执行后调用
+ - then方法的调用：可以调用多次
+ - then方法的返回值：promise
+
+  then方法必须返回一个promise，它实现了链式调用，它的返回值必须有then方法，所以它返回的是一个promise；
+  既然then方法返回一个promise，那么这个返回的promise的值是怎么确定的呢？假如我们返回的promsie是promise2
+  那规范中分了3种情况；我们根据这3种情况来确定promsie2的值和状态是什么？
+
+  返回的primise2的值和状态是怎样确定的？A+规范分了3种情况
+
+  1. onFulfilled 不是函数，promise1的状态是fulfilled
+   state：fulfilled
+   value：同promise1
+  2. onRejected不是函数，promise1的状态是rejected
+  state：rejected
+  reason：同promise1
+  3. onFullfilled或者onRejected，return x（onFullfilled或者onRejected有一个返回值，这个返回值是x，这个时候规范定义了一个解析过程）
+
+  promise解析过程
+  - 抽象模型resolve(promise,x)
+  - 如果promise和x指向相同的值
+    如果他们指向相同的值，就形成了循环引用；所以就return resolve(promise,new TypeError('cant be the same'))
+  - 如果x是一个promsie,状态有3种
+  - 如果x是一个对象或一个函数
+  - 如果x不是对象也不是函数
+
+  🔥案例
+  ```javascript
+  const promise = Promise.
+    resolve(1).
+    then(2).
+    then(Promise.resolve(3)).
+    then(console.log);
+     // 或
+    const promise1 = Promise.resolve(1);
+    const promise2 = promise1.then(2);
+    const promise3 = promise2.then(Promise.resolve(3));
+    const promise4 = promise3.then(console.log); 
+
+    // 1
+ ```
+ Promise1是resolved状态，它的value是1，then方法对不函数的参数会忽略掉；promise2的状态也是resolved状态；Value也是1；
+ 第三步的参数还是会忽略掉，promise3的状态也是resolved状态；Value也是1；第四步console.log是个函数，所以会打印出1.
+
+
+### 3.4.2 ES6 Promise API
+🔥Promise构造函数
+ ```javascript
+  new Promise( function(resolve,reject){
+    // resolve(value)
+    // reject(reson)
+  })
+
+  // 函数作为参数
+  resolve函数将promise的状态从pending变成resolved（fulfilled）
+  reject函数将promise状态从pending变成rejected
+ ```
+🔥Promise的静态方法
+
+| 方法  |  说明  |
+| :---: | :--------: |
+| Promise.resolve(param) | 等同于 new Promise(function (resolve.,reject){resolve(param)})  |
+| Promise.reject(reason) | 等同于 new Promise(function (resolve.,reject){reject(reason)}) |
+| Promise.all([p1,...,pn])| 输入一组promise返回一个新的promise，全部promise都是fulfilled结果才是fulfilled状态 |
+| Promise.allSettled([p1,...,pn])| 输入一组promise返回一个新的promise，所有的promise状态改变后，结果promise变成fulfilled |
+| Promise.race([p1,...,pn])| 输入一组promise返回一个新的promise，结果promise的状态跟随第一个变化的promsie状态 |
+
+🔥Promise的实例方法
+
+| 方法  |  说明  |
+| :---: | :--------: |
+| promise.then（onFulfilled，onRejected） | promise状态改变之后的回调，返回新的promise对想 |
+| Promise.catch(reason) | 同promise.then(null,onRejected),promise状态为rejected回调 |
+| Promise.finally(function（reason）{ // test })| 不管promise的状态如何都会执行 |
+
+ then和catch都会返回一个新的promise，链式调用的时候catch会冒泡到最后一层
+### 3.4.3 promise实践
+
+
 ## 3.5 Generator函数及其异步的应用
+### 3.5.1 Generator函数
+🔥先看2个概念：迭代器vs生成器
+ - 迭代器
+   - 有next方法，执行返回结果对象
+ 结果对象包含：1.value  2.done
+ 
+ 用es5自己写一个迭代器，让大家看的更清楚
+ ```javascript
+  function createIterator(item) {
+    var i=0
+  }
+ ```
+### 3.5.2 Thunk函数
+
 ## 3.6 深入理解async/await
