@@ -376,22 +376,21 @@ function isDef (v) {
 ```
 
 ### 3.2.3 diff的流程
-从上面看下来,我们了解到了patch要做些什么,无非就是创建
+从上面看下来,我们了解到了patch要做些什么,无非就是创建、删除、更新；下面我们来分析整个流程
+
 初始化时，通过render函数生成vNode，同时也进行了Watcher的绑定，当数据发生变化时，会执行_update方法，生成一个新的VNode对象，然后调用 __patch__方法，比较VNode和oldNode，最后将节点的差异更新到真实的DOM树上
 vue在update的时候会调用以下函数
   ```javascript
-   export function lifecyclm._vnode
-        vm._vnode = vnode
-        // Vue.prototype.__eMixin (Vue: Class<Component>) {
+   export function lifecycleMixin (Vue: Class<Component>) {
     Vue.prototype._update = function (vnode: VNode, hydrating?: boolean) {
         const vm: Component = this
         const prevVnode = vpatch__ is injected in entry points
         // based on the rendering backend used.
-        if (!prevVnode) {
-          // initial render
+        if (!prevVnode) { 
+          // 初次渲染，会传入原生dom节点和虚拟dom节点
           vm.$el = vm.__patch__(vm.$el, vnode, hydrating, false /* removeOnly */)
         } else {
-          // updates
+          // 更新
           vm.$el = vm.__patch__(prevVnode, vnode)
         }
       }
@@ -399,8 +398,13 @@ vue在update的时候会调用以下函数
    }
         
  ```
-而其中的vm._patch_才是进行vnode diff的核心，来看看patch是怎么打补丁的（代码只保留核心部分）
-  ```javascript
+vm._patch_才是进行vnode diff的核心，来看看patch是怎么打补丁的（代码只保留核心部分）
+
+patch的会有3种情况
+  1. 如果vnode不存在，oldVnode存在；那么需要销毁真实的dom节点
+  2. 如果vnode存在，oldVnode不存在；那么需要创建节点
+  3. 2者都存在，进行比较
+```javascript
  /**
    * oldVnode 旧的真实的DOM节点
    * vnode  节点变化后生成新的Vnode
@@ -415,7 +419,7 @@ vue在update的时候会调用以下函数
 
     let isInitialPatch = false
     const insertedVnodeQueue = []
-      // 如果oldVnode不存在，Vnode存在，那么旧创建新节点，则调用createElm()
+      // 如果oldVnode不存在，Vnode存在，那么创建新节点，则调用createElm()
     if (isUndef(oldVnode)) {
       // empty mount (likely as component), create new root element
       isInitialPatch = true

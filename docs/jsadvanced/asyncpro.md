@@ -584,7 +584,66 @@ const promise2=promise1.then(onFulfilled,onRejected);
   - 如果x是一个promsie,状态有3种
   - 如果x是一个对象或一个函数
   - 如果x不是对象也不是函数
+ ```javascript
+  function resolve (promise,x){
+    // 如果promise和x指向相同的值
+    if(x===promise){
+      return reject(promise,new TypeError('cant be the same'))
+    }
+    //如果x是一个promsie
+    if(isPromise(x)){
+      if(x.state==='pending'){
+        return x.then(()=>{
+          resolve(promise,x.value)
+        },()=>{
+          reject(promise,x.value)
+        })
+      }
+      if(x.state==='fulfilled'){
+        return fulfill(promise,x.value)
+      }
+      if(x.state==='rejected'){
+        return reject(promise,v.value)
+      }
+      // 如果x是一个对象或一个函数
+    }else if(isObject(x) || isFuction(x)){
+      let then
+      try {
+        then = x.then
+      }catch(e){
+        return reject(promise,e)
+      }
 
+      if(isFunction(then)){
+        let isCalled=false
+        try {
+          then.call(x,function reslovePromise(y){
+            if(isCalled){
+              return
+            }
+            isCalled=true
+            resolve(promise,y)
+          },function rejectPromise (r) {
+            if(isCalled){
+              return
+            }
+            isCalled=true
+            reject(promise,r)
+          })
+        } catch(e){
+          if(!isCalled){
+            return reject(promise,e)
+          }
+        }
+      }else {
+        return fulfill(promise,x)
+      }
+      // 如果x不是对象也不是函数
+    }else {
+      return fulfill(promise,x)
+    }
+  }
+ ```
   🔥案例
   ```javascript
   const promise = Promise.
@@ -635,8 +694,49 @@ const promise2=promise1.then(onFulfilled,onRejected);
 | Promise.finally(function（reason）{ // test })| 不管promise的状态如何都会执行 |
 
  then和catch都会返回一个新的promise，链式调用的时候catch会冒泡到最后一层
+
 ### 3.4.3 promise实践
 
+3秒后亮一次红灯,再过2秒亮一次绿灯,在过1秒亮一次黄灯,用promise实现多次交替亮灯的效果
+
+ ```javascript
+  function light (color,second) {
+    return new Promise((resolve,reject)=>{
+      setTimeout(()=>{
+        console.log(color)
+        resolve()
+      },second*1000)
+    })
+  }
+
+  let list =[
+    {
+      color:'red',
+      time:3
+    },
+    {
+      color:'green',
+      time:2
+    },
+    {
+      color:'yellew',
+      time:1
+    }
+  ]
+
+  function orderLights (list) {
+    let promise=Promise.resolve()
+    list.forEach(item=>{
+      promise=promise.then(function () {
+        return light(item.color,item.time)
+      })
+    })
+    promise.then(function(){
+      orderLights(list)
+    })
+  }
+  orderLights(list)
+ ```
 
 ## 3.5 Generator函数及其异步的应用
 ### 3.5.1 Generator函数

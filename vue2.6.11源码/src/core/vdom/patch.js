@@ -770,6 +770,7 @@ export function createPatchFunction (backend) {
       createElm(vnode, insertedVnodeQueue)
       // 当Vnode和oldVnode都存在时
     } else {
+      // 是不是真的元素
       const isRealElement = isDef(oldVnode.nodeType)
       if (!isRealElement && sameVnode(oldVnode, vnode)) {
         // patch existing root node  更新节点
