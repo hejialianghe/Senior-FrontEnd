@@ -1,39 +1,19 @@
-// let arr=[]
-// arr.__proto__.newPush=function mutator (val){
-//   console.log('访问到了')
-function light (color,second) {
-  return new Promise((resolve,reject)=>{
-    setTimeout(()=>{
-      console.log(color)
-      resolve()
-    },second*1000)
-  })
-}
-
-let list =[
-  {
-    color:'red',
-    time:3
-  },
-  {
-    color:'green',
-    time:2
-  },
-  {
-    color:'yellew',
-    time:1
+function createIterator (item) {
+  var i=0;
+  return {
+    next:function () {
+      var done = i>=item.length;
+      var value= !done?item[i++] : undefined
+      return {
+        done:done,
+        value:value
+      }
+    }
   }
-]
-
-function orderLights (list) {
-  let promise=Promise.resolve()
-  list.forEach(item=>{
-    promise=promise.then(function () {
-      return light(item.color,item.time)
-    })
-  })
-  promise.then(function(){
-    orderLights(list)
-  })
 }
-orderLights(list)
+
+var iterator=createIterator([1,2,3])
+console.log(iterator.next()) // { done: false, value: 1 }
+console.log(iterator.next()) // { done: false, value: 2 }
+console.log(iterator.next()) // { done: false, value: 3 }
+console.log(iterator.next()) // { done: true, value: undefined }

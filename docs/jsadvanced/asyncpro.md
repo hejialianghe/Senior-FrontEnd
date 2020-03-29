@@ -740,6 +740,15 @@ const promise2=promise1.then(onFulfilled,onRejected);
 
 ## 3.5 Generator函数及其异步的应用
 ### 3.5.1 Generator函数
+Generator函数可以直接生成迭代器，也是es6异步编程的解决方案
+
+ - es6异步编程解决方案
+ - 声明：通过function *声明
+ - 返回值：符合可迭代协议和迭代器协议的生成器对象
+ - 在执行时能暂停，又能从暂停出继续执行
+
+ 生成器对象原型上有3个方法：1.next(param); 2.return(param) 3.throw(param)
+
 🔥先看2个概念：迭代器vs生成器
  - 迭代器
    - 有next方法，执行返回结果对象
@@ -747,10 +756,342 @@ const promise2=promise1.then(onFulfilled,onRejected);
  
  用es5自己写一个迭代器，让大家看的更清楚
  ```javascript
-  function createIterator(item) {
-    var i=0
+  function createIterator (item) {
+  var i=0;
+  return {
+    next:function () {
+      var done = i>=item.length;
+      var value= !done?item[i++] : undefined
+      return {
+        done:done,
+        value:value
+      }
+    }
   }
- ```
-### 3.5.2 Thunk函数
+}
 
+var iterator=createIterator([1,2,3])
+console.log(iterator.next()) // { done: false, value: 1 }
+console.log(iterator.next()) // { done: false, value: 2 }
+console.log(iterator.next()) // { done: false, value: 3 }
+console.log(iterator.next()) // { done: true, value: undefined }
+ ```
+ 🔥迭代协议
+ 1. 可迭代协议
+  - [Symblo.iterator]属性
+  - 内置可迭代对象
+    - String Array Map Set等
+ 2. 迭代器协议
+  - next方法
+    - done
+    - value
+
+ 🔥 yield关键字
+  - 只能出现在Generator函数
+  - 用来暂停和恢复生成器函数
+  - next执行
+    - 遇yield暂停，将紧跟yield表达式的值作为返回的对象的value
+    - 没有yield，一直执行到return，将return的值作为返回的对象的value
+    - 没有return，将undefined作为返回的对象的value
+  - next参数
+    - next方法可以作为一个参数，该参数会被当作一个yield表达式的返回值
+
+ 案例1
+  ```javascript
+  function* createIterator (){
+    let first = yield 1
+    let second=yield first+2
+    yield second+3
+  }
+  let iterator=createIterator()
+  iterator.next() // {value:1,done:false}
+  iterator.next(4) // {value:6,done:false}
+  iterator.next(5)// {value:8,done:false}
+  iterator.next() // {value:undefined,done:false}
+ ```
+ 运行流程：
+  1. 第一次next遇到yield会把yield后面跟的表达式的值作为返回对象的value，这个表达式是1，所以value是1
+
+  2. 第二个next执行的时候，上一次next执行的时候yield 1返回了，但是first的值还未赋值；因为我们执行
+    yield的时候就停了，停了之后到第二个next执行的时候会才会从first这个值开始执行，next传入了参数4会把
+    第一次执行的yield值改变，所以这个时候fisrt是4，那么first+2是6，这时候还没执行完done是false，value是6
+
+  3. 第三次执行next，传入了5，那么second是5，所以value是8
+
+  4. 第四次执行next，前一次执行完next后，看着代码已经执行完了，然而相当于后面还有return undefined
+
+🔥 yield* 生成器函数/可迭代对象
+  - 委托其他可迭代对象
+  - 作用：复用生成器
+
+ 案例2
+  ```javascript
+  function* generator1 (){
+    yield 1
+    yield 2
+  }
+  function* gennerator2 (){
+    yield 100
+    yield* generator1()
+    yield 200
+  }
+let g2=generator2()
+g2.next() {value:100,done:false}
+g2.next() {value:1,done:false}
+g2.next() {value:2,done:false}
+g2.next() {value:200,done:false}
+g2.next() {value:undefined,done:ture}
+ ```
+ 🔥 return(param)
+ - 给定param值终结遍历器，param可缺省
+
+  案例3
+  ```javascript
+    function* createIterator (){
+      yield 1
+      yield 2
+      yield 3
+    }
+   let iterator=createIterator（）
+   iterator.next(); {value:1,done:false}
+   iterator.return(); {value:undefined,done:false}
+   iterator.next();{value:undefined,done:false}
+ ```
+ 🔥thorow(param)
+ - 让生成器对象内部抛出错误
+   案例4
+ ```javascript
+  function* createIterator(){
+    let first = yield 1;
+    let second;
+    try {
+      second=yield first+2
+    }catch(e){
+      second = 6
+    }
+    yield seond+3
+  }
+  let  iterator=createIterator()
+  iterator.next() // {value:1,done:false}
+  iterator.next(10) // {value:12,done:false}
+  iterator.throw(new Error('error')) // {value:9,done:false}  遇到yield才会暂停
+  iterator.next() //{value:undefined,done:true}
+ ```
+ 🔥协程
+ - 一个线程存在多个协层，但同时只能执行一个
+ - Genrator函数的协层在ES6的实现
+ - Yield挂器x协程（交给其他协程），next唤醒x协程
+
+ 🔥Generator函数的应用
+  回调函数的写法
+   ```javascript
+    function readFilesByCallback() {
+    const fs = require("fs");
+    const files = [
+        "/Users/kitty/testgenerator/1.json",
+        "/Users/kitty/testgenerator/2.json",
+        "/Users/kitty/testgenerator/3.json"
+    ];
+    fs.readFile(files[0], function(err, data) {
+        console.log(data.toString());
+        fs.readFile(files[1], function(err, data) {
+            console.log(data.toString());
+            fs.readFile(files[2], function(err, data) {
+                console.log(data.toString());
+            });
+        });
+    });
+}
+// 调用
+readFilesByCallback();
+ ```
+generator函数的写法
+```javascript
+  function* readFilesByGenerator() {
+      const fs = require("fs");
+      const files = [
+          "/Users/kitty/testgenerator/1.json",
+          "/Users/kitty/testgenerator/2.json",
+          "/Users/kitty/testgenerator/3.json"
+      ];
+      let fileStr = "";
+      function readFile(filename) {
+          fs.readFile(filename, function(err, data) {
+              console.log(data.toString());
+              f.next(data.toString());
+          });
+      }
+      yield readFile(files[0]);
+      yield readFile(files[1]);
+      yield readFile(files[2]);
+  }
+  // 调用
+  const f = readFilesByGenerator();
+
+  f.next();
+ ```
+ 缺点：需要在readFile函数内部调用生成器f，不是很优雅，thunk能把这个耦合能解开来，不用在函数内部调用函数外部的变量
+
+### 3.5.2 Thunk函数
+- 求职策略 传值调用，传名调用sum（x+1，x+2）
+    - 传值调用就是在计算sum之前先计算x+1和x+2的值，这2个值有了才传入sum函数里面计算
+    - 传名调用是等函数内部用到x+1和x+2的时候在计算
+- thunk函数是传名调用的实现方式之一
+- 可以实现自动执行Generator函数
+```javascript
+  const fs = require("fs");
+  const Thunk = function(fn) {
+    return function(...args) {
+      return function(callback) {
+        return fn.call(this, ...args, callback);
+      };
+    };
+  };
+  const readFileThunk = Thunk(fs.readFile);
+
+  function run(fn) {
+    var gen = fn();
+    function next(err, data) {
+      var result = gen.next(data);
+      if (result.done) return;
+      result.value(next);
+    }
+    next();
+  }
+
+  const g = function*() {
+    const s1 = yield readFileThunk("/Users/kitty/testgenerator/1.json");
+    console.log(s1.toString());
+    const s2 = yield readFileThunk("/Users/kitty/testgenerator/2.json");
+    console.log(s2.toString());
+    const s3 = yield readFileThunk("/Users/kitty/testgenerator/3.json");
+    console.log(s3.toString());
+  };
+
+  run(g);
+ ```
 ## 3.6 深入理解async/await
+### async函数
+🔥async
+- 一个语法糖 是异步操作更简单
+- 返回值 返回值是一个promise对象
+  - return的值是promise resolved时候的value
+  - Throw的值是Promise rejected时候的reason
+
+```javascript
+   async function test (){
+     return 1
+   }
+   const p = test()
+   console.log(p) // 打印出一个promise，状态是resolved，value是1
+   p.then( function (data){
+     console.log(data) //1
+   })
+```
+
+```javascript
+   async function test (){
+     throw new Error('error')
+   }
+   const p = test()
+   console.log(p) // 打印出一个promise，状态是rejected，value是error
+   p.then( function (data){
+     console.log(data) //打印出的promise的reason 是error
+   })
+```
+可以看出async函数的返回值是一个promise
+🔥await
+ - 只能出现在async函数内部或最外层
+ - 等待一个promise对象的值
+ - await的promise的状态为rejected，后续执行中断
+
+await可以await promise和非promsie，如果非primse，例如：await 1就返回1
+
+![](~@/asyncpro/await.png)
+
+await为等待promise的状态是resolved的情况
+```javascript
+  async function async1 (){
+    console.log('async1 start')
+    await async2() // await为等待promise的状态，然后把值拿到
+    console.log('async1 end')
+  }
+  async function async2(){
+    return Promsie.resolve().then(_=>{
+      console.log('async2 promise')
+    })
+  }
+  async1()
+  /*
+    打印结果
+    async1 start
+    async2 promise
+    async1 end
+  */
+```
+await为等待promise的状态是rejected的情况
+```javascript
+ async function f() {
+   await Promise.reject('error')
+   //后续代码不会执行
+   console.log(1) 
+   await 100
+ }
+ 
+ // 解决方案1
+  async function f() {
+   await Promise.reject('error').catch(err=>{
+     // 异常处理
+   })
+   console.log(1) 
+   await 100
+ }
+
+ // 解决方案2
+  async function f() {
+    try {
+      await Promise.reject('error')
+    }catch(e){
+      // 异常处理
+    }finally {
+
+    }
+   console.log(1) 
+   await 100
+ }
+```
+🔥async函数实现原理
+
+实现原理：Generator+自动执行器
+
+async函数是Generator和Promise的语法糖
+
+### 应用
+
+🔥用async函数方案读取文件
+```javascript
+async function readFilesByAsync() {
+    const fs = require("fs");
+    const files = [
+        "/Users/kitty/testgenerator/1.json",
+        "/Users/kitty/testgenerator/2.json",
+        "/Users/kitty/testgenerator/3.json"
+    ];
+    const readFile = function(src) {
+        return new Promise((resolve, reject) => {
+            fs.readFile(src, (err, data) => {
+                if (err) reject(err);
+                resolve(data);
+            });
+        });
+    };
+
+    const str0 = await readFile(files[0]);
+    console.log(str0.toString());
+    const str1 = await readFile(files[1]);
+    console.log(str1.toString());
+    const str2 = await readFile(files[2]);
+    console.log(str2.toString());
+}
+```
+
