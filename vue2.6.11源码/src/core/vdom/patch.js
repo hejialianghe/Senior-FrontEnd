@@ -103,7 +103,7 @@ export function createPatchFunction (backend) {
     return remove
   }
 
-  // 删除节点
+  // 删除文本节点
   function removeNode (el) {
     const parent = nodeOps.parentNode(el) //获取父节点
     // element may have already been removed due to v-html / v-text
@@ -371,14 +371,17 @@ export function createPatchFunction (backend) {
       createElm(vnodes[startIdx], insertedVnodeQueue, parentElm, refElm, false, vnodes, startIdx)
     }
   }
-
+// 销毁的钩子函数
   function invokeDestroyHook (vnode) {
     let i, j
     const data = vnode.data
     if (isDef(data)) {
+      // destroy钩子函数
       if (isDef(i = data.hook) && isDef(i = i.destroy)) i(vnode)
+      //主函数
       for (i = 0; i < cbs.destroy.length; ++i) cbs.destroy[i](vnode)
     }
+    // 递归处理子节点
     if (isDef(i = vnode.children)) {
       for (j = 0; j < vnode.children.length; ++j) {
         invokeDestroyHook(vnode.children[j])
@@ -387,15 +390,22 @@ export function createPatchFunction (backend) {
   }
 
   // 移除节点
+  /**
+   * 
+   * @param {*} vnodes 挂载虚拟dom的集合
+   * @param {*} startIdx 
+   * @param {*} endIdx 
+   */
   function removeVnodes (vnodes, startIdx, endIdx) {
     for (; startIdx <= endIdx; ++startIdx) {
       const ch = vnodes[startIdx]
       if (isDef(ch)) {
         if (isDef(ch.tag)) {
-        // 存在tag时,tag就是标签名
-          removeAndInvokeRemoveHook(ch)
-          invokeDestroyHook(ch)
+        // 存在tag时，说明是元素节点
+          removeAndInvokeRemoveHook(ch) // 移除挂载dom上的节点
+          invokeDestroyHook(ch) //销毁的钩子
         } else { // Text node
+          // 说明是文本节点
           removeNode(ch.elm)
         }
       }
@@ -773,7 +783,8 @@ export function createPatchFunction (backend) {
       // 是不是真的元素
       const isRealElement = isDef(oldVnode.nodeType)
       if (!isRealElement && sameVnode(oldVnode, vnode)) {
-        // patch existing root node  更新节点
+           // patch 现有的根节点,对oldVnode和vnode进行diff，并对oldVnode打patch
+        // patch existing root node  
         patchVnode(oldVnode, vnode, insertedVnodeQueue, null, null, removeOnly)
       } else {
         if (isRealElement) {
@@ -804,6 +815,7 @@ export function createPatchFunction (backend) {
         }
 
         // replacing existing element
+         // 替换现有的元素
         const oldElm = oldVnode.elm
         const parentElm = nodeOps.parentNode(oldElm)
 
@@ -814,11 +826,15 @@ export function createPatchFunction (backend) {
           // extremely rare edge case: do not insert if old element is in a
           // leaving transition. Only happens when combining transition +
           // keep-alive + HOCs. (#4590)
+          // 极为罕见的边缘情况:如果旧元素在a中，则不要插入。
+            // 离开过渡。只有结合过渡+时才会发生。
+          // keep-alive + HOCs. (#4590
           oldElm._leaveCb ? null : parentElm,
           nodeOps.nextSibling(oldElm)
         )
 
         // update parent placeholder node element, recursively
+        // 递归地更新父占位符节点元素。
         if (isDef(vnode.parent)) {
           let ancestor = vnode.parent
           const patchable = isPatchable(vnode)
@@ -834,9 +850,12 @@ export function createPatchFunction (backend) {
               // #6513
               // invoke insert hooks that may have been merged by create hooks.
               // e.g. for directives that uses the "inserted" hook.
+                // 调用插入钩子，这些钩子可能已经被创建钩子合并了。
+                // 例如使用“插入”钩子的指令。
               const insert = ancestor.data.hook.insert
               if (insert.merged) {
                 // start at index 1 to avoid re-invoking component mounted hook
+                // 从索引1开始，以避免重新调用组件挂起的钩子
                 for (let i = 1; i < insert.fns.length; i++) {
                   insert.fns[i]()
                 }

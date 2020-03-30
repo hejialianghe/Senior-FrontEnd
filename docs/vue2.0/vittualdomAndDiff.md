@@ -206,38 +206,32 @@ VNode类用js对象形式描述真实的dom，在vue初始化阶段，我们把`
 
 <font color="black">**vnode：数据变化后要渲染的虚拟的dom节点**</font>
 
-<font color="black">**oldVnode：数据变化前视图对应的虚拟dom节点**</font>
+<font color="black">**oldVnode：数据变化前视图对应的真实的dom节点**</font>
 
 ### 3.2.2 patch
 
-<font color="blue">**patch的过程就是以新的Vnode为基准，去改造旧的oldNode，让其跟新的一样；有人会说了，直接把旧的替换成新的就行了吗，如果这样做的话就是更新整个视图，而我们现在想做的是哪里变化了更新哪里。**</font>
+<font color="blue">**vue中把Diff过程叫做patch过程,patch的过程就是以新的Vnode为基准，去改造旧的oldNode，让其跟新的一样；有人会说了，直接把旧的替换成新的就行了吗，如果这样做的话就是更新整个视图，而我们现在想做的是哪里变化了更新哪里。**</font>
 
-
-🔥 patch的的特点
-
-   pach的过程只会进行同级比较，不会跨级
-
-![](~@/vue2.0/patch.png)
 
 🔥 patch的过程就是做3件事情
-- 创建节点：Vnode里有的，oldNode没有，那么就在oldNode里创建
-- 删除节点：Vnode里没有，oldNode有，那么旧在oldNode删除
+- 创建节点：Vnode里有的，oldNode没有，那么就在oldNode里创建节点
+- 删除节点：Vnode里没有，oldNode有，那么旧在oldNode删除节点
 - 更新节点：Vnode和oldNode都有，那么以Vnode基准去更新oldNode
 
 🔥 了解一下oldVnode有哪些属性
-  ```javascript
-// body下的 <div id="test" class="main"><div> 
-// 对应的 oldVnode 就是
+  ```javascript 
+  <div id="test" class="main"><div> 
 
-{
-  elm:  div  //对真实的节点的引用，本例中就是document.querySelector('v#test.main')
-  tagName: 'DIV',   //节点的标签
-  sel: 'div#test.main'  //节点的选择器
-  data: null,       // 一个存储节点属性的对象，对应节点的el[prop]属性，例如onclick , style
-  children: [], //存储子节点的数组，每个子节点也是vnode结构
-  text: null,    //如果是文本节点，对应文本节点的textContent，否则为null
-}
- 
+  // 上面节点对应的 oldVnode 就是
+  {
+    elm:  div  //对真实的节点的引用，本例中就是document.querySelector('v#test.main')
+    tagName: 'DIV',   //节点的标签
+    sel: 'div#test.main'  //节点的选择器
+    data: null,       // 一个存储节点属性的对象，对应节点的el[prop]属性，例如onclick , style
+    children: [], //存储子节点的数组，每个子节点也是vnode结构
+    text: null,    //如果是文本节点，对应文本节点的textContent，否则为null
+  }
+  
  ```
  需要注意的是，el属性引用的是此virtual dom对应的真实dom，patch的vnode参数的elm最初是null，因为patch之前它还没有对应的真实dom      
 
@@ -270,14 +264,21 @@ function isDef (v) {
 删除节点比较简单，只需调用删除元素的父元素的removeChild方法
 ```javascript
 // 源码位置: /src/core/vdom/patch.js
-function removeNode (el) {
-    const parent = nodeOps.parentNode(el) //获取父节点
-    // element may have already been removed due to v-html / v-text
-    if (isDef(parent)) {
-      nodeOps.removeChild(parent, el) // 调用父节点的removeChild方法 
+  function removeVnodes (vnodes, startIdx, endIdx) {
+    for (; startIdx <= endIdx; ++startIdx) {
+      const ch = vnodes[startIdx]
+      if (isDef(ch)) {
+        if (isDef(ch.tag)) {
+        // 存在tag时，说明是元素节点
+          removeAndInvokeRemoveHook(ch) // 移除挂载dom上的节点
+          invokeDestroyHook(ch) //销毁的钩子
+        } else { // Text node
+          // 说明是文本节点
+          removeNode(ch.elm)
+        }
+      }
     }
   }
-
 function isDef (v) {
    return v !== undefined && v !== null
 }
@@ -315,7 +316,7 @@ function isDef (v) {
     index,
     removeOnly
   ) {
-    // vnode和oldVode是完全一样，说明引用一致，没有什么变化；如果是就退出程序
+    // vnode和oldVnode是完全一样，说明引用一致，没有什么变化；如果是就退出程序
     if (oldVnode === vnode) {
       return
     }
@@ -374,13 +375,23 @@ function isDef (v) {
   }
 
 ```
+🔥 更新节点流程
 
-### 3.2.3 diff的流程
+![](~@/vue2.0/patchnode.png)
+### 3.2.3 diff的整个流程
+
+🔥 diff的比较方式
+
+pach的过程只会进行同级比较，不会跨级，如果两个子节点一样，那么就深入检查他们的子节点，如果2个子节点不一样，就直接替换oldVnode，即使这2个子节点的子节点一样，如果第一层不一样就不会深入比较第二层
+
+![](~@/vue2.0/patch.png)
+
 从上面看下来,我们了解到了patch要做些什么,无非就是创建、删除、更新；下面我们来分析整个流程
 
 初始化时，通过render函数生成vNode，同时也进行了Watcher的绑定，当数据发生变化时，会执行_update方法，生成一个新的VNode对象，然后调用 __patch__方法，比较VNode和oldNode，最后将节点的差异更新到真实的DOM树上
 vue在update的时候会调用以下函数
   ```javascript
+  // 源码位置: /src/instance/lifecycle.js
    export function lifecycleMixin (Vue: Class<Component>) {
     Vue.prototype._update = function (vnode: VNode, hydrating?: boolean) {
         const vm: Component = this
@@ -405,13 +416,14 @@ patch的会有3种情况
   2. 如果vnode存在，oldVnode不存在；那么需要创建节点
   3. 2者都存在，进行比较
 ```javascript
+ // 源码位置: /src/core/vdom/patch.js
  /**
    * oldVnode 旧的真实的DOM节点
    * vnode  节点变化后生成新的Vnode
    */
  function patch (oldVnode, vnode) {
 
-    // 如果vnode不存在，oldVnode存在，需要销毁旧节点，则调用invokeDestroyHook(oldVnode)
+    // 如果vnode不存在，oldVnode存在，则调用销毁钩子销毁节点invokeDestroyHook(oldVnode)
     if (isUndef(vnode)) {
       if (isDef(oldVnode)) invokeDestroyHook(oldVnode)
       return
@@ -426,11 +438,19 @@ patch的会有3种情况
       createElm(vnode, insertedVnodeQueue)
       // 当Vnode和oldVnode都存在时
     } else {
-
+      const isRealElement = isDef(oldVnode.nodeType)
+      if (!isRealElement && sameVnode(oldVnode, vnode)) {
+           // patch 现有的根节点,对oldVnode和vnode进行diff，并对oldVnode打patch
+        patchVnode(oldVnode, vnode, insertedVnodeQueue, null, null, removeOnly)
     }
  }
         
  ```
+ ### 3.2.3 总结
+
+ 上面我们学习了diff的基本流程,在diff的整个过程就是创建节点、删除节点、更新节点，对源码也进行了讲解；下面我们将对vnode和oldNode都包含子节点的情况进行分析，这是diff的核心。
+
+## 3.3 diff中的更新子节点
 
 
 

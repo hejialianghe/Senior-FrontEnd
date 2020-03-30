@@ -1094,4 +1094,9 @@ async function readFilesByAsync() {
     console.log(str2.toString());
 }
 ```
+##  总结
+
+这章我们学习了异步编程的解决方法
+
+回调->发布订阅->promise->Generator->async/await
 
