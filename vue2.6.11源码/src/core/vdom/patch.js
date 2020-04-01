@@ -464,21 +464,21 @@ export function createPatchFunction (backend) {
     }
 
     while (oldStartIdx <= oldEndIdx && newStartIdx <= newEndIdx) {
-      if (isUndef(oldStartVnode)) { // 如果oldStartVnode不在,则往右走继续对比
+      if (isUndef(oldStartVnode)) { // 当时开始的旧节点没有定义，进入下一个节点
         oldStartVnode = oldCh[++oldStartIdx] // Vnode has been moved left
-      } else if (isUndef(oldEndVnode)) { // 如果oldEndVnode不在,则往左走继续对比
+      } else if (isUndef(oldEndVnode)) { //当前结束的旧节点没有定义，进入上一个节点
         oldEndVnode = oldCh[--oldEndIdx]
       } else if (sameVnode(oldStartVnode, newStartVnode)) { // 利用sameVnode函数,判断是否是同一个节点
-                                                            // 如果老节点第一个和新节点第一个相同就进行patch
+                                                            // 如果旧节点第一个和新节点第一个相同就进行patch
         patchVnode(oldStartVnode, newStartVnode, insertedVnodeQueue, newCh, newStartIdx)
         oldStartVnode = oldCh[++oldStartIdx]
         newStartVnode = newCh[++newStartIdx]
-      } else if (sameVnode(oldEndVnode, newEndVnode)) { // 如果老节点最后一个和新节点最后一个相同就进行patch
+      } else if (sameVnode(oldEndVnode, newEndVnode)) { // 如果旧节点最后一个和新节点最后一个相同就进行patch
         patchVnode(oldEndVnode, newEndVnode, insertedVnodeQueue, newCh, newEndIdx)
         oldEndVnode = oldCh[--oldEndIdx]
         newEndVnode = newCh[--newEndIdx]
       } else if (sameVnode(oldStartVnode, newEndVnode)) { // Vnode moved right  
-        // 如果老节点第一个和新节点最后一个相同就进行patch,然后把旧节点移动到oldCh所有未处理的节点之后
+        // 如果旧节点第一个和新节点最后一个相同就进行patch,然后把旧节点移动到oldCh所有未处理的节点之后
         patchVnode(oldStartVnode, newEndVnode, insertedVnodeQueue, newCh, newEndIdx)
         canMove && nodeOps.insertBefore(parentElm, oldStartVnode.elm, nodeOps.nextSibling(oldEndVnode.elm))
         oldStartVnode = oldCh[++oldStartIdx]
