@@ -418,6 +418,7 @@ patch的会有3种情况
   1. 如果vnode不存在，oldVnode存在；那么需要销毁真实的dom节点
   2. 如果vnode存在，oldVnode不存在；那么需要创建节点
   3. 2者都存在，进行比较
+  
 ```javascript
  // 源码位置: /src/core/vdom/patch.js
  /**
@@ -449,6 +450,29 @@ patch的会有3种情况
  }
         
  ```
+`sameVnode`函数是判断2个节点是否是同一个节点
+```javascript
+  // 源码位置: /src/instance/lifecycle.js
+function sameVnode (a, b) {
+  return (
+    // key值
+    a.key === b.key && (
+      (
+        a.tag === b.tag && //标签名
+        a.isComment === b.isComment && // 2个节点是否是注释节点
+        // 2个节点是否都定义了data，data中包含一些具体信息，例如：class，style
+        isDef(a.data) === isDef(b.data) &&
+        sameInputType(a, b)  // 当标签是input的时候，type必须相同
+      ) || (
+        isTrue(a.isAsyncPlaceholder) &&
+        a.asyncFactory === b.asyncFactory &&
+        isUndef(b.asyncFactory.error)
+      )
+    )
+  )
+}
+        
+ ```
  ### 3.2.3 总结
 
  上面我们学习了diff的基本流程,在diff的整个过程就是创建节点、删除节点、更新节点，对源码也进行了讲解；下面我们将对vnode和oldNode都包含子节点的情况进行分析，这是diff的核心。
@@ -461,7 +485,7 @@ patch的会有3种情况
 
 ### 3.3.1 如何更新子节点
 
-当vnode和oldVnode都有子节点时，我们会比较虚拟dom对象中的children,这个数组包含了所有子节点。我们把包含vnode的所有子节点数组命名为oldCh而oldVnode的所有子节点命名为newCh，现在我们通过循环对比子节点。
+当vnode和oldVnode都有子节点时，我们会比较虚拟dom对象中的children,这个数组包含了所有子节点。我们把包含vnode的所有子节点数组命名为newCh而oldVnode的所有子节点命名为oldCh，现在我们通过循环对比子节点。
 
   ```javascript 
   newCh.forEach(newChild=>{
@@ -477,21 +501,173 @@ patch的会有3种情况
 
 对比中会出现以下几种情况
 
-1. 创建子节点：
+1. <font >**创建子节点：**</font>
 
   newCh某个节点跟oldCh的每个节点进行对比，发现没有找到，那么需要创建节点插入到oldCh中
 
-2. 删除子节点
+2. <font >**删除子节点：**</font>
 
   当newCh的第一个节点都循环完后，发现oldCh里面还有未处理的节点；这就说明在newCh没有这个节点；那么我们需要删除oldCh未处理的节点
 
-3. 移动子节点
+3. <font >**移动子节点：**</font>
 
   newCh的某个节点跟oldCh每一个节点对比中发现有相同的，但是位置不同，那么我们需要更新oldCh的该节点让其与newCh的相同，在以newCh位置为基准去移动oldCh这个节点的位置
 
-4. 更新子节点
+4. <font >**更新子节点：**</font>
 
  当newCh的某个节点和oldCh某个节点相同，位置也相同，那么我们需要更新oldCh的该节点让其与newCh的相同
 
 ## 3.3 优化的更新子节点
+
+### 3.3.1 前言
+
+ 我们上章传统的做法是拿newCh的每个子节点跟oldCh的子节点逐一对比，根据找到或没找到；不同的情况去做不同的处理。这种做法虽然能解决问题，但是有不足的地方，当子节点过多，这种循环算法变得很复杂；从而影响页面加载，本章我们将介绍vue中是怎么做的。
+
+ 🔥 传统做法的缺点
+  
+  传统的做法拿newCh的每个子节点跟oldCh的子节点逐一对比，如果运气好的话newCh数组的第一个节点跟oldCh数组的第一个节点相同，那么
+  就可以结束newCh数组的第一个节点的循环对比，如果运气差的话要对比到oldCh数组的最后一个节点，如果oldCh数组里有20个节点就要循环20次。
+
+🔥 vue中优化的做法
+
+ <font color="red">**概念介绍**</font>
+
+ - 新前：newCh数组中第一个未处理的节点
+ - 新后：newCh数组中最后一个未处理的节点
+ - 旧前：oldCh数组中第一个未处理的节点
+ - 旧后：oldCh数组中第一个未处理的节点
+ 
+ 既然我们考虑到有极端的情况，那么我们不按顺序去循环对比2个数组，可以先比较数组中特殊的位置的节点，例如：
+
+ 1. <font >**新前旧前对比**</font>
+
+   先拿newCh数组未处理的第一个节点和oldCh数组未处理的第一个节点进行对比，如果相同就更新节点，如果不同就进入第二种情况的对比
+   
+ 2. <font >**新后旧后对比**</font>
+
+  再拿newCh数组未处理的最后一个节点和oldCh数组未处理的最后一个节点进行对比，如果相同就更新节点，如果不同就进入第三种情况的对比
+
+ 3. <font >**新后旧前对比**</font>
+
+  再拿newCh数组未处理的最后一个节点和oldCh数组未处理的第一个节点进行对比，如果相同就更新节点，如果不同就进入第四种情况的对比
+
+ 4. <font >**旧前新后对比**</font>
+
+ 再拿newCh数组未处理的第一个节点和oldCh数组未处理的最后一个节点进行对比，如果相同就更新节点，如果不同就进入常规的对比，后面会介绍
+
+如图所式
+
+
+### 3.3.2 新前与旧前对比
+### 3.3.3 新后与旧后对比
+### 3.3.4 新后与旧前对比
+### 3.3.5 旧前与新后对比
+
+### 3.3.6 源码解析
+
+千呼万唤始出来，终于来到了我们的源码篇，根据上面的知识的铺垫，我们对vue中的diff做法有了一定了解，那么我们下面升入源码中看看是怎么做的
+
+  ```javascript
+// 源码位置: /src/core/vdom/patch.js
+//循环更新子节点
+  function updateChildren (parentElm, oldCh, newCh, insertedVnodeQueue, removeOnly) {
+    let oldStartIdx = 0 //oldCh开始的索引
+    let newStartIdx = 0 //newCh开始的索引
+    let oldEndIdx = oldCh.length - 1 //oldCh结束的索引
+    let oldStartVnode = oldCh[0] //oldCh未处理的第一个节点
+    let oldEndVnode = oldCh[oldEndIdx] //oldCh未处理的最后一个节点
+    let newEndIdx = newCh.length - 1 //newCh结束的索引
+    let newStartVnode = newCh[0] // newCh中未处理的节点种的第一个
+    let newEndVnode = newCh[newEndIdx]// newCh中未处理的节点的最后一个
+    let oldKeyToIdx, idxInOld, vnodeToMove, refElm
+
+    // removeOnly is a special flag used only by <transition-group> removeOnly是仅由<transition group>使用的特殊标志
+    // to ensure removed elements stay in correct relative positions // 确保拆下的元件保持在正确的相对位置
+    // during leaving transitions
+    const canMove = !removeOnly
+
+    if (process.env.NODE_ENV !== 'production') {
+      checkDuplicateKeys(newCh)
+    }
+
+    while (oldStartIdx <= oldEndIdx && newStartIdx <= newEndIdx) {
+      if (isUndef(oldStartVnode)) { // 当时开始的旧节点没有定义，进入下一个节点
+        oldStartVnode = oldCh[++oldStartIdx] // Vnode has been moved left
+      } else if (isUndef(oldEndVnode)) { //当前结束的旧节点没有定义，进入上一个节点
+        oldEndVnode = oldCh[--oldEndIdx]
+      } else if (sameVnode(oldStartVnode, newStartVnode)) {
+         // 利用sameVnode函数,判断是否是同一个节点
+        // 如果旧节点第一个和新节点第一个相同就进行patch                                                  
+        patchVnode(oldStartVnode, newStartVnode, insertedVnodeQueue, newCh, newStartIdx)
+        oldStartVnode = oldCh[++oldStartIdx]
+        newStartVnode = newCh[++newStartIdx]
+      } else if (sameVnode(oldEndVnode, newEndVnode)) { // 如果旧节点最后一个和新节点最后一个相同就进行patch
+        patchVnode(oldEndVnode, newEndVnode, insertedVnodeQueue, newCh, newEndIdx)
+        oldEndVnode = oldCh[--oldEndIdx]
+        newEndVnode = newCh[--newEndIdx]
+      } else if (sameVnode(oldStartVnode, newEndVnode)) { // Vnode moved right  
+        // 如果旧节点第一个和新节点最后一个相同就进行patch,然后把旧节点移动到oldCh所有未处理的节点之后
+        patchVnode(oldStartVnode, newEndVnode, insertedVnodeQueue, newCh, newEndIdx)
+        canMove && nodeOps.insertBefore(parentElm, oldStartVnode.elm, nodeOps.nextSibling(oldEndVnode.elm))
+        oldStartVnode = oldCh[++oldStartIdx]
+        newEndVnode = newCh[--newEndIdx]
+      } else if (sameVnode(oldEndVnode, newStartVnode)) { // Vnode moved left
+         // 如果老节点第一个和新节点最后一个相同就进行patch,然后把旧节点移动到oldCh所有未处理的节点之前
+        patchVnode(oldEndVnode, newStartVnode, insertedVnodeQueue, newCh, newStartIdx)
+        canMove && nodeOps.insertBefore(parentElm, oldEndVnode.elm, oldStartVnode.elm)
+        oldEndVnode = oldCh[--oldEndIdx]
+        newStartVnode = newCh[++newStartIdx]
+      } else { 
+        // 上面几种都不符合的话,进行常规的循环对比patch
+        if (isUndef(oldKeyToIdx)) oldKeyToIdx = createKeyToOldIdx(oldCh, oldStartIdx, oldEndIdx)//建立key和index索引的对应关系,并返回一个对象
+        /**
+         * 如果idxInOld不存在
+         * 1.newStartVnode存在key,在oldCh也没找到相同的节点
+         * 2.newStartVnode不存在key,在oldCh也没找到相同的节点
+         */
+        idxInOld = isDef(newStartVnode.key)
+          ? oldKeyToIdx[newStartVnode.key]
+          : findIdxInOld(newStartVnode, oldCh, oldStartIdx, oldEndIdx) //用findIdxInOld函数在oldCh找到与node相同的节点
+        // 在oldCh里找不到与newCh对应的子节点
+        if (isUndef(idxInOld)) { // New element
+          // 创建新的dom节点,插入到oldStartVnode.elm前面
+          createElm(newStartVnode, insertedVnodeQueue, parentElm, oldStartVnode.elm, false, newCh, newStartIdx)
+        } else {
+          vnodeToMove = oldCh[idxInOld] // 在oldCh拿到与newCh key值对应的子节点
+          if (sameVnode(vnodeToMove, newStartVnode)) { //如果是同一个节点就进行更新节点
+            patchVnode(vnodeToMove, newStartVnode, insertedVnodeQueue, newCh, newStartIdx)
+            oldCh[idxInOld] = undefined
+            /**
+             *  canMove为true表示需要移动节点,false则不移动
+             */
+            canMove && nodeOps.insertBefore(parentElm, vnodeToMove.elm, oldStartVnode.elm)
+          } else {
+            // same key but different element. treat as new element
+            // 如果key相同,但元素不相同,被视为新元素;创建新的dom节点
+            createElm(newStartVnode, insertedVnodeQueue, parentElm, oldStartVnode.elm, false, newCh, newStartIdx)
+          }
+        }
+        newStartVnode = newCh[++newStartIdx]
+      }
+    }
+    /**
+     * 如果oldCh比newCh先遍历完,那么说明newCh里剩余的节点都是要新增的节点,把[ newStartIdx, newEndIdx]
+     * 之间的所有的节点都插入dom中
+     */
+    if (oldStartIdx > oldEndIdx) {
+      refElm = isUndef(newCh[newEndIdx + 1]) ? null : newCh[newEndIdx + 1].elm
+      // 添加newVnode中剩余的节点到parentElm中
+      addVnodes(parentElm, refElm, newCh, newStartIdx, newEndIdx, insertedVnodeQueue)
+    } else if (newStartIdx > newEndIdx) {
+      /**
+     * 如果oldCh比newCh后遍历完,那么说明newCh里剩余的节点都是要删除的节点,把[ newStartIdx, newEndIdx]
+     * 之间的所有的节点都删除
+     */
+      removeVnodes(oldCh, oldStartIdx, oldEndIdx)
+    }
+  }
+
+  
+ ```
+
 
