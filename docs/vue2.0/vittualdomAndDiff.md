@@ -234,7 +234,7 @@ VNode类用js对象形式描述真实的dom，在vue初始化阶段，我们把`
   }
   
  ```
- 需要注意的是，el属性引用的是此virtual dom对应的真实dom，patch的vnode参数的elm最初是null，因为patch之前它还没有对应的真实dom      
+ 需要注意的是，elm属性引用的是此virtual dom对应的真实dom，patch的vnode参数的elm最初是null，因为patch之前它还没有对应的真实dom      
 
 ### 3.2.3 创建节点
 从上章我们知道通过Vnode类可以创建6种描述的dom节点的实例，是实际只有3种会被创建，并插入dom当中，3种分别是：元素节点、注释节点、文本节点
@@ -300,7 +300,7 @@ function isDef (v) {
 2. 判断vNode和oldnode如果是同一个对象，则直接return
 3. 如果vNode和oldnode都是静态节点，则直接return
 3. 如果vnode没有文本节点
-     - 2者都有子节点且不相同，则执行updateChildren比较子节点
+     - 2者都有子节点且不相同，则执行updateChildren比较子节点，比较子节点在下一章介绍。
      - 若只有vnode存在子节点，在判断oldVnode是否有文本，如果有就清除，然后将vnode的子节点替换到真实的dom中去
      - 若只有oldVnode存在子节点，则清空dom种子节点的存在
      - 若2者都没有子节点，则oldnode种有文本，则清空oldnode的文本
@@ -379,7 +379,7 @@ function isDef (v) {
 🔥 更新节点流程
 
 ![](~@/vue2.0/patchnode.png)
-### 3.2.3 diff的整个流程
+### 3.2.6 diff的整个流程
 
 🔥 diff的比较方式
 
@@ -473,7 +473,7 @@ function sameVnode (a, b) {
 }
         
  ```
- ### 3.2.3 总结
+ ### 3.2.7 总结
 
  上面我们学习了diff的基本流程,在diff的整个过程就是创建节点、删除节点、更新节点，对源码也进行了讲解；下面我们将对vnode和oldNode都包含子节点的情况进行分析，这是diff的核心。
 
@@ -499,13 +499,13 @@ function sameVnode (a, b) {
  ```
 ![](~@/vue2.0/patch1.png)
 
-从上面代码和图可知，我们通过循环进行比较新旧子节点，newCh每项节点会跟oldCh的每项节点进行对比。
+从上面代码和图可知，假如newCh和oldCh都包含的是`li`标签，我们通过循环进行比较新旧子节点，newCh每项节点会跟oldCh的每项节点进行对比。
 
 🔥 理解未处理与已处理
 
 ![](~@/vue2.0/patch2.png)
 
-从上面可知,我们假如newCh数组中的前2个子节点根据不同的情况给odlCh数组的节点打了补丁,我们称为已处理,没有对比的我们称未处理。
+从上图可知,我们假如newCh数组中的前2个子节点在dlCh数组中找到了对应的节点并给odlCh打了补丁,我们可以把已经对比过的称为已处理,没有对比的我们称未处理。
 
 🔥 对比中会出现以下几种情况
 
@@ -515,11 +515,11 @@ function sameVnode (a, b) {
 
   ![](~@/vue2.0/patch3.png)
 
-  当newCh的节点在oldCh里面没找到时，我们需要创建节点，那我们插入到什么位置？假设我们插入已处理的后面，看起来是对的，那么如果newCh第三个节点在oldCh里面再没找到时，还适用这种方式吗？
+  当newCh的第二节点在oldCh里面没找到时，我们需要创建节点，创建完节点那我们插入到什么位置？假设我们插入已处理的后面，看起来是对的，那么如果newCh第三个节点在oldCh里面再没找到时，还适用这种方式吗？
 
   ![](~@/vue2.0/patch4.png)
   
-  从上图可以看出newCh第三个节点在oldCh里面再没找到时，如果插入已处理的后面，新增的节点将会插入oldCh第二位置，那么就不对应了，<font color="red">**所以我们新增的节点应该插入未处理的前面就适应各种场景了**</font>。
+  从上图可以看出newCh第三个节点在oldCh里面再没找到时，按照上面的逻辑插入已处理的后面，那么这次新增的节点将会插入oldCh第二位置，那么2个节点的位置就不对应了，应该newCh第三个节点要对应oldCh第三的位置才行，<font color="red">**所以我们新增的节点应该插入未处理的前面就适应各种场景了**</font>。
 
 
 2. <font >**删除子节点：**</font>
@@ -537,8 +537,6 @@ function sameVnode (a, b) {
 4. <font >**更新子节点：**</font>
 
  当newCh的某个节点和oldCh某个节点相同，位置也相同，那么我们需要更新oldCh的该节点让其与newCh的相同
-
-### 3.3.3 创建子节点
 
 
 
@@ -564,36 +562,42 @@ function sameVnode (a, b) {
  
  既然我们考虑到有极端的情况，那么我们不按顺序去循环对比2个数组，可以先比较数组中特殊的位置的节点，例如：
 
- 1. <font >**新前旧前对比**</font>
+ 1. <font >**新前旧前对比**</font>（第一种情况）
 
    先拿newCh数组未处理的第一个节点和oldCh数组未处理的第一个节点进行对比，如果相同就更新节点，如果不同就进入第二种情况的对比
    
- 2. <font >**新后旧后对比**</font>
+ 2. <font >**新后旧后对比**</font>（第二种情况）
 
   再拿newCh数组未处理的最后一个节点和oldCh数组未处理的最后一个节点进行对比，如果相同就更新节点，如果不同就进入第三种情况的对比
 
- 3. <font >**新后旧前对比**</font>
+ 3. <font >**新后旧前对比**</font>（第三种情况）
 
   再拿newCh数组未处理的最后一个节点和oldCh数组未处理的第一个节点进行对比，如果相同就更新节点，如果不同就进入第四种情况的对比
 
- 4. <font >**新前与旧后对比**</font>
+ 4. <font >**新前与旧后对比**</font>（第四种情况）
 
  再拿newCh数组未处理的第一个节点和oldCh数组未处理的最后一个节点进行对比，如果相同就更新节点，如果不同就进入常规的对比，后面会介绍
 
-如图所式
+四种情况对比如图所式
 
  ![](~@/vue2.0/patch7.png)
 
 ### 3.4.2 新前与旧前对比
+参考上一张图，这种情况对比，无需移动位置
 ### 3.4.3 新后与旧后对比
+参考上一张图，这种情况对比，无需移动位置
 ### 3.4.4 新后与旧前对比
+这种对比方式，如果newCh中未处理最后一个节点与oldCh中未处理的第一个节点对比发现相同，那么要参照newCh节点的位置去移动oldCh这个节点的位置。
+
  ![](~@/vue2.0/patch8.png)
 ### 3.4.5 新前与旧后对比
+这种对比方式，如果newCh中未处理第一个节点与oldCh中未处理的最后一个节点对比发现相同，那么要参照newCh节点的位置去移动oldCh这个节点的位置。
+
  ![](~@/vue2.0/patch9.png)
 
 ### 3.4.6 源码解析
 
-千呼万唤始出来，终于来到了我们的源码篇，根据上面的知识的铺垫，我们对vue中的diff做法有了一定了解，那么我们下面升入源码中看看是怎么做的
+千呼万唤始出来，终于来到了我们的源码篇，根据上面的知识的铺垫，我们对vue中的diff做法有了一定了解，那么我们下面深入源码中看看是怎么做的
 
   ```javascript
 // 源码位置: /src/core/vdom/patch.js
@@ -629,7 +633,8 @@ function sameVnode (a, b) {
         patchVnode(oldStartVnode, newStartVnode, insertedVnodeQueue, newCh, newStartIdx)
         oldStartVnode = oldCh[++oldStartIdx]
         newStartVnode = newCh[++newStartIdx]
-      } else if (sameVnode(oldEndVnode, newEndVnode)) { // 如果旧节点最后一个和新节点最后一个相同就进行patch
+      } else if (sameVnode(oldEndVnode, newEndVnode)) { 
+        // 如果旧节点最后一个和新节点最后一个相同就进行patch
         patchVnode(oldEndVnode, newEndVnode, insertedVnodeQueue, newCh, newEndIdx)
         oldEndVnode = oldCh[--oldEndIdx]
         newEndVnode = newCh[--newEndIdx]
@@ -655,7 +660,7 @@ function sameVnode (a, b) {
          */
         idxInOld = isDef(newStartVnode.key)
           ? oldKeyToIdx[newStartVnode.key]
-          : findIdxInOld(newStartVnode, oldCh, oldStartIdx, oldEndIdx) //用findIdxInOld函数在oldCh找到与node相同的节点
+          : findIdxInOld(newStartVnode, oldCh, oldStartIdx, oldEndIdx) 
         // 在oldCh里找不到与newCh对应的子节点
         if (isUndef(idxInOld)) { // New element
           // 创建新的dom节点,插入到oldStartVnode.elm前面
@@ -679,8 +684,8 @@ function sameVnode (a, b) {
       }
     }
     /**
-     * 如果oldCh比newCh先遍历完,那么说明newCh里剩余的节点都是要新增的节点,把[ newStartIdx, newEndIdx]
-     * 之间的所有的节点都插入dom中
+     * 如果oldCh比newCh先遍历完,那么说明newCh里剩余的节点都是要新增的节点,
+     * 把[ newStartIdx, newEndIdx]之间的所有的节点都插入dom中
      */
     if (oldStartIdx > oldEndIdx) {
       refElm = isUndef(newCh[newEndIdx + 1]) ? null : newCh[newEndIdx + 1].elm
@@ -688,14 +693,21 @@ function sameVnode (a, b) {
       addVnodes(parentElm, refElm, newCh, newStartIdx, newEndIdx, insertedVnodeQueue)
     } else if (newStartIdx > newEndIdx) {
       /**
-     * 如果oldCh比newCh后遍历完,那么说明newCh里剩余的节点都是要删除的节点,把[ newStartIdx, newEndIdx]
-     * 之间的所有的节点都删除
+     * 如果oldCh比newCh后遍历完,那么说明newCh里剩余的节点都是要删除的节点,
+     * 把[ newStartIdx, newEndIdx]之间的所有的节点都删除
      */
       removeVnodes(oldCh, oldStartIdx, oldEndIdx)
     }
   }
 
-  
  ```
+updateChildren中的`newStartIdx`、`oldStartIdx`、`newEndIdx`、`oldEndIdx`这几个变量，可能让我们疑惑，那么下面我们看一看是干什么用的？
+- newStartIdx:newCh开始的索引
+- newEndIdx:newCh结束的索引
+- oldStartIdx:oldCh开始的索引
+- oldEndIdx:oldCh结束的索引
+
+ 这些索引的作用是，在newCh和oldCh对比的时候，从2头往中间对比
+  ![](~@/vue2.0/patch10.png)
 
 
