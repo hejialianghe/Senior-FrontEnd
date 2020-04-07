@@ -15,7 +15,7 @@
 
 从打印结果可以看出，一个dom会有很多属性；真实的dom节点入栈执行会占据很大的内存，当我们频繁的操作会产生性能问题
 
- 我们用传统的开发模式，用原生的js和jq操作DOM时，浏览器会从构建DOM树到绘制从头到尾执行一遍，如果我们更新10个dom节点，浏览器收到第一个dom请求后并不知道后面还有9次更新操作，最终会执行10次。如果第一次计算完，紧接这下一个DOM更新请求更改了前一次的DOM；那么前一次的dom更新就是白白的性能浪费，虽然计算机硬件一直迭代更新，但是操作dom的代价仍然是昂归的，频繁操作还会出现页面卡顿，影响用户体验。
+ 我们用传统的开发模式，用原生的js和jq操作DOM时，浏览器会从构建DOM树到绘制从头到尾执行一遍，如果我们更新10个dom节点，浏览器收到第一个dom请求后并不知道后面还有9次更新操作，最终会执行10次。如果第一次计算完，紧接这下一个DOM更新请求更改了前一次的DOM；那么前一次的dom更新就是白白的性能浪费，虽然计算机硬件一直迭代更新，但是操作dom的代价仍然是昂贵的，频繁操作还会出现页面卡顿，影响用户体验。
 
 🔥 为什么虚拟DOM？
 
@@ -609,8 +609,8 @@ function sameVnode (a, b) {
     let oldStartVnode = oldCh[0] //oldCh未处理的第一个节点
     let oldEndVnode = oldCh[oldEndIdx] //oldCh未处理的最后一个节点
     let newEndIdx = newCh.length - 1 //newCh结束的索引
-    let newStartVnode = newCh[0] // newCh中未处理的节点种的第一个
-    let newEndVnode = newCh[newEndIdx]// newCh中未处理的节点的最后一个
+    let newStartVnode = newCh[0] // newCh中未处理节点中的第一个节点
+    let newEndVnode = newCh[newEndIdx]// newCh中未处理节点的最后一个节点
     let oldKeyToIdx, idxInOld, vnodeToMove, refElm
 
     // removeOnly is a special flag used only by <transition-group> removeOnly是仅由<transition group>使用的特殊标志
@@ -618,54 +618,64 @@ function sameVnode (a, b) {
     // during leaving transitions
     const canMove = !removeOnly
 
+
     if (process.env.NODE_ENV !== 'production') {
       checkDuplicateKeys(newCh)
     }
 
+
     while (oldStartIdx <= oldEndIdx && newStartIdx <= newEndIdx) {
-      if (isUndef(oldStartVnode)) { // 当时开始的旧节点没有定义，进入下一个节点
-        oldStartVnode = oldCh[++oldStartIdx] // Vnode has been moved left
-      } else if (isUndef(oldEndVnode)) { //当前结束的旧节点没有定义，进入上一个节点
+      if (isUndef(oldStartVnode)) {
+         // oldCh第一个节点不存在，索引右移，进入下一个节点
+        oldStartVnode = oldCh[++oldStartIdx]
+      } else if (isUndef(oldEndVnode)) {
+         // oldCh最后一个节点不存在，索引左移，进入上一个节点
         oldEndVnode = oldCh[--oldEndIdx]
       } else if (sameVnode(oldStartVnode, newStartVnode)) {
-         // 利用sameVnode函数,判断是否是同一个节点
-        // 如果旧节点第一个和新节点第一个相同就进行patch                                                  
+        // 利用sameVnode函数,判断是否是同一个节点
+        // 如果oldStartVnode和newStartVnode是同一个节点，就进行patchVnode                                                 
         patchVnode(oldStartVnode, newStartVnode, insertedVnodeQueue, newCh, newStartIdx)
+        // 索引右移，继续循环
         oldStartVnode = oldCh[++oldStartIdx]
         newStartVnode = newCh[++newStartIdx]
       } else if (sameVnode(oldEndVnode, newEndVnode)) { 
-        // 如果旧节点最后一个和新节点最后一个相同就进行patch
+        // 如果oldEndVnode和newEndVnode是同一个节点，就进行patchVnode       
         patchVnode(oldEndVnode, newEndVnode, insertedVnodeQueue, newCh, newEndIdx)
+         // 索引左移，继续循环
         oldEndVnode = oldCh[--oldEndIdx]
         newEndVnode = newCh[--newEndIdx]
       } else if (sameVnode(oldStartVnode, newEndVnode)) { // Vnode moved right  
-        // 如果旧节点第一个和新节点最后一个相同就进行patch,然后把旧节点移动到oldCh所有未处理的节点之后
+        // 如果oldStartVnode和newEndVnode是同一个节点,然后把oldStartVnode移动到oldCh所有未处理的节点之后
         patchVnode(oldStartVnode, newEndVnode, insertedVnodeQueue, newCh, newEndIdx)
+        // 将oldStartVnode.elm移动到oldEndVnode.elm之后
         canMove && nodeOps.insertBefore(parentElm, oldStartVnode.elm, nodeOps.nextSibling(oldEndVnode.elm))
-        oldStartVnode = oldCh[++oldStartIdx]
-        newEndVnode = newCh[--newEndIdx]
+        oldStartVnode = oldCh[++oldStartIdx] // 索引右移，获取下个节点
+        newEndVnode = newCh[--newEndIdx]// // 索引左移，获取上个节点
       } else if (sameVnode(oldEndVnode, newStartVnode)) { // Vnode moved left
-         // 如果老节点第一个和新节点最后一个相同就进行patch,然后把旧节点移动到oldCh所有未处理的节点之前
+         // 如果oldEndVnode和newStartVnode是同一个节点,,然后把oldEndVnode移动到oldCh所有未处理的节点之前
         patchVnode(oldEndVnode, newStartVnode, insertedVnodeQueue, newCh, newStartIdx)
+        // 将oldEndVnode.elm移动到oldStartVnode.elm之前
         canMove && nodeOps.insertBefore(parentElm, oldEndVnode.elm, oldStartVnode.elm)
-        oldEndVnode = oldCh[--oldEndIdx]
-        newStartVnode = newCh[++newStartIdx]
+        oldEndVnode = oldCh[--oldEndIdx]  // 索引左移，获取上个节点
+        newStartVnode = newCh[++newStartIdx] // 索引右移，获取下个节点
       } else { 
         // 上面几种都不符合的话,进行常规的循环对比patch
-        if (isUndef(oldKeyToIdx)) oldKeyToIdx = createKeyToOldIdx(oldCh, oldStartIdx, oldEndIdx)//建立key和index索引的对应关系,并返回一个对象
+        // createKeyToOldIdx建立key和index索引的对应关系,并返回一个对象
+        if (isUndef(oldKeyToIdx)) oldKeyToIdx = createKeyToOldIdx(oldCh, oldStartIdx, oldEndIdx)
         /**
          * 如果idxInOld不存在
          * 1.newStartVnode存在key,在oldCh也没找到相同的节点
          * 2.newStartVnode不存在key,在oldCh也没找到相同的节点
          */
+         // 尝试在oldCh里找到与newStartVnode具有相同key的vnode
         idxInOld = isDef(newStartVnode.key)
           ? oldKeyToIdx[newStartVnode.key]
           : findIdxInOld(newStartVnode, oldCh, oldStartIdx, oldEndIdx) 
-        // 在oldCh里找不到与newCh对应的子节点
+        // 在oldCh里找不到与newCh对应的子节点，说明newStartVnode是一个新节点
         if (isUndef(idxInOld)) { // New element
           // 创建新的dom节点,插入到oldStartVnode.elm前面
           createElm(newStartVnode, insertedVnodeQueue, parentElm, oldStartVnode.elm, false, newCh, newStartIdx)
-        } else {
+        } else { //如果在oldCh找到了与newStartVnode具有相同key的vnode，叫vnodeToMove
           vnodeToMove = oldCh[idxInOld] // 在oldCh拿到与newCh key值对应的子节点
           if (sameVnode(vnodeToMove, newStartVnode)) { //如果是同一个节点就进行更新节点
             patchVnode(vnodeToMove, newStartVnode, insertedVnodeQueue, newCh, newStartIdx)
@@ -676,10 +686,11 @@ function sameVnode (a, b) {
             canMove && nodeOps.insertBefore(parentElm, vnodeToMove.elm, oldStartVnode.elm)
           } else {
             // same key but different element. treat as new element
-            // 如果key相同,但元素不相同,被视为新元素;创建新的dom节点
+            // 如果key相同,但节点不相同,被视为新元素;创建新的dom节点
             createElm(newStartVnode, insertedVnodeQueue, parentElm, oldStartVnode.elm, false, newCh, newStartIdx)
           }
         }
+        // 右移
         newStartVnode = newCh[++newStartIdx]
       }
     }
@@ -710,4 +721,14 @@ updateChildren中的`newStartIdx`、`oldStartIdx`、`newEndIdx`、`oldEndIdx`这
  这些索引的作用是，在newCh和oldCh对比的时候，从2头往中间对比
   ![](~@/vue2.0/patch10.png)
 
+🔥 key的作用
 
+- 设置key以后，除了头尾两端比较之外，还可以从key生成的oldKeyToIdx对象中查找对应的节点。
+
+- 不设置key以后，除了头尾两端比较之外，只能循环查找。
+
+所以vue中key是vnode的唯一标记，通过key，我们的diff操作可以更加准确，更加快速。
+
+### 3.4.7 总结
+
+Vue 的 diff 过程可以概括为：oldCh 和 newCh 各有两个头尾的变量 oldStartIdx、oldEndIdx 和 newStartIdx、newEndIdx，它们会新节点和旧节点会进行两两对比，即一共有4种比较方式：newStartIdx对应节点和oldStartIdx对应节点 、newEndIdx对应节点 和 oldEndIdx对应节点 、newStartIdx对应节点 和 oldEndIndex对应节点、newEndIndex对应节点 和 oldStartIndex对应节点，如果以上 4 种比较都没匹配，如果设置了key，就会用 key 再进行比较，在比较的过程中，遍历会往中间靠，一旦 StartIdx > EndIdx 表明 oldCh 和 newCh 至少有一个已经遍历完了，就会结束比较。
