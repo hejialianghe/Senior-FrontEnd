@@ -1,3 +1,4 @@
 let a=[1,2,3,4]
-let i=0
-console.log(a[i++])
+let b=a.slice()
+b[0]=9
+console.log(a)

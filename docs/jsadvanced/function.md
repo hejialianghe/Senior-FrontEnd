@@ -878,7 +878,9 @@
       // 拷贝的第一层层如果是引用类型，拷贝的其实是一个指针，所以拷贝对象改变会影响原对象
       console.log(start.name,opyStart.friend.name) //古力娜扎 黄渤 
   ```
-  🔥Object.assign(target,source) 可以把n个源对象拷贝到目标对象中去（拷贝的是可枚举属性）
+  🔥Object.assign(target,source) (适用于对象)
+
+  可以把n个源对象拷贝到目标对象中去（拷贝的是可枚举属性）
   ``` javascript
       let start ={
         name:'古力娜扎',
@@ -896,6 +898,13 @@
     let newStart={...start}
     newStart.name='迪丽热巴'
     console.log(start.name)  // 刘亦菲
+  ```
+  🔥slice(适用于数组)
+   ``` javascript
+    let a=[1,2,3,4]
+    let b=a.slice()
+    b[0]=9
+    console.log(a) //[1,2,3,4]
   ```
    ### 2.8.3 深拷贝实现
   🔥JSON.parse(JSON.string(obj))
