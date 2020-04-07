@@ -9,7 +9,12 @@
     <script src="./promise.js"></script>
     <script>
         new Promise(function(resolve,reject){
-            resolve(999)
+            setTimeout(()=>{
+                resolve(999)
+                console.log(23332)
+            })
+        }).then((data)=>{
+            console.log(888,data)
         })
     </script>
 </body>

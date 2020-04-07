@@ -2,7 +2,12 @@ function Promise (excutor){
     var self=this
     self.onResolvedCallback=[]
     function resolve (value){
-        console.log(value)
+       setTimeout(()=>{
+        self.data=value
+        self.onResolvedCallback.forEach(callBack=>{
+            callBack()
+        })
+       })
     }
     excutor(resolve)
 }
@@ -10,6 +15,9 @@ function Promise (excutor){
 Promise.prototype.then=function(onResolved){
     var self=this
     return new Promise(resolve=>{
-        self.
+        self.onResolvedCallback.push(function (){
+            var result=onResolved(self.data)
+            // console.log(result)
+        })
     })
 }
