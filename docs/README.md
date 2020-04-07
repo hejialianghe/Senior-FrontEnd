@@ -17,6 +17,6 @@ features:
 - title: 工程化
   details: Git、脚本、单元测试、e2e测试、持续集成、部署、前后端分离、多仓库版本管理、代理抓包、内网穿透、mock、远程调试、server-x
 - title: 项目实战
-  details: 有道精品课、蜗牛读书、有道云笔记
+  details: -----
 footer:  MAYI | Copyright © 2020-present(版权所有，转载请注来源)
 ---

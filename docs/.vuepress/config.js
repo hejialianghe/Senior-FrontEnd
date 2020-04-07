@@ -1,6 +1,6 @@
 const path = require("path");
 module.exports = {
-    title: '高级开发工程师必学',
+    title: 'web全栈体系',
     description: 'Hello, my friend!',
     dest: "dist",
     serviceWorker: true,

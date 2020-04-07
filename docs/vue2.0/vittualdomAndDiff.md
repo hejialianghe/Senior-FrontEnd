@@ -519,7 +519,7 @@ function sameVnode (a, b) {
 
   ![](~@/vue2.0/patch4.png)
   
-  从上图可以看出newCh第三个节点在oldCh里面再没找到时，按照上面的逻辑插入已处理的后面，那么这次新增的节点将会插入oldCh第二位置，那么2个节点的位置就不对应了，应该newCh第三个节点要对应oldCh第三的位置才行，<font color="red">**所以我们新增的节点应该插入未处理的前面就适应各种场景了**</font>。
+  从上图可以看出newCh第三个节点在oldCh里面再没找到时，按照上面的逻辑插入已处理的后面，那么这次新增的节点将会插入oldCh第二位置，那么2个节点的位置就不对应了，应该newCh第三个节点要对应oldCh第三的位置才行，<font color="red">**所以我们新增的节点应该插入未处理的前面就适应各种场景了**</font>
 
 
 2. <font >**删除子节点：**</font>
@@ -530,7 +530,7 @@ function sameVnode (a, b) {
 
 3. <font >**移动子节点：**</font>
 
-  newCh的某个节点跟oldCh每一个节点对比中发现有相同的，但是位置不同，那么我们需要更新oldCh的该节点让其与newCh的相同，在以newCh位置为基准去移动oldCh这个节点的位置
+  newCh的某个节点跟oldCh每一个节点对比中发现有相同的，但是位置不同，那么我们需要更新oldCh的该节点让其与newCh的相同，在以newCh位置为基准去移动oldCh这个节点的位置，可以参考下图中，newCh的第二个节点与oldCh的最后一个节点相同，但位置不同，那么我们需要移动oldCh最后一个节点的位置
 
    ![](~@/vue2.0/patch6.png)
 
