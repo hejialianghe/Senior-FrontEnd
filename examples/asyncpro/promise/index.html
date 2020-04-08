@@ -15,7 +15,11 @@
             })
         }).then((data)=>{
             console.log(888,data)
+            return 6
+        }).then(data=>{
+            console.log('第二个then',data)
         })
+
     </script>
 </body>
 </html>

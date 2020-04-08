@@ -541,9 +541,9 @@ class PubSub {
 🔥术语
 - promise 一个有then方法的对象或函数，行为符合本规范
 - thenable 一个定义了then方法的对象或函数
-- 值，value 任何javaScript的合法值
-- 异常，exception throw语句抛出的值
-- 拒绝原因，reason 一个标示promise被拒绝原因的值
+- value（值） 任何javaScript的合法值（包括 undefined,thenable或promise）
+- exception（异常） throw语句抛出的值
+- reason（拒绝原因） 一个标示promise被拒绝原因的值
 
 🔥promise的状态
 ![](~@/asyncpro/promisestatus.png)
@@ -554,14 +554,18 @@ rejected：拒绝
 
 🔥promise的then方法
 
-```javascript
-const promise2=promise1.then(onFulfilled,onRejected); 
-```
+一个promise必须提供一个then方法以访问最终值value和reason
+
  - then 方法的参数
-      - 两个函数参数
-      - onFulfilled在promise完成后被调用，onRejected在promise被拒绝执行后调用
+      - 两个函数参数，都是可选参数
+      - onFulfilled在promise完成后被调用，onRejected在promise被拒绝执行后调用；onFulfilled和onRejected如果不是函数，其必须被忽略
  - then方法的调用：可以调用多次
  - then方法的返回值：promise
+
+
+  ```javascript
+  const promise2=promise1.then(onFulfilled,onRejected); 
+  ```
 
   then方法必须返回一个promise，它实现了链式调用，它的返回值必须有then方法，所以它返回的是一个promise；
   既然then方法返回一个promise，那么这个返回的promise的值是怎么确定的呢？假如我们返回的promsie是promise2
@@ -570,11 +574,15 @@ const promise2=promise1.then(onFulfilled,onRejected);
   返回的primise2的值和状态是怎样确定的？A+规范分了3种情况
 
   1. onFulfilled 不是函数，promise1的状态是fulfilled
+
    state：fulfilled
    value：同promise1
+
   2. onRejected不是函数，promise1的状态是rejected
+
   state：rejected
   reason：同promise1
+
   3. onFullfilled或者onRejected，return x（onFullfilled或者onRejected有一个返回值，这个返回值是x，这个时候规范定义了一个解析过程）
 
   promise解析过程
@@ -584,6 +592,7 @@ const promise2=promise1.then(onFulfilled,onRejected);
   - 如果x是一个promsie,状态有3种
   - 如果x是一个对象或一个函数
   - 如果x不是对象也不是函数
+
  ```javascript
   function resolve (promise,x){
     // 如果promise和x指向相同的值
@@ -659,7 +668,7 @@ const promise2=promise1.then(onFulfilled,onRejected);
 
     // 1
  ```
- Promise1是resolved状态，它的value是1，then方法对不函数的参数会忽略掉；promise2的状态也是resolved状态；Value也是1；
+ Promise1是resolved状态，它的value是1，then方法不函数的参数会忽略掉；promise2的状态也是resolved状态；Value也是1；
  第三步的参数还是会忽略掉，promise3的状态也是resolved状态；Value也是1；第四步console.log是个函数，所以会打印出1.
 
 
@@ -1000,6 +1009,7 @@ generator函数的写法
    })
 ```
 可以看出async函数的返回值是一个promise
+
 🔥await
  - 只能出现在async函数内部或最外层
  - 等待一个promise对象的值

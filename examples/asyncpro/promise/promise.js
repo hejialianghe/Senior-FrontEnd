@@ -17,7 +17,11 @@ Promise.prototype.then=function(onResolved){
     return new Promise(resolve=>{
         self.onResolvedCallback.push(function (){
             var result=onResolved(self.data)
-            // console.log(result)
+            if(result instanceof Promise){
+                result.then(resolve)
+            }else {
+                resolve(result)
+            }
         })
     })
 }
