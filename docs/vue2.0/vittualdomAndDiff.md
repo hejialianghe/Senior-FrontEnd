@@ -226,11 +226,11 @@ VNode类用js对象形式描述真实的dom，在vue初始化阶段，我们把`
   // 上面节点对应的 oldVnode 就是
   {
     elm:  div  //对真实的节点的引用，本例中就是document.querySelector('v#test.main')
-    tagName: 'DIV',   //节点的标签
+    tag: 'DIV',   //节点的标签
     sel: 'div#test.main'  //节点的选择器
     data: null,       // 一个存储节点属性的对象，对应节点的el[prop]属性，例如onclick , style
     children: [], //存储子节点的数组，每个子节点也是vnode结构
-    text: null,    //如果是文本节点，对应文本节点的textContent，否则为null
+    text: null,    //如果是文本节点，对应文本节点，否则为null
   }
   
  ```
@@ -661,22 +661,22 @@ function sameVnode (a, b) {
       } else { 
         // 上面几种都不符合的话,进行常规的循环对比patch
         // createKeyToOldIdx建立key和index索引的对应关系,并返回一个对象
+        // 对应关系{key1:0,Key2:1,key3:2}
         if (isUndef(oldKeyToIdx)) oldKeyToIdx = createKeyToOldIdx(oldCh, oldStartIdx, oldEndIdx)
-        /**
-         * 如果idxInOld不存在
-         * 1.newStartVnode存在key,在oldCh也没找到相同的节点
-         * 2.newStartVnode不存在key,在oldCh也没找到相同的节点
-         */
-         // 尝试在oldCh里找到与newStartVnode具有相同key的vnode
-        idxInOld = isDef(newStartVnode.key)
-          ? oldKeyToIdx[newStartVnode.key]
+
+         // 尝试在oldCh里找到跟newStartVnode同一个节点，并拿到这个节点的index
+        idxInOld = isDef(newStartVnode.key) //判断newStartVnode有没有key值
+          ? oldKeyToIdx[newStartVnode.key] // newStartVnode有key值的话，拿到oldCh对应的index
           : findIdxInOld(newStartVnode, oldCh, oldStartIdx, oldEndIdx) 
-        // 在oldCh里找不到与newCh对应的子节点，说明newStartVnode是一个新节点
+          // newStartVnode没有key值的话，采用循环比较的方式，在oldCh中找到newStartVnode对应的节点并拿到index
+
+        // 在oldCh里找不到与newStartVnode对应的index，说明newStartVnode是一个新节点
         if (isUndef(idxInOld)) { // New element
           // 创建新的dom节点,插入到oldStartVnode.elm前面
           createElm(newStartVnode, insertedVnodeQueue, parentElm, oldStartVnode.elm, false, newCh, newStartIdx)
-        } else { //如果在oldCh找到了与newStartVnode具有相同key的vnode，叫vnodeToMove
-          vnodeToMove = oldCh[idxInOld] // 在oldCh拿到与newCh key值对应的子节点
+        } else { 
+          // 在oldCh里找不到与newStartVnode对应的index，叫vnodeToMove
+          vnodeToMove = oldCh[idxInOld] // 用index拿到对应的子节点
           if (sameVnode(vnodeToMove, newStartVnode)) { //如果是同一个节点就进行更新节点
             patchVnode(vnodeToMove, newStartVnode, insertedVnodeQueue, newCh, newStartIdx)
             oldCh[idxInOld] = undefined
@@ -686,7 +686,7 @@ function sameVnode (a, b) {
             canMove && nodeOps.insertBefore(parentElm, vnodeToMove.elm, oldStartVnode.elm)
           } else {
             // same key but different element. treat as new element
-            // 如果key相同,但节点不相同,被视为新元素;创建新的dom节点
+            // 如果index相同,但节点不相同,被视为新元素;创建新的dom节点
             createElm(newStartVnode, insertedVnodeQueue, parentElm, oldStartVnode.elm, false, newCh, newStartIdx)
           }
         }
@@ -728,6 +728,10 @@ updateChildren中的`newStartIdx`、`oldStartIdx`、`newEndIdx`、`oldEndIdx`这
 - 不设置key以后，除了头尾两端比较之外，只能循环查找。
 
 所以vue中key是vnode的唯一标记，通过key，我们的diff操作可以更加准确，更加快速。
+
+🔥尽量不要用index做key
+
+ 如果我们用index做key值，当我们删除一个节点，在进行diff的时候，oldCh用key对应newCh里节点可能就不是同一个节点，例如你删除索引为2的节点，那么会生成新的vnode；然而以前索引为3的节点会变成现在索引为2的节点，在进行patch的时候我们就根本不知道删除的节点为2。当然index的弊端还有其它按情况。
 
 ### 3.4.7 总结
 
