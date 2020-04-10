@@ -548,7 +548,7 @@ class PubSub {
 🔥promise的状态
 ![](~@/asyncpro/promisestatus.png)
 
-pending：等待
+pending：等待,可以转换成fulfilled或rejected状态
 
 fulfilled：完成，拥有一个不可变的终值
 
@@ -566,10 +566,17 @@ rejected：拒绝，拥有一个不可变的据因
  - then方法的调用：可以调用多次
  - then方法的返回值：promise
 
-
+promise的then方法接受两个参数
   ```javascript
   const promise2=promise1.then(onFulfilled,onRejected); 
   ```
+  1. onFulfilled和onRejected都是可选参数
+
+   - onFulfilled不是一个函数，则忽略
+   - onRejected不是一个函数，则忽略
+  
+  2. 如果onFulfilled是一个函数
+   - 它必须在promise fulfilled后调用，且promise的value为其第一个参数
 
   then方法必须返回一个promise，它实现了链式调用，它的返回值必须有then方法，所以它返回的是一个promise；
   既然then方法返回一个promise，那么这个返回的promise的值是怎么确定的呢？假如我们返回的promsie是promise2
@@ -589,7 +596,7 @@ rejected：拒绝，拥有一个不可变的据因
 
   3. onFullfilled或者onRejected，return x（onFullfilled或者onRejected有一个返回值，这个返回值是x，这个时候规范定义了一个解析过程）
 
-  promise解析过程
+  🔥promise解析过程
   - 抽象模型resolve(promise,x)
   - 如果promise和x指向相同的值
     如果他们指向相同的值，就形成了循环引用；所以就return resolve(promise,new TypeError('cant be the same'))
