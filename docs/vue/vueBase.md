@@ -134,8 +134,8 @@ new Vue({
 })
 ```
 
-## 2.4 事件
-
+## 2.4 事件&样式
+## 2.4.1 事件
 ```javascript
 <template>
   <div>
@@ -164,6 +164,80 @@ export default {
 </style>
 
 ```
+
+## 2.4.2 自定义事件
+
+自定义事件实现双向绑定
+```javascript
+    // 父组件
+    <template>
+    <div>
+        我是父组件：{{msg}}
+        <child @update:msg="msg=$event" :msg="msg"></child>
+        // 也可以用sync修饰符去替换上面的写法，编译的时候会自动编译成上面的写法
+        // <child :msg.sync="msg"></child>
+    </div>
+    </template>
+
+    <script>
+    import child from './child'
+    export default {
+    data () {
+        return {
+        msg: ''
+        }
+    },
+    components: {
+        child
+    }
+    }
+    </script>
+
+    // 子组件
+    <template>
+    <div>
+        我是子组件：{{msg}}
+        <button @click="$emit('update:msg','我是改变值的')">点击</button>
+    </div>
+    </template>
+
+    <script>
+    export default {
+    props: ['msg']
+
+    }
+    </script>
+```
+
+## 2.4.2 样式
+
+为了避免样式的全局污染，我们平时在style上加入scoped
+```javascript
+<template>
+  <div class=“test”></div>
+</template>
+
+<style scoped>
+ .test{
+     font-size:21px
+ }
+
+</style>
+
+// 最后编译出来的html上会添加一个属性
+<div id=“app”>
+  <div data-v-382addcf class=“test”></div>
+</div>
+
+// 最后编译出来style,也会以这个属性做选择器，从而做到样式的封装
+
+<style type=“text/>css”>
+ .test[data-v-382addcf]{
+     font-size:21px
+ }
+</style>
+```
+
 ## 2.5 组件
 
 ### 2.5.1 生命周期

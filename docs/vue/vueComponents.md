@@ -24,19 +24,18 @@
 ## 3.2 双向绑定
 
 ### 3.2.1 v-model
-用于表单元素<input>、<textarea>及<select>上创建双向数据绑定的语法糖
 
 ```javascript
-
+// 用于表单元素<input>、<textarea>及<select>上创建双向数据绑定的语法糖
 <template>
   <div>
-    <input type="text" v-model="text"></input>
-    //  v-model是下面的语法糖
+    <input type="text" v-model="text"/>
+    // v-model是下面的语法糖
     <input type="text" :value="text" @input="text=$event.target.value"></input>
   </div>
 </template>
 
-<script type="text/ecmascript-6">
+<script>
 export default {
   data(){
       return {
@@ -53,6 +52,6 @@ export default {
 - v-bind: msg
 - v-on:update:msg
 
-## 3.3 双向绑定
+## 3.3 组件设计
 
 
