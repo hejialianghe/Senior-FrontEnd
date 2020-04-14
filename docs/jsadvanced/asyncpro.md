@@ -576,7 +576,22 @@ promise的then方法接受两个参数
    - onRejected不是一个函数，则忽略
   
   2. 如果onFulfilled是一个函数
+
    - 它必须在promise fulfilled后调用，且promise的value为其第一个参数
+   - 它不能在promise fulfilled前调用
+   - 不能多次被调用
+  
+  3. 如果onRejected是一个函数
+   - 它必须在promise rejected后调用，且promise的reason为其第一个参数
+   - 它不能在promise rejected前调用
+   - 不能被多次调用
+  
+  4. onFulfilled和onRejected必须被当做函数调用
+
+  5. 对于promise，它的then方法可以调用多次
+
+  6. then方法必须返回一个promise
+  
 
   then方法必须返回一个promise，它实现了链式调用，它的返回值必须有then方法，所以它返回的是一个promise；
   既然then方法返回一个promise，那么这个返回的promise的值是怎么确定的呢？假如我们返回的promsie是promise2

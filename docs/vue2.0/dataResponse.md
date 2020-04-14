@@ -275,13 +275,15 @@ export function parsePath (path: string): any {
 
  1. 2.0需要对每个属性进行监听，对data的属性是遍历+递归为每个属性设置getter和setter
  2. 2.0数组添加元素和长度的变化无法监视到采用的是this.$set(obj,index,value)的方法
- 3. 对象的添加值，Object.defineProperty无法观测，采用的是this.$set(obj,key,value)的方法
+ 3. 对象的添加值和删除值，Object.defineProperty无法观测，采用的是this.$set(obj,key,value)的方法
 
  3.0 proxy
 
   1. 弥补了2.0上面的缺点
   2. 采用惰性监听，初始化的时候不创建Observer，而是会在用到的时候去监听，效率更高，速度加倍
  
+ 
+
  ### 2.2.6 简单实现vue响应式和编译的参考代码
  
  目录 `examples/vue2.0/2`

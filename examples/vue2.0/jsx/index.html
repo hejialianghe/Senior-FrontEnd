@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://unpkg.com/vue"></script>
+</head>
+<body>
+    <div id="app">
+        <!-- <p>{{msg}}</p> -->
+        <my-child></my-child>
+    </div>
+   <script>
+       new Vue ({
+        mode: 'production',
+           el:'#app',
+           data(){
+             return{
+                msg:"模版"
+             }
+           },
+        //   template:`<div>第三种写法{{this.msg}}</div>`,
+        components:{
+            'my-child':{
+                data(){
+             return{
+                msg:"模版111"
+             }
+           },
+           render(){
+               return (<div>9999</div>)
+           }
+        }
+        }
+       })
+   </script>
+</body>
+</html>

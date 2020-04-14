@@ -64,11 +64,8 @@ module.exports = {
                 collapsable: false,
                 children: [
                   ["vue/",'前言'],
-                  ["vue/",'探索vue的组件世界'],
-                  ["vue/",'vue生态'],
-                  ["vue/",'vue实战'],
-                  ["vue/",'企业级组件系统架构'],
-                  ["vue/",'Vue3.0']
+                  ["vue/vueBase",'vue基础'],
+                  ["vue/vueComponents",'探索vue的组件世界']
                 ]
               },
               {
