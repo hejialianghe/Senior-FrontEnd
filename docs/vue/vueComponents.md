@@ -25,7 +25,7 @@
 
 ### 3.2.1 v-model
 
-```javascript
+```vue
 // 用于表单元素<input>、<textarea>及<select>上创建双向数据绑定的语法糖
 <template>
   <div>
@@ -54,4 +54,60 @@ export default {
 
 ## 3.3 组件设计
 
+重复做的组件，可以抽象出来，通过slot作用域外层修改数据而保持内部的稳定
 
+
+```vue
+// 父组件
+<template>
+  <div>
+      <child>
+      <!-- 作用域插槽，任何没有被包裹在带有 v-slot 的 
+      <template> 中的内容都会被视为默认插槽的内容 -->
+          <template>
+              <div>内容1</div>
+          </template>
+
+        <!-- 具名插槽 -->
+         <template v-slot:header>
+              <div>头部2</div>
+          </template>
+
+        <!-- 拿到slot内部组件的内容在父作用域显示 -->
+         <template #main="{user}">
+             <!--  v-slot:main="{user}" 简写#main="{user}"-->
+              <div>{{user.name}}</div>
+          </template>
+
+      </child>
+  </div>
+</template>
+
+// 子组件
+<template>
+  <div>
+      <slot name="header"></slot>
+    <!-- 为了让 user 在父级的插槽内容中可用
+    ，我们可以将 user 作为 <slot> 元素的一个 attribute 绑定上去，
+    绑定在 <slot> 元素上的 attribute 被称为插槽 prop -->
+      <slot name="main" v-bind:user="user">laowang</slot>
+      <!-- 一个不带 name 的 <slot> 出口会带有隐含的名字“default” -->
+      <slot ></slot>
+  </div>
+
+</template>
+
+<script>
+export default {
+  data () {
+    return {
+      user: {
+        name: 'zhangsan',
+        age: 18
+      }
+    }
+  }
+
+}
+</script>
+```

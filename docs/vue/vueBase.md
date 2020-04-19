@@ -135,8 +135,8 @@ new Vue({
 ```
 
 ## 2.4 事件&样式
-## 2.4.1 事件
-```javascript
+### 2.4.1 事件
+```vue
 <template>
   <div>
     <p>{{count}}</p>
@@ -165,7 +165,7 @@ export default {
 
 ```
 
-## 2.4.2 自定义事件
+### 2.4.2 自定义事件
 
 自定义事件实现双向绑定
 ```javascript
@@ -231,11 +231,19 @@ export default {
 
 // 最后编译出来style,也会以这个属性做选择器，从而做到样式的封装
 
-<style type=“text/>css”>
+<style scoped lang=“scss”>
  .test[data-v-382addcf]{
      font-size:21px
  }
+ // 如果用到组件库，想修改组件库里的的样式
+ .test {
+     /deep/ .van-btn{
+
+     }
+ }
 </style>
+
+
 ```
 
 ## 2.5 组件
