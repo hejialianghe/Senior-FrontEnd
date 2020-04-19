@@ -209,7 +209,7 @@ export default {
     </script>
 ```
 
-## 2.4.2 样式
+### 2.4.2 样式
 
 为了避免样式的全局污染，我们平时在style上加入scoped
 ```javascript
