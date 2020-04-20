@@ -209,7 +209,7 @@ export default {
     </script>
 ```
 
-### 2.4.2 样式
+### 2.4.3 样式
 
 为了避免样式的全局污染，我们平时在style上加入scoped
 ```javascript
@@ -248,7 +248,45 @@ export default {
 
 ## 2.5 组件
 
-### 2.5.1 生命周期
+### 2.5.1 组件注册
+
+🔥批量导入组件（weppack的require.context()）
+
+```javascript
+const requireComponent=require.context(
+    "./components", // 当前组件的相对路径
+    false, // 是否查询子目录
+    /\w+\.(vue | js)$/ // 匹配组件名的正则表达式
+    )
+    const regExp = new RegExp(/.\/(\w+).js$/i)
+    const componentName
+    requireComponent.keys().forEach(fileName=>{
+        const componentConfig=requireComponent(fileName)
+        if(regExp.test(fileName)){
+            componentName=RegExp.$1
+        }
+        // 全局注册组件
+        Vue.component(
+          componentName,
+          /*
+          如果这个组件选项是通过‘export defalut’导出得，
+          那么就会优先使用defalut
+          否则使用模块得根
+          */
+        componentConfig.defalut || componentConfig
+        )
+    })
+```
+🔥按需导出
+
+babel-plugin-import 根据这个插件进行按需导入，不同得库插件也会不通
+```javascript
+import { button} from 'components'
+//最终会转换require得方式导入
+var button=require('componets/lib/button')
+require('components/lib/button/style/css')
+```
+### 2.5.2 生命周期
 
 - beforeCreate 最初调用触发，data和evnets都不能用
 - created data和evnets已经初始化好，data已经具有响应式；在这里可以发送请求
