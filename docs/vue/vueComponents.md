@@ -115,6 +115,7 @@ export default {
 Mixin是可以轻松被一个子类或一组子类继承功能的类，目的是函数复用
 
 🔥vue.mixin
+
 全局注册的mixin会影响所有创建的Vue实例
 - 同名钩子函数会合并为一个数组，混入对象的钩子将在组件自身钩子之前调用
 - 二者的methods、components和directives，将被合并为同一个对象，若对象健名冲突时，取组件对象的健值对

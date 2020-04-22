@@ -95,7 +95,7 @@ export default {
   render () {
     return (
       <div>
-        <div class="title">八皇后问题</div>
+        <div class="title">test</div>
         <div class="grid">
           {
             this.grids.map((row, index) => {
@@ -279,7 +279,7 @@ const requireComponent=require.context(
 ```
 🔥按需导出
 
-babel-plugin-import 根据这个插件进行按需导入，不同得库插件也会不通
+babel-plugin-import 根据这个插件进行按需导入，不同的库插件也会不同
 ```javascript
 import { button} from 'components'
 //最终会转换require得方式导入
