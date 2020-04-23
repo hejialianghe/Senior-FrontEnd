@@ -2,7 +2,7 @@
 
 ## 1.1 设计模式概论
 
-### 1.1 代码与设计模式
+### 1.1.1 代码与设计模式
 
 🔥我们写代码到底是在写什么？
 
@@ -74,7 +74,7 @@
 
  <font color="red">**后面学习到设计模式都是在体现这些设计原则**</font>
 
-### 1.2 设计模式的分类
+### 1.1.2 设计模式的分类
 
 1. 创建型
 
@@ -141,7 +141,7 @@
 
 - 等待者模式-等你们都回来再吃饭
 
-### 1.3 重点设计模式区别
+### 1.1.3 重点设计模式区别
 
 观察者模式
 
@@ -154,3 +154,148 @@
 在现在的发布订阅模式中，称为发布者的消息发送者不会将消息直接发送给订阅者，这意味着发布者和订阅者不知道彼此的存在。在发布者和订阅者之间存在第三个组件，称为调度中心或事件通道，它维持着发布者和订阅者之间的联系，过滤所有发布者传入的消息并相应地分发它们给订阅者
 
 发布-订阅模式是面向调度中心编程的,用于解耦发布者和订阅者
+
+## 1.2 封装与对象
+
+创建型设计模式到底是怎么样使用的，利用创建型设计模式更好的封装代码更好的创建对象
+
+封装的目的？
+
+- 定义的变量不会污染到外部
+
+- 能够作为一个模块调用
+
+- 遵循开闭原则
+
+什么是好的封装？
+
+- 变量外部不可见
+
+- 调用接口使用
+
+- 留出扩展接口
+
+###  1.2.1 封装对象时的设计模式
+
+🔥创建一个对象的模式
+
+- 工厂模式
+
+  目的：方便我们大量创建对象
+
+  应用场景：当某一个对象需要经常创建的时候
+
+- 建造者模式
+  
+  目的：需要组合出一个全局对象
+
+  应用场景：当要创建单个、庞大的组合对象时
+
+🔥保障对象全局只有一个
+
+- 单例模式
+
+  目的：需要确保全局只有一个对象
+
+  应用场景：为了避免重复新建，避免多个对象存在相互干扰
+
+
+###  1.2.2 基本结构
+
+🔥工厂模式的基本结构
+
+ ```javascript
+ function Factory (type) {
+     switch (type) {
+         case 'type1'
+         return new Type1()
+         case 'type2'
+         return new Type2()
+         case 'type3'
+         return new Type3()
+     }
+ }
+ ```
+ 工厂模式就是写一个方法，只需调用这个方法，就能拿到你要的对象
+
+ 🔥建造者模式的基本结构
+
+ ```javascript
+//  模块1
+function Mode1(){
+}
+// 模块2
+function Mode2(){
+}
+// 最终使用的类
+function Final(){
+    this.mode1=new Model();
+    this.mode2=new Mode2()
+}
+ ```
+ 把一个复杂的类各个部分，拆分成独立的类，然后再最终类里组合到一块，final为最终给出去的类
+
+🔥单例模式的基本结构
+
+单例模式的做法不是很固定，我们更重要的记住是保证全局只有一个对象的思想
+
+ ```javascript
+ // 作为单例实例化的对象
+ let SingLeton=function(name){
+     this.name=name
+ }
+/*
+ 在SingLeton挂在一个getInstance方法，只能通过getInstance方法来获取
+ SingLeton的实力化对象
+*/
+ SingLeton.getInstance=function(name){
+     if(this.instance){
+         return this.instance
+     }
+     return this.instance=new  SingLeton(name)
+ }
+ ```
+ 通过定义一个方法，使用时只允许通过此方法拿到存在内部的同一实力化对象
+
+###  1.2.2 应用示例
+
+🔥工厂模式的示例
+
+实现一个多彩的弹窗？
+
+需求：弹窗有多种，它们之间存在内容和颜色上的差异
+
+ ```javascript
+    (function(ROOT){
+        // 消息弹性
+        function infoPop(){
+
+        }
+       // 确认弹窗
+        function confirmPop(){
+
+        }
+        // 取消弹窗
+        function cancelPop(){
+
+        }
+        // 弹窗工厂
+        function pop (type,content,color){
+            switch(type){
+                case 'infoPop':
+                return new infoPop(content,color)
+                case  'confirmPop':
+                return new confirmPop(content,color)
+                case  'confircancelPopmPop':
+                return new cancelPop(content,color)
+            }
+        }
+    ROOT.pop=pop
+    })(window)
+// 根据传入不同的参数来，来弹出不同的弹窗
+    pop('infoPop','开始','white')
+ ```
+
+
+
+
