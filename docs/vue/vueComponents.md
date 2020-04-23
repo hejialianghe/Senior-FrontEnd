@@ -154,6 +154,98 @@ Mixin是可以轻松被一个子类或一组子类继承功能的类，目的是
 
  - 模版可复用
  - 不会出现命名冲突
- - 复合依赖倒置原则
+ - 符合依赖倒置原则
  - 复用的接口来源清晰
 
+🔥看一个示例（做一个表单验证）
+
+当前组件是一个验证组件，通过父组件传入验证规则，子组件把validate方法传给父组件调用
+
+```vue
+<template>
+    <div class="Validate">
+        <slot :validate="validate"></slot>
+        {{errmsg}}
+    </div>
+</template>
+
+<script>
+export default {
+  props: ['value', 'rules'],
+  data () {
+    return {
+      errmsg: ''
+    }
+  },
+  methods: {
+    validate () {
+      let check
+      var validate = this.rules.reduce((pre, cur) => {
+        check = cur && cur.test && cur.test(this.value)
+        this.errmsg = check ? '' : cur.message
+        return pre && check
+      }, true)
+      return validate
+    }
+  },
+  components: {
+
+  }
+}
+</script>
+```
+当前组件对姓名和年龄进行验证，把规则传到子组件，失去焦点的时候调用validate方法进行验证
+```vue
+<template>
+    <div>
+        <!-- 姓名验证 -->
+        <validate #default="{validate}" :rules="nameReles" :value="name">
+            <input type="text" @blur="validate" v-model="name">
+        </validate>
+        <!-- 年龄验证 -->
+        <validate #default="{validate}" :rules="ageRules" :value="age">
+            <input type="text" @blur="validate" v-model="age">
+        </validate>
+
+    </div>
+</template>
+
+<script>
+import Validate from './Validate'
+export default {
+  data () {
+    return {
+      age: '',
+      name: '',
+      ageRules: [ // 姓名的验证规则
+        {
+          test (value) {
+            return /^\d+$/g.test(value)
+          },
+          message: '请输入数字'
+        }
+      ],
+      nameReles: [ // 年龄的验证规则
+        {
+          test (value) {
+            return /^[a-z]+$/g.test(value)
+          },
+          message: '请输入英文字母'
+        }
+      ]
+    }
+  },
+  components: {
+    Validate
+  }
+}
+</script>
+
+<style scoped lang="scss">
+input{
+    border: 1px solid #000;
+}
+</style>
+```
+
+总结：我们把能够复用错误提示和验证放到包含slot插槽的组件，提供接口给父组件调用

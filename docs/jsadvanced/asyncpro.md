@@ -201,17 +201,22 @@ js就是采用了这种机制，来解决单线程带来的问题。
    ![](~@/asyncpro/taskandmicrotask.png)
    <font color="red">**宏任务（task）**</font>：
 
-   1. script：script全局的执行
+   1. script：script整体代码
    2. setImmediate：node的一个方法
-   3. UI rendering：ui渲染
+   3. setTimeout和setInterval
+   4. requestAnimationFrame
+   5. I/O
+   6. UI rendering
 
    ......
 
    <font color="red">**微任务（microtask）**</font>：
 
    1. Object.observe:监听对象变化的一个方法
-   1. MutationObserver:可以监听Dom结构变化的一个api
-   1. postMessgae:window对象通信的一个方法
+   2. MutationObserver:可以监听Dom结构变化的一个api
+   3. postMessgae:window对象通信的一个方法
+   4. Promise.then catch finally
+   5. process.nextTick
    
   🔥Event Loop的运行过程
 
@@ -536,7 +541,12 @@ class PubSub {
 
 ### 3.3.3 node.js的发布/订阅
 
+参考资料：/examples/jsadvanced/3.3/nodePubSub.js
+
 ## 3.4 深入理解promise
+ 
+ 因为es6的promise是按照A+规范来写的，如果我们想要理解promise源码，需要先看A+规范
+
 ### 3.4.1 promise A+规范
 🔥术语
 - promise 一个有then方法的对象或函数，其行为符合本规范
@@ -560,38 +570,49 @@ rejected：拒绝，拥有一个不可变的据因
 
 一个promise必须提供一个then方法以访问最终值value和reason
 
+promise的then方法接受两个参数
+
+  ```javascript
+  promise.then(onFulfilled, onRejected)
+  ```
+
  - then 方法的参数
       - 两个函数参数，都是可选参数
       - onFulfilled在promise完成后被调用，onRejected在promise被拒绝执行后调用；onFulfilled和onRejected如果不是函数，其必须被忽略
  - then方法的调用：可以调用多次
  - then方法的返回值：promise
 
-promise的then方法接受两个参数
-  ```javascript
-  const promise2=promise1.then(onFulfilled,onRejected); 
-  ```
-  1. onFulfilled和onRejected都是可选参数
+ <font color="red">**1. onFulfilled和onRejected都是可选参数**</font>
 
    - onFulfilled不是一个函数，则忽略
    - onRejected不是一个函数，则忽略
   
-  2. 如果onFulfilled是一个函数
 
+<font color="red">**2. 如果onFulfilled是一个函数**</font>
    - 它必须在promise fulfilled后调用，且promise的value为其第一个参数
    - 它不能在promise fulfilled前调用
    - 不能多次被调用
   
-  3. 如果onRejected是一个函数
+<font color="red">**3. 如果onRejected是一个函数**</font>
+
    - 它必须在promise rejected后调用，且promise的reason为其第一个参数
    - 它不能在promise rejected前调用
    - 不能被多次调用
-  
-  4. onFulfilled和onRejected必须被当做函数调用
 
-  5. 对于promise，它的then方法可以调用多次
+<font color="red">**4. onFulfilled 和 onRejected 只有在执行环境堆栈仅包含平台代码时才可被调用**</font>
 
-  6. then方法必须返回一个promise
-  
+<font color="red">**5. onFulfilled 和 onRejected 必须被作为函数调用（即没有 this 值）**</font>
+ 
+<font color="red">**6. then 方法可以被同一个 promise 调用多次**</font>
+
+  - 当 promise 成功执行时，所有 onFulfilled 需按照其注册顺序依次回调
+  - 当 promise 被拒绝执行时，所有的 onRejected 需按照其注册顺序依次回调
+
+<font color="red">**7. then 方法必须返回一个 promise 对象**</font>
+
+  ```javascript
+  promise2 = promise1.then(onFulfilled, onRejected);
+  ```
 
   then方法必须返回一个promise，它实现了链式调用，它的返回值必须有then方法，所以它返回的是一个promise；
   既然then方法返回一个promise，那么这个返回的promise的值是怎么确定的呢？假如我们返回的promsie是promise2
