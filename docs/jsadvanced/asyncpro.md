@@ -584,20 +584,21 @@ promise的then方法接受两个参数
 
  <font color="red">**1. onFulfilled和onRejected都是可选参数**</font>
 
-   - onFulfilled不是一个函数，则忽略
-   - onRejected不是一个函数，则忽略
+   - onFulfilled不是一个函数，则被忽略
+   - onRejected不是一个函数，则被忽略
   
 
 <font color="red">**2. 如果onFulfilled是一个函数**</font>
+
    - 它必须在promise fulfilled后调用，且promise的value为其第一个参数
    - 它不能在promise fulfilled前调用
-   - 不能多次被调用
+   - 其调用次数不可超过一次
   
 <font color="red">**3. 如果onRejected是一个函数**</font>
 
    - 它必须在promise rejected后调用，且promise的reason为其第一个参数
    - 它不能在promise rejected前调用
-   - 不能被多次调用
+   - 其调用次数不可超过一次
 
 <font color="red">**4. onFulfilled 和 onRejected 只有在执行环境堆栈仅包含平台代码时才可被调用**</font>
 
