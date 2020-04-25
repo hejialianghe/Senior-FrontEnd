@@ -1,27 +1,13 @@
-(function(ROOT){
-    function infoPop(){
-
+function store(){
+    this.state={}
+    if(store.install){
+        return store.install
     }
+    store.install=this
+}
 
-    function confirmPop(){
-
-    }
-
-    function cancelPop(){
-
-    }
-
-    function pop (type,content,color){
-        switch(type){
-            case 'infoPop':
-            return new infoPop(content,color)
-            case  'confirmPop':
-            return new confirmPop(content,color)
-            case  'confircancelPopmPop':
-            return new cancelPop(content,color)
-        }
-    }
-ROOT.pop=pop
-})(window)
-
-pop('infoPop','开始','white')
+store.install=null
+var s1=new store()
+var s2=new store()
+s1.state.a=1
+console.log(s1,s2) // store { state: { a: 1 } } store { state: { a: 1 } }
