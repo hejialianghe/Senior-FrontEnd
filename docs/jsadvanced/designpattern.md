@@ -296,6 +296,164 @@ function Final(){
     pop('infoPop','开始','white')
  ```
 
+上面这种写法有个弊端就是不能new pop，当用户用new关键词就不适用了
 
 
+ ```javascript
+ (function(ROOT){
+   
+    function pop (type,content,color){
 
+        if(this instanceof pop){
+            var s=this[type](content,color)
+            return
+        }else {
+            return new pop(type,content,color)
+        }
+    }
+    pop.prototype.infoPop= function (){
+    }
+    pop.prototype.confirmPop= function (){
+    }
+    pop.prototype.cancelPop= function (){
+    }
+ROOT.pop=pop
+})(window)
+
+pop('infoPop','开始','white')
+
+ ```
+
+ jQuery源码示例
+
+ 需求：jQuery需要操作dom，每个dom都是一个jq对象
+
+```javascript
+/*
+ seletor 选择器
+ context 上下文
+*/
+(function(ROOT){
+var jQuery=function(){
+    //之所以不new jQuery本身，避免递归造成无限循环，我们用的Query.fn上的init方法代替
+    return new jQuery.fn.init(seletor,context)
+}
+// JQuery各种操作都会挂载到prototype上
+JQuery.fn=JQuery.prototype={
+    init:function(){
+
+    }
+}
+jQuery.fn.init.prototype=jQuery.fn
+// extend方法把方法拷贝extend对象上
+jQuery.extend=jQuery.fn.extend=function(){
+
+}
+
+jQuery.extend({
+
+})
+
+ROOT.$=ROOT.jQuery=jQuery
+})(window)
+```
+
+总结：工厂模式就是要把我们要暴露的对象，真正要实例化的对象先封装到函数的内部，然后我们只暴露一个工厂方法，使用者通过这个工厂方法
+来获取我们实例话的对象，它的优势方便我们大量的创建对象。
+
+🔥建造者模式的示例
+
+编写一个编辑器插件
+
+需求：有一个编辑器插件，初始化的时候需要配置大量参数，而且内部功能很多
+
+```javascript
+// 最终类
+function Editor(){
+    this.intt=new initHTML()
+    this.fontControll=new fontControll()
+    this.stateControll=new stateControll()
+}
+
+// 初始化html的类，最终渲染成dom
+function initHTML(){}
+// 初始化控制样式的方法
+initHTML.prototype.initStyle=function(){}
+// 初始化渲染成dom的方法
+initHTML.prototype.renderDom=function(){}
+
+
+// 改变字体颜色大小的类
+function fontControll(){}
+// 控制颜色的方法
+fontControll.prototype.changeColor=function(){}
+// 控制字体大小的方法
+fontControll.prototype.changeFontsize=function(){}
+
+
+// 改变状态类，为了前进后退
+function stateControll(){
+    this.state=[] //存储状态
+    this.nowstate=0 //状态指针
+}
+//保存状态的方法
+stateControll.prototype.saveState=function(){}
+//回滚状态的方法
+stateControll.prototype.saveBack=function(){
+    var state=this.state[this.nowstate-1]
+    this.fontControll.changeColor(state.color)
+    this.fontControll.changeFontsize(state.color)
+}
+//前进状态的方法
+stateControll.prototype.saveGo=function(){}
+
+window.Editor=Editor
+```
+建造者模式是把它的模块抽离出独立的类，然后在组合起来
+
+vue初始化
+
+需求：vue内部众多模块，而且过程复杂，vue类也可以看做是一个建造者模式
+
+```javascript
+function Vue(options){
+    // 只允许用户用new操作符，如果直接调用就抛出警告
+    if(this instanceof Vue){
+        console.warn('Vue is a constructor and should be called with the `new` keyword')
+    }
+    // 初始化配置项
+    this._init(options)
+}
+
+initMixin（Vue) // 初始化系统混入到Vue中去
+stateMixin(Vue) // 状态系统混入到Vue中去
+eventsMixin(Vue) // 事件系统的混入
+lifecycleMixin(Vue) // 生命周期混入
+renderMixin(Vue)  // 渲染混入
+
+```
+通过这些方法和我们上一个案例把模块独立成一个类，把这些类放到暴露出的类里面是一个道理；
+只不过这里改成方法，vue中所有的功能都是独立开发，通过这一系列的混入将其混入进去
+
+🔥单例模式的示例
+
+写一个数据存储对象
+
+需求：项目中有一个全局的数据存储者，这个存储者只能有一个 ，不然会需要进行同步，增加复杂度
+
+```javascript
+function store(){
+    this.state={}
+    if(store.install){
+        return store.install
+    }
+    store.install=this
+}
+
+store.install=null
+var s1=new store()
+var s2=new store()
+s1.state.a=1
+console.log(s1,s2) // store { state: { a: 1 } } store { state: { a: 1 } }
+
+```
