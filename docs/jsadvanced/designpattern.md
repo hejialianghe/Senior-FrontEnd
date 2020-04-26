@@ -1,8 +1,8 @@
 
 
-## 1.1 设计模式概论
+## 4.1 设计模式概论
 
-### 1.1.1 代码与设计模式
+### 4.1.1 代码与设计模式
 
 🔥我们写代码到底是在写什么？
 
@@ -74,7 +74,7 @@
 
  <font color="red">**后面学习到设计模式都是在体现这些设计原则**</font>
 
-### 1.1.2 设计模式的分类
+### 4.1.2 设计模式的分类
 
 1. 创建型
 
@@ -141,7 +141,7 @@
 
 - 等待者模式-等你们都回来再吃饭
 
-### 1.1.3 重点设计模式区别
+### 4.1.3 重点设计模式区别
 
 观察者模式
 
@@ -155,7 +155,7 @@
 
 发布-订阅模式是面向调度中心编程的,用于解耦发布者和订阅者
 
-## 1.2 封装与对象
+## 4.2 封装与对象
 
 创建型设计模式到底是怎么样使用的，利用创建型设计模式更好的封装代码更好的创建对象
 
@@ -175,7 +175,7 @@
 
 - 留出扩展接口
 
-###  1.2.1 封装对象时的设计模式
+###  4.2.1 封装对象时的设计模式
 
 🔥创建一个对象的模式
 
@@ -200,7 +200,7 @@
   应用场景：为了避免重复新建，避免多个对象存在相互干扰
 
 
-###  1.2.2 基本结构
+###  4.2.2 基本结构
 
 🔥工厂模式的基本结构
 
@@ -257,7 +257,7 @@ function Final(){
  ```
  通过定义一个方法，使用时只允许通过此方法拿到存在内部的同一实力化对象
 
-###  1.2.2 应用示例
+###  4.2.3 应用示例
 
 🔥工厂模式的示例
 
@@ -455,4 +455,194 @@ var s1=new store()
 var s2=new store()
 s1.state.a=1
 console.log(s1,s2) // store { state: { a: 1 } } store { state: { a: 1 } }
+```
+
+vue-router
+
+需求：vue-router必须 保障全局有且只有一个，否则的话会错乱
+
+```javascript
+    let _Vue
+    function install (Vue){
+        if(install.installed &&  _Vue===vue) return
+        install.installed=true
+        _Vue=vue
+    }
+```
+
+###  4.2.4 总结
+
+工厂模式：如果你写的模块，需要大量创建类似的对象
+
+建造者模式：需要创建一个需要大量参数，且内部模块庞大
+
+单例模式：防止重复注册，防止有多个对象互相干扰
+
+##  4.3 提高复用性
+
+什么是好的复用？
+
+- 对象可以再重复使用，不用修改
+- 重复代码少
+- 模块功能单一
+
+###  4.3.1 提高复用性的设计模式
+
+🔥 减少代码数量，高效复用代码
+
+- 桥接模式
+
+  目的：通过桥接代替耦合
+
+  应用场景：减少模块之间的耦合
+
+- 享元模式
+  
+  目的：减少对象/代码数量
+
+  应用场景：当代码中创建了大量类似对象和类似的代码块
+
+🔥 创建高可复用性的代码
+
+ - 模版方法模式
+
+   目的：定义一系列操作的骨架，简化后面类似操作的内容
+
+   应用场景：当项目中出现很多类似操作内容
+
+###  4.3.2 基本结构
+
+🔥 桥接模式
+
+```javascript
+ // 有三种形状，每种形状都有3种颜色
+ function rect (color){ //矩形
+     showcolor(color)
+ }
+ function circle () { // 圆形
+     showcolor(clor)
+ }
+ function delta (color){ // 三角形
+     showcolor(clor)
+ }
+ 
+ new circle("red")
+```
+- 对于3种形状、每种形状有3种颜色的需求，可以不用创建9种不同颜色的不同形状
+- 这个模式把重复的方法抽取出来，然后在桥接出去
+
+这个模式跟我们的建造者模式很类似拆分再组合，建造者模式的核心是如何去构造对象；而我们桥接模式是如何简化我们的代码，提高我们的可复用性，一个关注的是功能一个关注的是创建，这是它们的区别。
+
+🔥 享元模式
+
+```javascript
+    // 有一百种不同文字的弹窗，每种弹窗行为相同，但是文字和样式不同，我们没必要新间一百个弹窗对象
+    function Pop(){
+    }
+    // 保留同样的行为
+    Pop.prototype.action=function(){}
+    //显示
+    Pop.prototype.show=function(){}
+    // 提取出每个弹窗不同的部分作为一个外部数组
+    var popArr=[
+        {text:"window1",style:[400,400]}
+        {text:"window2",style:[400,200]}
+    ]
+
+    var poper=new Pop()
+
+    for(var i=0;i<100;i++){
+        poper.show(popArr[i])
+    }
+```
+- 只需一个类，不需要new一百次弹窗
+- 这个类只保留所有弹窗共有的，每个弹窗不同的部分留作为一个公共享元
+
+🔥 模版方法模式
+
+```javascript
+  // 编写导航组件，有的带消息提示，有的竖着，有的横者
+   function baseNav(){
+       // 基础类，此处定下基本骨架
+   }
+
+   baseNav.prototype.action=function(fn){
+       // 特异性的处理，留一个回调等待具体实现
+   }
+```
+- 导航组件多种多样，可能后面还会新增类型，那么我们不妨写一个基础的组件库，然后具体的实现，延迟到具体的使用时
+
+
+###  4.3.3 应用示例
+
+🔥享元模式的示例
+
+文件上传
+
+需求：项目中有一个文件上传功能，该功能可以上传多个文件
+
+一般做法
+
+```javascript
+//文件上传
+function uploader(fileType,file){
+	 this.fileType=fileType;
+    this.file=file;
+}
+uploader.prototype.init=function(){
+  //初始化文件上传的html
+}
+uploader.prototype.delete=function(){
+  //删除掉该html
+}
+uploader.prototype.uploading=function(){
+  //上传
+}
+
+new uploader('img',fileob1)
+new uploader('txt',fileob2)
+new uploader('img',fileob3)
+new uploader('word',fileob4)
+
+```
+享元模式
+```javascript
+
+ //fileType,file
+function uploader(){
+
+}
+uploader.prototype.init=function(){
+  //初始化文件上传的html
+}
+uploader.prototype.delete=function(){
+  //删除掉该html
+}
+uploader.prototype.uploading=function(filetype,file){
+
+}
+
+var fileob1,fileob2,fileob3,fileob4
+var data=[
+  {
+  	type:'img',
+  	file:fileob1
+  },
+  {
+  	type:'txt',
+  	file:fileob2
+  },
+  {
+  	type:'img',
+  	file:fileob3
+  },
+  {
+  	type:'word',
+  	file:fileob4
+  },      
+]
+var uploader=new uploader();
+for(var i=0;i<data.length;i++){
+	uploader.uploading(data[i].type,data[i].file);
+}
 ```
