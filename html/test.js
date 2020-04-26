@@ -1,13 +1,27 @@
-function store(){
-    this.state={}
-    if(store.install){
-        return store.install
-    }
-    store.install=this
-}
+async function async1() { 
+console.log('1');
+console.log(await async2()); console.log('2'); 
+} 
 
-store.install=null
-var s1=new store()
-var s2=new store()
-s1.state.a=1
-console.log(s1,s2) // store { state: { a: 1 } } store { state: { a: 1 } }
+async function async2() {
+    console.log('3');
+    return '0'; 
+} 
+
+setTimeout(function() {
+ console.log('4'); 
+new Promise(function(resolve) { console.log('5'); resolve(); })
+.then(function() { console.log('6') })
+
+})
+
+ async1(); 
+
+ new Promise(function(resolve) { console.log('7'); resolve(); })
+ .then(function() { console.log('8'); }); 
+
+ console.log('9');
+
+
+
+

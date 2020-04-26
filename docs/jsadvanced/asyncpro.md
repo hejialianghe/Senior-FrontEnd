@@ -167,7 +167,7 @@ test();
 
 🔥Event Loop是什么
 
-Event Loop是一个程序结构，用于等待和发送信息和事件。
+Event Loop是一个程序结构，用于等待和发送信息的事件。
 简单说就是在程序中设置2个线程，一个负责程序本身的运行，称为“主线程”；另一个负责主线程和其他进程（主要是各种I/O操作）的通信
 被称为“Event Loop线程”（也可以翻译为消息线层）
 
@@ -582,34 +582,34 @@ promise的then方法接受两个参数
  - then方法的调用：可以调用多次
  - then方法的返回值：promise
 
- <font color="red">**1. onFulfilled和onRejected都是可选参数**</font>
+ <font color="red">**1. onFulfilled和onRejected都是可选参数**</font>（参数可选）
 
    - onFulfilled不是一个函数，则被忽略
    - onRejected不是一个函数，则被忽略
   
 
-<font color="red">**2. 如果onFulfilled是一个函数**</font>
+<font color="red">**2. 如果onFulfilled是一个函数**</font>（onFulfilled特性）
 
    - 它必须在promise fulfilled后调用，且promise的value为其第一个参数
    - 它不能在promise fulfilled前调用
    - 其调用次数不可超过一次
   
-<font color="red">**3. 如果onRejected是一个函数**</font>
+<font color="red">**3. 如果onRejected是一个函数**</font>（onRejected特性）
 
    - 它必须在promise rejected后调用，且promise的reason为其第一个参数
    - 它不能在promise rejected前调用
    - 其调用次数不可超过一次
 
-<font color="red">**4. onFulfilled 和 onRejected 只有在执行环境堆栈仅包含平台代码时才可被调用**</font>
+<font color="red">**4. onFulfilled 和 onRejected 只有在执行环境堆栈仅包含平台代码时才可被调用**</font>（调用时机）
 
-<font color="red">**5. onFulfilled 和 onRejected 必须被作为函数调用（即没有 this 值）**</font>
+<font color="red">**5. onFulfilled 和 onRejected 必须被作为函数调用（即没有 this 值）**</font>（调用要求）
  
-<font color="red">**6. then 方法可以被同一个 promise 调用多次**</font>
+<font color="red">**6. then 方法可以被同一个 promise 调用多次**</font>（多次调用）
 
   - 当 promise 成功执行时，所有 onFulfilled 需按照其注册顺序依次回调
   - 当 promise 被拒绝执行时，所有的 onRejected 需按照其注册顺序依次回调
 
-<font color="red">**7. then 方法必须返回一个 promise 对象**</font>
+<font color="red">**7. then 方法必须返回一个 promise 对象**</font>（返回）
 
   ```javascript
   promise2 = promise1.then(onFulfilled, onRejected);
