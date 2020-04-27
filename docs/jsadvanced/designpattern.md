@@ -575,6 +575,90 @@ vue-router
 
 ###  4.3.3 应用示例
 
+🔥桥接模式的示例
+ 
+ 创建不同的选中效果
+
+ 需求：有一组菜单，上面每种选项都有不同的选中效果
+
+ ```javascript
+//  一般做法
+ //menu1,menu2,menu3
+function menuItem(word){
+  this.word="";
+  this.dom=document.createElement('div');
+  this.dom.innerHTML=this.word;  
+}
+var menu1=new menuItem('menu1');
+var menu2=new menuItem('menu2');
+var menu3=new menuItem('menu3');
+menu1.onmouseover=function(){
+  menu1.style.color='red';
+}
+menu2.onmouseover=function(){
+  menu1.style.color='green';
+}
+menu3.onmouseover=function(){
+  menu1.style.color='blue';
+}
+menu1.onmouseout=function(){
+  menu1.style.color='white';
+}
+menu2.onmouseout=function(){
+  menu1.style.color='white';
+}
+menu3.onmouseout=function(){
+  menu1.style.color='white';
+}
+
+
+// 桥接模式做法
+function menuItem(word,color){
+  this.word=word;
+  this.color=color;
+  this.dom=document.createElement('div');
+  this.dom.innerHTML=this.word;
+  document.getElementById('app').appendChild(this.dom);
+}
+
+menuItem.prototype.bind=function(){
+  var self=this;
+  this.dom.onmouseover=function(){
+     console.log(self.color);
+  	this.style.color=self.color.colorOver;
+  }
+  this.dom.onmouseout=function(){
+  	this.style.color=self.color.colorOut;
+  }  
+}
+function menuColor(colorover,colorout){
+  this.colorOver=colorover;
+  this.colorOut=colorout;
+}
+
+
+var data=[{word:'menu1',color:['red','black']},{word:'menu2',color:['green','black']},{word:'menu3',color:['blue','black']}]
+for(var i=0;i<data.length;i++){
+
+  new menuItem(data[i].word,new menuColor(data[i].color[0],data[i].color[1])).bind();
+
+}
+ ```
+
+ Express中创建get等方法
+
+ 需求：express中get，post等方法，有七八个，如何快速地创建。
+
+ ```javascript
+ var methods=['get','post','delete','put'];
+    methods.forEach(function(method){
+    app[method]=function(){
+        //利用桥接过来的route来完成post，get等请求
+        route[method].apply(route,slice.call(arguments,1))
+    }
+    })
+ ```
+
 🔥享元模式的示例
 
 文件上传
@@ -646,3 +730,316 @@ for(var i=0;i<data.length;i++){
 	uploader.uploading(data[i].type,data[i].file);
 }
 ```
+
+jQuery的extend
+
+需求：extends方法，需要判断参数数量来进行不同的操作
+
+```javascript
+// 一般做法
+var jQuery={};
+jQuery.fn={};
+jQuery.extend = jQuery.fn.extend = function() {
+  if(arguments.length==1){
+     for(var item in arguments[0]){
+         this[item]=arguments[0][item]
+     }
+  }else if(arguments.length==2){
+    for(var item in arguments[1]){
+      arguments[0][item]=arguments[1][item]
+    }
+    return arguments[0];
+  }
+ 
+} 
+
+// 享元做法，保留一个公共的for循环
+jQuery.extend = jQuery.fn.extend = function() {
+
+  var target=arguments[0];
+  var source;
+  if(arguments.length==1){
+    target=this;
+    source=arguments[0];
+  }else if(arguments.length==2){
+    target=arguments[0];
+    source=arguments[1];
+  }
+  for(var item in source){
+    target[item]=source[item]
+  }
+  return target;
+}
+```
+
+
+ 🔥模版方法模式的示例
+
+ 编写一个弹窗组件
+
+ 需求：项目有一系列弹窗，每个弹窗的行为、大小、文字不同
+
+```javascript
+function basePop(word,size){
+  this.word=word;
+  this.size=size;
+  this.dom=null;
+}
+basePop.prototype.init=function(){
+	var div=document.createElement('div');
+	div.innerHTML=this.word;
+	div.style.width=this.size.width+'px';
+	div.style.height=this.size.height+'px';
+	this.dom=div;
+}
+basePop.prototype.hidden=function(){
+   //定义基础操作
+   this.dom.style.display='none';
+}
+basePop.prototype.confirm=function(){
+   //定义基础操作
+   this.dom.style.display='none';
+}
+function ajaxPop(word,size){
+  basePop.call(this,word,size);
+}
+ajaxPop.prototype=new basePop();
+var hidden=ajaxPop.prototype.hidden;
+ajaxPop.prototype.hidden=function(){
+	hidden.call(this);
+	console.log(1);
+}
+var confirm=ajaxPop.prototype.confirm;
+ajaxPop.prototype.confirm=function(){
+	confirm.call(this);
+	console.log(1);
+}
+var pop=new ajaxPop('sendmes',{width:100,height:300});
+pop.init();
+pop.confirm();
+
+var axios={get:function(){
+	return Promise.resolve();
+}};
+ 
+```
+
+上面这个就是我们面向对象中的继承，模版模式不一定非要通过继承方式来完成，它强调先定义后面进行不同维度的操作的基本行为；
+
+然后在这个基本行为上有扩展的空间，这就是我们模版方法的目的。
+
+封装一个算法计算器
+
+需求：现在我们有一系列自己的算法，但是这个算法常在不同的地方需要增加一些不同的操作
+
+```javascript
+    //算法计算器
+
+function counter(){
+  this.beforeCounter=[];
+  this.afterCounter=[];
+}
+
+//然后我们把具体的不同部分留到具体使用的时候去扩展
+//所以我们定义两个方法来扩展
+counter.prototype.addBefore=function(fn){
+   this.beforeCounter.push(fn);
+}
+counter.prototype.addAfter=function(fn){
+   this.afterCounter.push(fn);
+}
+
+//最终计算方法
+counter.prototype.count=function(num){
+   //结果边两
+   var _resultnum=num;
+   //算法队列数组组装
+   var _arr=[baseCount];
+   _arr=this.beforeCounter.concat(_arr);
+   _arr=_arr.concat(this.afterCounter);
+   //不同部分的相同算法骨架
+   function baseCount(num){
+     num+=4;
+     num*=2;
+     return num;
+   }
+   //循环执行算法队列
+   while(_arr.length>0){
+     _resultnum=_arr.shift()(_resultnum);
+   }
+   return _resultnum;
+}
+//使用
+var countObject=new counter();
+countObject.addBefore(function(num){
+   num--;
+   return num;
+})
+countObject.addAfter(function(num){
+  num*=2;
+  return num;
+})
+countObject.count(10);
+
+```
+这个应用了组合实现模版模式
+
+ <font color="red">**javascript的组合与继承**</font>
+
+ - 组合（推荐）
+   1. javascript最初没有专门的继承，所以最初javascript推崇函数式的编程，然后进行统一组合桥接到一起
+   2. 桥接模式可以看出组合的一种体现，组合的好处是耦合低，方便方法复用，方便扩展
+
+- 继承
+   1. es6出现class与extend，继承的方式多种多样，但是都是各有弊端
+   2. 模版方法模式可以看出继承的一种体现，继承的好处是可以自动获得父类的内容与接口，方便统一化
+
+###  4.3.4 总结
+
+- 桥接模式
+
+通过独立方法间接的桥接来形成整体功能，这样每个方法都可以被高度复用
+
+- 享元模式
+
+提取出公有部分与私有部分，私有部分作为外部数据传入，从而减少对象数量
+
+- 模版方法模式
+
+当一个功能朝着多样化发展，不妨先定义一个基础的，把具体实现延迟到后面
+
+## 4.4 提高可扩展性（1）
+
+提高可扩展性的目的
+
+- 面对需求变更，方便更该需求
+- 减少代码修改的难度
+
+什么是好的扩展
+
+- 需求的变更，不需要重写
+- 代码修改不会引起大规模变动
+- 方便加入新模块
+
+### 4.4.1 提高可扩展性的设计模式
+
+🔥 更好的更改代码
+
+- 适配器模式（接口）
+
+适配器模式的目的：通过写一个适配器，来代替替换
+
+适配器模式的应用场景：面临接口不通用的问题
+
+- 装饰者模式（方法作用）
+
+装饰者模式的目的：不重写方法的扩展方法
+
+装饰者模式的应用场景：放一个方法需要扩展，但是又不好去修改方法
+
+🔥解耦你得方法与调用
+
+- 命令模式
+
+命令模式的目的：解耦实现和调用，让双方互不干扰
+
+命令模式的应用场景：调用的命令充满不确性
+
+### 4.4.2 基本结构
+
+🔥 适配器模式的基本结构
+
+```javascript
+    var log=(function(){
+        return winodw.console.log
+    })
+```
+想用log来代替console.log
+
+🔥 装饰者模式的基本结构
+
+```javascript
+  // 在一个他人写好的模版a内部调用b，模块为他人写好，不能修改，如何扩展b方法？
+    var a={
+        b:function(){}
+    }
+    function myb(){
+        a.b()
+        // 要扩展的方法
+    }
+```
+我们新建一个自己的方法，在其内部调用b方法，并且再执行自己的方法，这样可以在不修改原方法的情况下扩展方法
+
+🔥 命令模式的基本结构
+
+```javascript
+  var command=(function(){
+      // action中定义了各种方法
+      var action={}
+      // excure可以调用action方法
+      return function excure()
+  })()
+  // command只需输入命令就可以调用action里的方法
+```
+### 4.4.3 应用示例
+
+框架的变更
+
+需求：目前项目使用的A框架，现在改成了B，2个框架与十分类似，但是有少数几个方法不同
+
+```javascript
+// A框架调用的方式
+A.c()
+// 假如我们项目中换成了jQuey，我们不想全部去替换A方法，就用适配器的方法
+A.c=function(){
+    return $.on.apply(this.arguments)
+}
+
+```
+
+参数适配
+
+需求：为了避免参数不适配产生问题，很多框架会有一个参数适配操作
+
+
+```javascript
+// 给参数适配，没传值给默认值
+function f1(){
+    var _defalut={
+        name:"",
+        color:""
+    }
+    for(var item in _defalut){
+        _defalut[item]=config[item] || _defalut[item]
+    }
+    return _defalut
+}
+
+```
+
+🔥 装饰者模式的基本结构
+
+扩展你的已有事件绑定
+
+需求：现在项目改造，需要给input标签已经有的事件增加一些操作
+
+```javascript
+var decorator=function(dom,fn){
+  if(typeof dom.onclick='function'){
+  	var _old=dom.onclick;
+  	dom.onclick=function(){
+  		_old();
+  		fn();
+  	}
+  }
+}
+decorator(document.getElementById('dom1'),function(){
+    // 自己的操作
+})
+```
+
+
+
+
+
+
