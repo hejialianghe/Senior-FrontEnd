@@ -983,6 +983,8 @@ countObject.count(10);
 ```
 ### 4.4.3 应用示例
 
+🔥 适配器模式示例
+
 框架的变更
 
 需求：目前项目使用的A框架，现在改成了B，2个框架与十分类似，但是有少数几个方法不同
@@ -1017,7 +1019,7 @@ function f1(){
 
 ```
 
-🔥 装饰者模式的基本结构
+🔥 装饰者模式示例
 
 扩展你的已有事件绑定
 
@@ -1037,6 +1039,404 @@ decorator(document.getElementById('dom1'),function(){
     // 自己的操作
 })
 ```
+Vue的数组监听
+
+需求：vue中利用defineProperty可以监听对象，那么数组怎么办
+
+```javascript
+var arrayProto=Array.prototype
+var arrayMethods=Object.create(arrayProto)
+var methodsToPatch=[
+  'push',
+  'pop',
+  'unshift',
+  'shift',
+  'splice',
+  'resverse',
+  'sort'
+]
+
+methodsToPatch.forEach(method=>{
+  var original=arrayMethods[method]
+  object.defineProperty(arrayMethods,method,{
+    value(...args){
+    const result =original.apply(this,args)
+    dep.notify()
+    return result
+    }
+  })
+
+})
+```
+装饰者模式，拿到老方法，调用老方法，组成新方法
+
+🔥 命令模式示例
+
+需求：封装一系列的canvas绘图命令
+
+```javascript
+ var myCanvas=function(){
+
+   }
+   myCanvas.prototype.drawCircle=function(){
+
+   }
+   myCanvas.prototype.drawRect=function(){
+
+   }
+   
+
+   var canvasComand=(function(){
+     var action={
+     	drawCircle:function(config){
+
+     	},
+     	drawRect:function(config){
+
+     	}
+     };
+     return function excute(commander){
+     	commander.forEach((item)=>{
+     		action[item.command](item.config);
+     	})
+     }
+   })()
+
+  myCanvas([{command:'drawReact',config:{}}])
+```
+1. 用户只管输入他要的命令，不用关心api
+
+2. 命令和实现解耦，无论命令发生变动，还是实现发生变动，都不会彼此影响
+
+绘制随数量图片
+
+需求：需要做一个画廊，图片数量和排列顺序随机
+
+```javascript
+   var createImg=(function(){
+    	var action={
+    	  create:function(obj){
+             var htmlArr=[];
+             var _htmlstring='';
+             var _htmlTemplate="<div><img src='{{img-url}}' /></div><h2>{{title}}</h2>"
+             var displayWay={
+             	normal:function(arr){
+                  return arr;
+             	},
+             	reverse:function(arr){
+             	  return arr.reverse;
+             	}
+             }
+
+             obj.imgArr.forEach((img)=>{
+               var _html;
+               _html=_htmlTemplate.replace('{{img-url}}',img.img).replace('{{title}}',img.title);
+               htmlArr.push(_html);
+             })
+             htmlArr=displayWay[obj.type](htmlArr);
+             _htmlstring=htmlArr.join("");
+             return "<div>"+_htmlstring+"</div>";
+    	  },
+    	  display:function(obj){
+            var _html=this.create(obj);
+            obj.target.innerHTML=_html;
+    	  }
+    	}
+
+        return function excute(obj){
+             var _default={
+             	imgArr:[{img:'xxxx',title:'default title'}],
+             	type:'normal',
+             	target:document.body
+             };
+             for(var item in _default){
+             	_default[item]=obj[item]||_default[item];
+             }
+             action.display(_default);          
+        }
+    })()
+    createImg({
+      imgArr:[{img:'xxxx',title:'default title1'},{img:'xxxx',title:'default title2'}],
+      type:'normal',
+    })
+```
+
+数据-> excute命令解析层 -> 调用api
+
+## 4.5 提高可扩展性（2）
+
+提高整体项目可扩展性的核心
+
+- 低耦合
+
+- 良好的组织沟通方式
+
+### 4.5.1 提高可扩展性的设计模式
+
+🔥 应对需求上的变更
+
+- 观察者模式（事件绑定是典型的观察者模式，比如dom上监视点击了事件，点击事件触发以后就去做这个点击事件）
+
+观察者模式的目的：减少对象间的耦合，来提高可扩展性
+
+观察者模式的应用场景：当两个模块直接沟通会增加它们的耦合性时
+
+- 职责链模式
+
+职责链模式的目的：为了避免请求发送者与多个请求处理者耦合在一起，形成一个链条
+
+组合模式的应用场景：把操作分隔成一系列模块，每个模块只处理自己的事情
+
+
+🔥 应对需求上的变更
+
+访问者模式的目的：解耦数据结构与数据操作
+
+访问者模式的应用场景：数据结构不希望与操作有关联
+
+
+### 4.5.2 基本结构
+
+🔥 观察者的基本结构
+
+```javascript
+function observe {
+  this.message={}
+}
+
+observe.prototype.regist=function(type,fn) {
+  this.message[type]=fn
+}
+
+observe.prototype.fire=function(type){
+  this.message[type]()
+}
+
+observe.prototype.remove=function(type){
+  this.message[type]=null
+}
+```
+- 定义一个中转观察者，两个模块之间不直接沟通，而是通过观察者，一般使用与不方便直接沟通，或者异步操作
+
+
+🔥 职责链模式的基本结构
+
+```javascript
+function mode1 () {
+
+}
+
+function mode2 () {
+
+}
+
+function mode3 () {
+
+}
+
+_result=mode1(_result)
+_result=mode2(_result)
+_result=mode3(_result)
+
+```
+- 把要做的事情组织为一条有序的链条，通过再这条链条传递消息来完成功能，适用于不设计到赋值异步操作
+
+🔥 访问者模式的基本结构
+
+```javascript
+var data=[]
+
+var handler=function () {
+
+}
+
+handler.prototype.get=function(){
+
+}
+
+var vistor=function (handler,data){
+  handler.get(data)
+}
+```
+
+- 通过定义一个访问者，代替直接访问对象，来减少两个对象之间的耦合
+
+### 4.5.3 应用示例
+
+🔥 观察者模式示例
+
+多人合作的问题
+
+需求：现在假设A工程师写了首页模块，然后B工程师写了评论模块。现在要把评论展示在首页
+
+```javascript
+function observe {
+  this.message={}
+}
+
+observe.prototype.regist=function(type,fn) {
+  this.message[type]=fn
+}
+
+observe.prototype.fire=function(type){
+  this.message[type]()
+}
+
+function comment () {
+  var self=this;
+  this.commentList=[
+    {
+      type:'hot',
+      content:'xxxx'
+    }
+  ];
+// 注册事件
+observeOb.regist('gotHot',function(){
+  var _arr=[];
+  self.commentList.forEach((item)=>{
+    if(item.type==='hot'){
+      _arr.push(item)
+    }
+  })
+  return _arr
+})
+
+}
+// 调用事件
+var _arr=observeOb.fire('gotHot')
+
+```
+
+一个转盘
+
+需求：有一个转盘应用，每转一圈，速度加快
+
+```javascript
+function observe {
+  this.message={}
+}
+
+observe.prototype.regist=function(type,fn) {
+  this.message[type]=fn
+}
+
+observe.prototype.fire=function(type){
+  this.message[type]()
+}
+
+var observeOb=new observe()
+
+// 初始化html=> 最终结果选定 => 运动结果 => 运动控制
+
+var _domArr=[]
+
+function htmlInit (target) {
+  for(let i =0;i<9;i++){
+    var _div=document.createElement('div')
+    _div.innerHTML=i
+    _div.setAttribute('class','item')
+    target.appendChild(_div)
+    _domArr.push(_div)
+  }
+}
+
+function getFinal(){
+  var _num=Math.random()*10+40
+  return Math.floor(_num,0)
+}
+// 运动模块
+function mover (moveConfig){
+  var nowIn=0;
+  var removeNum=9;
+  var timer=setInterval(()=>{
+    if(nowIn!=0){
+      removeNum=nowIn-1
+    }
+    _domArr[removeNum].setAttribute('class','item')
+    _domArr[nowIn].setAttribute('class','item item-on')
+    nowIn++
+    if(nowIn==moveConfig.moveTime){
+      clearInterval(timer)
+      if(moveConfig.moveTime==10){
+        observeOb.fire('finish')
+      }
+    }
+  },moveConfig.speed)
+}
+
+function moveControll () {
+  var final=getFinal()
+  var _circle=Math.floor(final/10,0)
+  var stopNum=final%10
+  var _speed=2000
+  var _runCircle=0
+  mover({
+    moveTime:10,
+    speed:_speed
+  })
+  observeOb.regist('finish',fucntion(){
+    var _time=0;
+    _speed-=50;
+    _runCircle++;
+    if(_runCircle<=_circle){
+      _time=0
+    }else {
+      _time=stopNum
+    }
+    mover({
+      moveTime:_time,
+      speed:_speed
+    })
+  })
+}
+
+htmlInit(document.getElementById('app'))
+moveControll()
+```
+
+🔥 职责链模式示例
+
+Axios的拦截器
+
+需求：axios拦截器的设计，大家可以看成一个用给职责链的思想去处理请求
+
+```javascript
+function axios(){
+  this.interceptors={
+    request:new interceptorsManner(),
+    response: new interceptorsManner()
+  }
+  axios.prototype.request=function (){
+    var chain=[dispathReuest,undefined]
+    var promise=Promise.resolve(config)
+    this.interceptors.request.handlers.forEach((interceptor)=>{
+      chain.unshift(interceptor.fulfilled,interceptor.injected)
+    })
+      this.interceptors.response.handlers.forEach((interceptor)=>{
+      chain.shift(interceptor.fulfilled,interceptor.injected)
+    })
+    while(chain.length){
+      promise=promise.then(chain.shift(),chain.shift())
+    }
+  }
+}
+
+function interceptorsManner (){
+  this.handlers=[]
+}
+
+interceptorsManner.prototype.use=function(fulfilled,rejected){
+  this.handlers.push({
+    fulfilled:fulfilled,
+    rejected:rejected
+  })
+}
+```
+
+
+
+
+
 
 
 
