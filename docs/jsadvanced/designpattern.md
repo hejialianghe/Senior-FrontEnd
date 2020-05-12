@@ -1163,6 +1163,20 @@ methodsToPatch.forEach(method=>{
 
 数据-> excute命令解析层 -> 调用api
 
+### 4.4.4 总结
+
+- 适配器模式
+
+当面临两个新老模块间接口api不匹配，可以用适配来转化api
+
+- 装饰者模式
+
+当老的方法，不方便去直接修改，可以通装饰者来增加功能
+
+- 命令模式
+
+解耦实现与具体命令，让实现端和命令端扩展的都更轻松
+
 ## 4.5 提高可扩展性（2）
 
 提高整体项目可扩展性的核心
@@ -1432,6 +1446,133 @@ interceptorsManner.prototype.use=function(fulfilled,rejected){
   })
 }
 ```
+
+利用职责链组织一个表单验证
+
+需求：有一个表单，需要前后台校验，后台校验
+
+```javascript
+  // 表单事件绑定->表单前端验证->表单后端验证
+  // 思想：把你要做的事情拆分为模块，模块之间只做自己模块的事情
+
+input.onblur=function() {
+  var _value=input.value
+  var _arr=[font,middle,back,fontAgain]
+  async function test(){
+    var _result=_value
+    while (_arr.length>0){
+      _result=await _arr.shift()(_result)
+    }
+    return _result
+  }
+  test().then((res)=>{
+    console.log(res)
+  })
+}
+
+function font (result){}
+
+function middle (result){}
+
+function back (result){}
+
+function fontAgain (result){}
+```
+
+🔥 访问者模式示例
+
+不同角色访问数据
+
+需求：假设有一个公司的财务报表，财务关心支出和收入，老板关心盈利
+
+```javascript
+function report () {
+  this.income=""
+  this.cost=""
+  this.profit=""
+}
+
+function boss () {}
+
+boss.prototype.get=function(data) {}
+
+function account () {}
+
+account.prototype.get=function (num1,num2){}
+
+function vistor (data,man) {
+  var handle={
+    boss:function (data){
+      man.get(data.profit)
+    },
+    account:function (data){
+      man.get(data.income,data.cost)
+    }
+  }
+  handle[man.constructor.name](data)
+}
+
+vistor(new report(),new account())
+vistor(new report(),new boss())
+
+// 设计的数据结构操作难以去访问具体的数据结构的时候
+```
+
+表格操作
+
+需求：一个可以新增，删除的表格
+
+```javascript
+  function table () { }
+
+  table.prototype.show=function () {
+
+  }
+
+  table.prototype.delete=function () {
+    vistor(this.tableData,'delete',id)
+  }
+
+  table.prototype.add=function () {
+
+  }
+
+  var tableData=[
+    {
+      id:1,
+      name:'xxx',
+      prize:'xxx'
+    }
+  ]
+
+  function vistor (table,data,handle) {
+    var handleOb={
+      delete:function(id){
+
+      },
+      add:funtion(id,name,price){
+
+      }
+    }
+    var arg=Array.prototype.splice(arguments);
+    arg.splice(0,3);
+    handleOb[handle].apple(this,arg)
+  }
+```
+### 4.5.4 总结
+
+- 观察者模式
+
+适用于不适合直接沟通的模块之间的组织
+
+- 职责链模式
+
+组织同步模块，把要做的事情划分为模块，要做的事情一次传递
+
+- 访问者模式
+
+解耦数据操作与数据结构
+
 
 
 
