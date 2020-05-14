@@ -245,13 +245,15 @@
   ```
   ### 2.3.2 纯函数
   🔥含义：如果函数的调用参数相同，则永远返回相同的结果。它不依赖于程序执行期间函数外部任何状态或数据的变化，必须只依赖于其输入的参数(相同的输入，必须得到相同的输出)。
+
    ``` javascript
         // 纯函数
         const calculatePrice=（price，discount）=> price * discount
         let price = calculatePrice（200，0，8）
         console.log(price)
-    ```
-    ``` javascript
+  ```
+
+  ``` javascript
         // 不纯函数
         const calculatePrice=（price，discount）=>{
           const dt= new Date().toISOString()

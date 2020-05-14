@@ -4,7 +4,7 @@
 
  <font color="red">**UI = render(state)**</font>
 
- `state`代表数据，`UI`代表页面，`vue`将扮演着`render`；vue将侦测数据，一旦数据变化就会把数据反应到`ui`上。
+ `state`代表数据，`UI`代表页面，`vue`将扮演着`render`，一旦数据变化就会把数据反应到`ui`上。
 ## 2.2 Object的响应
 
 ### 2.2.1 利用Object.defineProperty是数据变得可观测
