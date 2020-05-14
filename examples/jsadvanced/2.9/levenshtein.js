@@ -16,7 +16,7 @@ const lsamples = [
     var n=word1.length
     var m=word2.length
     let d=[]
-    // 如果有一个空字符窜，就返回非空字符窜长度
+    // 如果有一个空字符串，就返回非空字符串长度
     if(n*m===0){
       return n+m
     }
