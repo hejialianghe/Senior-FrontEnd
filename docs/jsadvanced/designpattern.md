@@ -1560,6 +1560,474 @@ vistor(new report(),new boss())
 
 解耦数据操作与数据结构
 
+## 4.6 提高代码质量
+
+提高代码质量
+
+- 高质量的代码，方便后续的一切操作
+- 方便他人阅读
+
+什么是代码质量
+
+1. 代码整洁
+2. 结构规整，没有漫长的结构
+3. 阅读好理解
+
+### 4.6.1 优化代码结构
+
+- 策略模式/状态模式
+
+策略/状态模式的目的：优化if-else分支
+
+策略/状态模式的应用场景：当代码if-else分支过多时
+
+- 外观模式
+
+外观模式的目的：通过为多个复杂的子系统提供一个一致的接口
+
+外观模式的应用场景：当完成一个操作时，需要操作多个子系统，不如提供一个更高级的
+
+### 4.6.2 优化你的代码操作
+
+- 迭代器模式
+
+迭代器者模式的目的：不访问内部的情况下，方便的遍历数据
+
+迭代器模式的应用场景：当我们需要对某个对象进行操作，但是又不能暴露内部
+
+- 备忘录模式
+
+备忘录模式的目的：记录状态，方便回滚
+
+备忘录模式的应用场景：系统状态多样，为了保证状态的回滚方便，记录状态
+
+### 4.6.3 基本结构
+
+🔥 策略模式的基本结构
+
+假设要编写一个计算器，有加减乘除，我们把一层一层的if判断，变成下面的形式
+
+```javascript
+  function Strategy (type,a,b) {
+    var Strategyer={
+      add:function (a,b){
+        return a+b
+      }
+      minus:function(a,b){
+        return a-b
+      }
+      division:function (a,b){
+        return a/b
+      }
+    }
+    return Strategyer[type](a,b)
+  }
+```
+
+🔥 状态模式的基本结构（加了状态的策略模式）
+
+为了减少if-else结构，将判断变成对象内部的一个状态，通过对象内部的状态改变，让其拥有不同的行为
+
+```javascript
+function stateFactor (state) {
+  var stateObject={
+    _status:'',
+    state:{
+      state1:function () {
+
+      },
+      state2:function (){
+
+      }
+    },
+    run:function () {
+      return this.state[this._status]
+    }
+  }
+  stateObject._status=state
+  return stateObject
+}
+```
+
+🔥 外观模式的基本结构
+
+我们组织方法模块时可以细化多个接口，但是我们给别人使用时，要合为一个接口就像你可以直接去餐厅去点套餐
+
+```javascript
+  // 模块1
+  function Model1 () {
+
+  }
+  // 模块2
+  function Model2 () {
+
+  }
+  // 功能由Model1获取Model2得结果来完成
+
+  function use () {
+    Model2(Model1())
+  }
+```
+
+🔥 迭代器模式的基本结构
+
+在不暴露对象内部结构的同时，可以顺序的访问对象内部，可以帮助我们简化循环，简化数据操作
+
+```javascript
+  function Iterator (item){
+    this.item=item
+  }
+  Iterator.prototype.dealEach=function (fn) {
+    for(var i=0;i<this.item.length;i++){
+      fn(this.item[i],i)
+    }
+  }
+```
+
+🔥 备忘录模式的基本结构
+
+记录对象内部的状态，当有需要时回滚到之前的状态或者方便对象使用
+
+```javascript
+  function Memento () {
+    var cache={}
+    return function (cacheName){
+      if(cache[cacheName]){
+        // 有缓存的操作
+      }else {
+        // 没有缓存的操作
+      }
+    }
+  }
+var MementtoFn=Memento()
+MementtoFn('xxxcx')
+```
+
+
+### 4.6.4 应用示例
+
+🔥 策略/状态模式的示例
+
+动态的内容
+
+需求：项目有一个动态的内容，根据用户权限的不同显示不同的内容
+
+```javascript
+// 没有用策略的模式的情况
+function showPart1(){
+	 console.log(1);
+ }
+ function showPart2(){
+	console.log(2);
+}
+function showPart3(){
+	console.log(3);
+}
+axios.get('xxx').then((res)=>{
+	 if(res=='boss'){
+		 showPart1();
+		 showPart2();
+		 showPart3();
+	 }else if(res=='manner'){
+		showPart1();
+		showPart2();		 
+	 }else if(res=='staff'){
+		showPart3();
+	 }
+}) 
+
+// 用策略模式的情况
+ function showControl(){
+	this.status='';
+    this.power={
+	  boss:function(){
+		showPart1();
+		showPart2();
+		showPart3();		  
+	  },
+	  manner:function(){
+		showPart1();
+		showPart2();
+	  },
+	  staff:function(){
+		showPart3();
+	  }
+	}
+ }
+ showControl.prototype.show=function(){
+	 var self=this;
+	 axios.get('xxx').then((res)=>{
+		 self.status=res;
+		 self.power[self.status]();
+	 })
+ }
+ new showControl().show();
+
+```
+
+复合运动
+
+需求：有一个小球，可以控制它左右移动，或则左前，右前等方式移动
+
+```javascript
+ function moveLeft(){
+  console.log('left')
+ }
+ function moveRight(){
+	console.log('RigmoveRight')	 
+}
+function moveTop(){
+	console.log('Top')	 
+}
+function moveBottom(){
+	console.log('bomoveBottom')	 
+} 
+
+// 没有用状态模式的情况
+ function mover(){
+   if(arguments.length==1){
+	   if(arguments[0]=='left'){
+         moveLeft();
+	   }else if(arguments[0]=='right'){
+		 moveRight();
+	   }else if(arguments[0]=='top'){
+		 moveTop();
+	   }else if(arguments[0]=='bottom'){
+		 moveBottom();
+	   }
+   }else{
+	   if(arguments[0]=='left'&&arguments[1]=='top'){
+		 moveLeft();
+		 moveTop();
+	   }else if(arguments[0]=='right'&&arguments[1]=='bottom'){
+		 moveRight();
+		 moveBottom();
+	   }
+   }
+ }
+
+// 用状态模式的情况
+ function mover(){
+	 this.status=[];
+	 this.actionHandle={
+		left:moveLeft,
+		right:moveRight,
+		top:moveTop,
+		bottom:moveBottom
+	 }
+ }
+ mover.prototype.run=function(){
+	 this.status=Array.prototype.slice.call(arguments);
+	 this.status.forEach((action)=>{
+		 this.actionHandle[action]();
+	 })
+ }
+ new mover().run('left','right');
+
+```
+
+🔥 外观模式的示例
+
+插件封装的规律
+
+需求：插件基本都会给最终使用提供一个高级接口
+
+```javascript
+// 划分功能，给使用者一个统一的接口
+function tab(){
+  this.dom=null
+}
+tab.prototype.initHTML=function(){
+
+}
+tab.prototype.changeTab=function(){
+      
+}
+tab.prototype.eventBind=function(){
+   var self=this;
+   this.dom.onclick=function(){
+     self.changeTab();
+   }
+}
+tab.prototype.init=function(config){
+  this.initHTML(config);
+  this.eventBind();
+}
+```
+
+封装成方法的思想
+
+需求：在兼容时代，我们会常常需要检测能力，不妨作为一个统一接口
+
+```javascript
+  //dom支持检测
+function addEvent(dom,type,fn){
+  if(dom.addEventListener){
+  	dom.addEventListener(type,fn,false);
+  }else if(dom.attachEvent){
+  	dom.attachEvent('on'+type,fn)
+  }else{
+  	dom['on'+type]=fn
+  }
+}
+```
+
+🔥 迭代器模式的示例
+
+构建一个自己的forEach
+
+需求：forEach方法其实是一个典型的迭代器方法
+
+```javascript
+  // 对数组和对象进行迭代
+  //forEach
+  function Iterator(data){
+    this.data=data;
+  }
+  Iterator.prototype.dealEach=function(fn){
+    if(this.data instanceof Array){
+      for(var i=0;i<this.data.length;i++){
+        fn(this.data[i],i)
+      }
+    }else{
+      for(var item in this.data){
+        fn(this.data[item],item)
+      }
+    }
+  }
+```
+
+给你的项目数据添加迭代器
+
+需求：项目经常对于后端数据进行遍历操作，不如封装一个迭代器，遍历的更方便
+
+```javascript
+
+//数据迭代器
+var data=[{num:1},{num:2},{num:3}]
+function i(data){
+    function Iterator(data){
+      this.data=data;
+    }
+    Iterator.prototype.getHasSomenum=function(handler,num){
+       var _arr=[];
+       var handleFn;
+       if(typeof handler=='function'){
+         handleFn=handler;
+       }else{
+         handleFn=function(item){
+             if(item[handler]==num){
+                return item;
+             }
+         }
+       }
+       for(var i=0;i<this.data.length;i++){
+          var _result=handleFn.call(this,this.data[i])
+          if(_result){
+            _arr.push(_result);  
+          }
+          
+       }
+       return _arr;
+    }
+    return new Iterator(data);
+}
+i(data).getHasSomenum('num',1);
+// 自定义的筛选方法
+i(data).getHasSomenum(function(item){
+  if(item.num-1==2){
+      return item;
+  }
+});
+```
+
+🔥 备忘录模式的示例
+
+文章页的缓存
+
+需求：项目有一个文章页需求，现在进行优化，如果上一篇已经读取过了，则不进行请求，否则请求文章数据
+
+```javascript
+//缓存
+function pager(){
+  var cache={};
+  return function(pageName){
+     if(cache[pageName]){
+         return cache[pageName];
+     }else{
+         axios.get(pageName).then((res)=>{
+           cache[pageName]=res;
+         })
+     }
+  }
+}
+var getpage=pager();
+getpage('pageone');
+
+```
+
+前进后退功能
+
+需求：开发一个可移动的div，拥有前进后退功能能回滚到之前的位置
+
+```javascript
+//前进后退
+function moveDiv(){
+    this.stateList=[];
+    this.nowState=0;
+}
+moveDiv.prototype.move=function(type,num){
+    moveDiv(type,num);
+    this.stateList.push({
+     type:type,
+     num:num
+    });
+    this.nowState=this.stateList.length-1;
+}
+moveDiv.prototype.go=function(){
+  var _state;
+  if(this.nowState<this.stateList.length-1){
+      this.nowState++;
+      _state=this.stateList[this.nowState];
+      moveDiv(_state.type,_state.num);
+  } 
+}
+moveDiv.prototype.back=function(){
+    var _state;
+    if(this.nowState>=0){
+        this.nowState--;
+        _state=this.stateList[this.nowState];
+        moveDiv(_state.type,_state.num);
+    }
+}
+```
+
+### 4.6.5 本章总结
+
+- 策略/状态模式
+
+帮助我们优化if-else结构
+
+- 外观模式
+
+一种套餐化接口的思想，提醒我们封装常用方法
+
+- 迭代器模式
+
+帮助我们更好的遍历数据
+
+- 备忘录模式
+
+帮我们缓存以及回到过去的状态
+
+### 4.7 总结
+
+<font color="red">**我们的设计模式，要记住其思想，不用记住其结构，结构不是固定；我们通过设计模式主要是提高我们代码的质量**</font>
+
+
+
+
+
 
 
 
