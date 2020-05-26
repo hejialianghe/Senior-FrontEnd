@@ -65,7 +65,8 @@ module.exports = {
                 children: [
                   ["vue/",'前言'],
                   ["vue/vueBase",'vue基础'],
-                  ["vue/vueComponents",'探索vue的组件世界']
+                  ["vue/vueComponents",'探索vue的组件世界'],
+                  ["vue/sourceCode",'部分源码解析']
                 ]
               },
               {

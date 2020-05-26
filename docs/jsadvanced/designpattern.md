@@ -838,7 +838,7 @@ counter.prototype.addAfter=function(fn){
 
 //最终计算方法
 counter.prototype.count=function(num){
-   //结果边两
+   //结果变量
    var _resultnum=num;
    //算法队列数组组装
    var _arr=[baseCount];
@@ -2023,6 +2023,10 @@ moveDiv.prototype.back=function(){
 ### 4.7 总结
 
 <font color="red">**我们的设计模式，要记住其思想，不用记住其结构，结构不是固定；我们通过设计模式主要是提高我们代码的质量**</font>
+
+
+
+
 
 
 
