@@ -42,7 +42,7 @@ module.exports = {
                 title: "JavaScript进阶",
                 collapsable: false,
                 children: [
-                  ["jsadvanced/",'导学'],
+                  ["jsadvanced/",'前言'],
                   ["jsadvanced/function",'函数'],
                   ["jsadvanced/asyncpro",'异步编程'],
                   ["jsadvanced/designpattern",'设计模式'],
@@ -83,17 +83,7 @@ module.exports = {
                 collapsable: false,
                 children: [
                   ["react/",'入门介绍'],
-                  ["react/",'JSX介绍'],
-                  ["react/",'组件基础知识'],
-                  ["react/",'组件进阶'],
-                  ["react/",'实战应用1'],
-                  ["react/",'react生态-路由'],
-                  ["react/",'react生态-企业应用'],
-                  ["react/",'react原理'],
-                  ["react/",'react-hooks'],
-                  ["react/",'react高级实战与性能优化'],
-                  ["react/",'状态管理'],
-                  ["react/",'实战应用2']
+                  ["react/react-base",'步入react']
                 ]
               },
               {
