@@ -9,7 +9,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "vuepress dev docs",
-    "build": "vuepress build docs"
+    "build": "vuepress build docs",
+    "deploy": "sh deploy.sh"
   },
   "keywords": [],
   "author": "",
@@ -21,3 +22,4 @@
     "lodash": "^4.17.15"
   }
 }
+
