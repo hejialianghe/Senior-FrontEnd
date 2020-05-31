@@ -3,7 +3,7 @@ module.exports = {
     title: 'web全栈体系',
     description: 'Hello, my friend!',
     dest: "dist",
-    serviceWorker: true,
+    serviceWorker: true, //支持PWA配置
     markdown: {
       lineNumbers: true
     },
