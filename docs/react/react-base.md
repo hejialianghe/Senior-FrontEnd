@@ -29,7 +29,7 @@ my-app/
     index.js
     logo.svg
 ```
-### 2.1.1 开始前的配置
+### 2.1.2 开始前的配置
 
 ####  安装第三方插件
 
@@ -97,7 +97,7 @@ settings.json配置信息
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "eslint.validate": ["javascript", "javascriptreact", "html", "typescript", "typescriptreact"], //确定校验准则
   "files.associations": {
-    "*.tsx": "typescriptreact"
+    "*.jsx": "javascriptreact"
   },
 
   "typescript.tsdk": "node_modules/typescript/lib",
@@ -108,14 +108,140 @@ settings.json配置信息
 
 ```
 
-### 2.1.2 线上项目编辑器
+### 2.1.3 线上项目编辑器
 
 [codesandbox](https://codesandbox.io/)
 
 
-## 2.1 组件和JSX
+## 2.2 组件和JSX
 
-### 2.1 编写react元素
+### 2.2.1 编写react元素
 
+react 元素就是一个javascript对象
 
+```js{2}
+const element=<h1>hell react</h1>
+console.log(element);
+ReactDOM.render(element, document.getElementById('root'));// render方法将react元素加载到页面上
+// 打印结果
+{
+$$typeof: Symbol(react.element)
+key: null
+props:{children: "hell react"}
+ref: null
+type: "h1"
+}
+```
 
+### 2.2.2 jsx
+
+jsx是javascript的语法扩展，使用xml标记的方式直接声明界面
+
+#### jsx是什么
+
+- 不是模版引擎语言
+
+模版引擎语言Angular和vue中template的语法，js模版的作用就是输入模版的字符串+数据，经过渲染得到渲染过的字符串；jsx不是这样的模版引擎，它是带语法糖的ATX，其实是抽象的语法树，语法糖放到了构建阶段，所以运行的时候不需要解析。
+
+- 声明示方式创建UI，处理UI逻辑
+
+- 遵循javascript语法，无学习门槛
+
+#### react通过babel将jsx转换浏览器识别的语言
+
+[bable](https://www.babeljs.cn/repl)
+
+```js
+const ele=<div className="root">
+         <p>hello</p>
+      </div>
+
+  // 转换后
+var ele = /*#__PURE__*/React.createElement("div", {
+  className: "root"
+}, /*#__PURE__*/React.createElement("p", null, "hello"));
+// 通过createElement创建元素
+```
+react通过层层嵌套的方法，把我们输入的语句转换成浏览器识别的代码，这就是`jsx`背后的原理
+
+#### jsx 规则
+
+- 在jsx中潜入表达式，用`{}`包裹
+- 大写开头作为定义组件，小写tag作为原生的dom节点
+- jsx标签可以有特定属性和子元素
+- jsx只能有一个根元素
+
+#### jsx 实践
+
+```jsx
+const mainData={
+  name:"zs",
+  age:12
+}
+  class main extends Components {
+    addage(){
+      return mainData.age+12
+    }
+    render(){
+      return (
+        // jsx需要一个根元素
+        <div className="main">
+          <p>{mainData.name}</p>
+          <p>{mainData.age>18?'成年':'未成年'}</p>
+          <p>{this.mainData()}</p>
+        </div>
+      )
+    }
+  }
+```
+jsx需要一个根元素包裹，因为jsx是通过babel进行转译，其实就是通过`React.createElement()`，它的第一个参数需要一个元素，如果出现2个就无法识别了
+
+#### Fragments
+
+用Fragments替换根元素，而且此标签不渲染到页面中
+
+```jsx
+  class main extends Components {
+    addage(){
+      return mainData.age+12
+    }
+    render(){
+      return (
+        <React.Fragments>
+          <p>{mainData.name}</p>
+          <p>{mainData.age>18?'成年':'未成年'}</p>
+          <p>{this.mainData()}</p>
+       </React.Fragments>
+      )
+    }
+  }
+  // 或者用react提供的简洁方法
+    class main extends Components {
+    addage(){
+      return mainData.age+12
+    }
+    render(){
+      return (
+        <>
+          <p>{mainData.name}</p>
+          <p>{mainData.age>18?'成年':'未成年'}</p>
+          <p>{this.mainData()}</p>
+       </>
+      )
+    }
+  }
+```
+为什么使用Fragments
+
+- 可以包含并列的子元素
+- 编写表格组件，包裹子元素让html生效
+
+## 2.3 props、列表渲染
+
+什么是props？
+
+当react元素作为自定义组件，将jsx所接受的属性转换成单个对象传递给组件，这个对象被称为“props”（就是父组件传递给子组件的对象）
+
+- props是组件的固有属性
+- 不可在组件内部对props进行修改
+- 更新props：需要通过父组件重新传入新的props，更新子组件（单向数据流）
