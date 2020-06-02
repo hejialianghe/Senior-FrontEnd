@@ -183,7 +183,6 @@ react通过层层嵌套的方法，把我们输入的语句转换成浏览器识
         name:"zs",
         age:12
       }
-      this.addage.bind(this)
     }
     addage(){
       return this.state.age+12
@@ -196,7 +195,7 @@ react通过层层嵌套的方法，把我们输入的语句转换成浏览器识
         <div className="main">
           <p>{this.state.name}</p>
           <p>{this.state.age>18?'成年':'未成年'}</p>
-          <p>{this.addage()}</p>
+          <p>{this.addage.call(this)}</p>
             {/* 三元表达式判断显示元素 */}
           {
             flag?
