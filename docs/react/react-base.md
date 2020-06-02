@@ -83,7 +83,7 @@ my-app/
 
 - 配置vscode编辑配置文件
 
-可以配置针对改项目的配置文件，在根目录创建.vscode/settings.json
+可以配置针对该项目的配置文件，在根目录创建.vscode/settings.json
 
 settings.json配置信息
 ```js
