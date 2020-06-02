@@ -83,7 +83,7 @@ my-app/
 
 - 配置vscode编辑配置文件
 
-可以配置针对改项目的配置文件，在跟目录创建.vscode/settings.json
+可以配置针对改项目的配置文件，在根目录创建.vscode/settings.json
 
 settings.json配置信息
 ```js
@@ -120,14 +120,16 @@ settings.json配置信息
 react 元素就是一个javascript对象
 
 ```js{2}
-const element=<h1>hell react</h1>
+const element=<h1>hello react</h1>
 console.log(element);
-ReactDOM.render(element, document.getElementById('root'));// render方法将react元素加载到页面上
+// render方法将react元素渲染到页面上
+ReactDOM.render(element, document.getElementById('root'));
+
 // 打印结果
 {
 $$typeof: Symbol(react.element)
 key: null
-props:{children: "hell react"}
+props:{children: "hello react"}
 ref: null
 type: "h1"
 }
@@ -174,21 +176,38 @@ react通过层层嵌套的方法，把我们输入的语句转换成浏览器识
 #### jsx 实践
 
 ```jsx
-const mainData={
-  name:"zs",
-  age:12
-}
   class main extends Components {
+    constructor(props){
+      super(props)
+       this.state={
+        name:"zs",
+        age:12
+      }
+      this.addage.bind(this)
+    }
     addage(){
-      return mainData.age+12
+      return this.state.age+12
     }
     render(){
+      const flag=true
+      const list = [1, 2, 3]
       return (
         // jsx需要一个根元素
         <div className="main">
-          <p>{mainData.name}</p>
-          <p>{mainData.age>18?'成年':'未成年'}</p>
-          <p>{this.mainData()}</p>
+          <p>{this.state.name}</p>
+          <p>{this.state.age>18?'成年':'未成年'}</p>
+          <p>{this.addage()}</p>
+            {/* 三元表达式判断显示元素 */}
+          {
+            flag?
+          <p>元素1</p>
+             :
+          <p>元素1</p>
+          }
+          {/* 只能用map循环 */}
+          {list.map((item) => {
+            return <div key='item'>{item}</div>
+          })}
         </div>
       )
     }
@@ -202,30 +221,24 @@ jsx需要一个根元素包裹，因为jsx是通过babel进行转译，其实就
 
 ```jsx
   class main extends Components {
-    addage(){
-      return mainData.age+12
-    }
     render(){
       return (
         <React.Fragments>
-          <p>{mainData.name}</p>
-          <p>{mainData.age>18?'成年':'未成年'}</p>
-          <p>{this.mainData()}</p>
+          <p>{this.state.name}</p>
+          <p>{this.state.age>18?'成年':'未成年'}</p>
+          <p>{this.addage()}</p>
        </React.Fragments>
       )
     }
   }
   // 或者用react提供的简洁方法
     class main extends Components {
-    addage(){
-      return mainData.age+12
-    }
     render(){
       return (
         <>
-          <p>{mainData.name}</p>
-          <p>{mainData.age>18?'成年':'未成年'}</p>
-          <p>{this.mainData()}</p>
+          <p>{this.state.name}</p>
+          <p>{this.state.age>18?'成年':'未成年'}</p>
+          <p>{this.addage()}</p>
        </>
       )
     }
