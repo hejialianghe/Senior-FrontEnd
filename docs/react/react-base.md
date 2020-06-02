@@ -37,6 +37,8 @@ my-app/
 
 - simple react  快速生成react模版，可以看插件具体文档
 
+  编辑器中输入`cc`生成类组件，`sfc`生成函数示组件
+
 - prettier     格式化代码
 
 ```js
@@ -248,7 +250,13 @@ jsx需要一个根元素包裹，因为jsx是通过babel进行转译，其实就
 - 可以包含并列的子元素
 - 编写表格组件，包裹子元素让html生效
 
-## 2.3 props、列表渲染
+### 2.2.3 拓展学习资料
+
+[Babel和ATS 抽象语法树1](https://juejin.im/post/5ab9f2f3f265da239b4174f0)
+
+[Babel和ATS 抽象语法树2](https://github.com/barretlee/babel-plugin-ast)
+
+## 2.3 props、列表渲染、条件渲染
 
 什么是props？
 
@@ -257,3 +265,250 @@ jsx需要一个根元素包裹，因为jsx是通过babel进行转译，其实就
 - props是组件的固有属性
 - 不可在组件内部对props进行修改
 - 更新props：需要通过父组件重新传入新的props，更新子组件（单向数据流）
+
+
+### 2.3.1 示例
+
+```jsx
+const listData={name:'react'}
+  // 父组件
+  funtion App (){
+    return (
+      <div>
+        {/* 传递数据listData*/}
+        <ListItem data={listData}></ListItem> 
+      <div>
+    )
+  }
+```
+```jsx
+  // 子组件
+  class ListItem extends Component {
+   constructor(props){
+     super(props) //子类中调用父类构造函数
+   }
+    render() { 
+        return ( 
+            <div>
+             <div>
+             {/* 通过props拿到值 */}
+              {this.props.data.name}  
+            <div>
+          <div>
+         );
+    }
+}
+```
+
+#### 函数示组件
+
+- 函数组件也叫无状态组件
+- 组件内部没有this
+- 没有声明周期
+
+改写如下
+```jsx
+  // 子组件
+  funtion ListItem (props){
+    return (
+      <div>
+        <div>
+          {/* 通过props拿到值 */}
+         {props.data.name}  
+        <div>
+      <div>
+    )
+  }
+```
+当前组件如果是纯展示组件，可以用函数组件，函数组件是一个纯函数，用函数组件可以得到性能的提升
+
+### 2.3.2 列表渲染
+
+```jsx
+const listData=[{name:'react',id:1},{name:'vue',id:2}]
+  // 父组件
+  funtion App (){
+    return (
+      <div>
+        {/* 传递数据listData*/}
+       {
+         listData.map(item=>{
+           return <ListItem data={item} key={item.id}/>
+         })
+       }
+      <div>
+    )
+  }
+```
+
+### 2.3.3 条件渲染
+
+条件渲染的主要方法
+
+- 使用三目运算符
+- 使用函数做条件判断
+- 使用与运算符 && 判断
+
+```jsx
+
+  class ListItem extends Component {
+   constructor(props){
+     super(props) //子类中调用父类构造函数
+   }
+   renderList(){
+     if(this.props.data.name==='react'){
+       return <div>jsx</div>
+     }else {
+       return <div>template</div>
+     }
+   }s
+   render(){
+    return (
+      <div className='listItem'>
+        {/* 使用三目运算符*/}
+        <div className={`thend-grid`${this.props.data.name==='react'?'-blue':'-green'}}>
+         {this.props.data.name==='react'?'jsx':'template'}  
+        <div>
+          {/*使用函数做条件判断*/}
+        {this.renderList.call(this)}
+          {/*使用与运算符 && 判断*/}
+        {this.props.data.name==='react' && <div>jsx</div>}
+      <div>
+    )
+   }
+  }
+  
+```
+
+### 2.3.4 拓展学习资料
+
+[列表渲染进阶知识](https://zhuanlan.zhihu.com/p/41237949)
+
+[更多的条件渲染的方式](https://juejin.im/post/5ab0bff06fb9a028d444696b)
+
+## 2.4 CSS in React
+
+### 2.4.1 行内样式
+
+```jsx
+  <div style={{fontSize:18;color:red}}></div>
+```
+
+### 2.4.2 引入css样式表
+
+```jsx
+     src/   
+        components/
+          ListItem/
+            index.jsx
+            index.css //也可以用scss，文件命名index.css
+  // 我们在index.css 定义样式
+    .title{
+      color:red;
+    }
+
+ //在ListItem导入
+    import './index.css' 
+    class ListItem extends Component {
+     constructor(props){
+     super(props) //子类中调用父类构造函数
+   }
+ 
+   render(){
+    return (
+      <div className='listItem'>
+        <span className='title'>header<span>
+      <div>
+    )
+   }
+  }
+```
+上面的在index.css写法，里面的样式是全局样式，会造成全局污染，可以用css module解决
+
+#### css module
+
+- 不使用选择器，使用class名定义样式
+- 不层叠class，使用一个class定义样式
+- 用过compose来组合
+
+```jsx
+       src/   
+        components/
+          ListItem/
+            index.jsx
+            index.module.css //命名方式加入module
+  // 我们在index.css 定义样式
+    .title{
+      color:red;
+    }
+
+ //在ListItem导入对象
+    import style from 'index.module.css' 
+    class ListItem extends Component {
+     constructor(props){
+     super(props) //子类中调用父类构造函数
+   }
+ 
+   render(){
+    return (
+      <div className='listItem'>
+        <span className={style.title}>header<span>
+      <div>
+    )
+   }
+  }
+```
+
+### 2.4.3 css管理进阶
+
+css管理工具
+
+- Styled-component
+- Classnames
+
+```jsx
+       src/   
+        components/
+          ListItem/
+            index.jsx
+            index.module.css //命名方式加入module
+  // 我们在index.css 定义样式
+    .title{
+      color:red;
+    }
+    .themd {
+      background:'red'
+    }
+
+ //在ListItem导入对象
+    import style from 'index.module.css' 
+    import classnames from 'classnames/bind'
+    import cn from 'classnames'
+    const cls=classnames.bind(style)
+    class ListItem extends Component {
+     constructor(props){
+     super(props) //子类中调用父类构造函数
+   }
+ 
+   render(){
+     const flag=true
+     const _cn=cn({
+       'themd':flag
+     })
+    return (
+      <div className='listItem'>
+        <span className={cls('title')}>header<span>
+        <span className={cn}></span>
+      <div>
+    )
+   }
+  }
+```
+
+### 2.4.3 扩展
+
+[css module](http://www.ruanyifeng.com/blog/2016/06/css_modules.html)
+
+[styled   component](https://www.styled-components.com/)
+
+[在React中使用css预编译](https://juejin.im/post/5c3d67066fb9a049f06a8323   )
