@@ -1,12 +1,12 @@
 ## 2.1初识vue
 ### 2.1.1 创建项目
-🔥安装vueCLI
+####  🚀安装vueCLI
 ```bash
  npm i @vue/cli -g 
  #or
  yarn global add @vue/cli
 ```
-🔥创建项目
+####  🚀创建项目
 ```bash
  vue create project
  #or
@@ -20,7 +20,7 @@
 
 下面我们看一下在我们vue中，怎样用上面的命名规则
 
-🔥cameCase
+####  🚀cameCase
 
 - js函数、变量
 ```javascript
@@ -38,7 +38,7 @@ new Vue({
     }
 })
 ```
-🔥PascalCase
+####  🚀PascalCase
 
 - js类，组件文件
 ```javascript
@@ -53,7 +53,7 @@ components/
 |- TestList.vue
 |- TestItem.vue
 ```
-🔥kebab-case
+####  🚀kebab-case
 - HTML
 
 在html中大小写是不敏感的，正因为这样我们约定在模版中才采用烤串的方式，来避免混淆
@@ -250,7 +250,7 @@ export default {
 
 ### 2.5.1 组件注册
 
-🔥批量导入组件（weppack的require.context()）
+####  🚀批量导入组件（weppack的require.context()）
 
 ```javascript
 const requireComponent=require.context(
@@ -277,7 +277,7 @@ const requireComponent=require.context(
         )
     })
 ```
-🔥按需导出
+####  🚀按需导出
 
 babel-plugin-import 根据这个插件进行按需导入，不同的库插件也会不同
 ```javascript
