@@ -148,3 +148,127 @@ react事件要素
 [合成事件](	http://react.html.cn/docs/events.html)
 
 ## 3.2 认识State
+
+安装`react-devtools`调试工具
+
+方法1:有条件的可以在谷歌商店安装
+
+方法2:没有条件的看地址安装[点击我](https://www.npmjs.com/package/react-devtools)
+
+### 3.2.1 如何定义State
+```jsx
+   class ListItem extends Component {
+     constructor(props){
+     super(props)
+     this.state={ //定义一个state
+         conunt:1 
+     }
+   }
+   render(){
+    return (
+      <div className='listItem'>
+        <span>{this.state.count}<span>  
+      <div>
+    )
+   }
+  } 
+```
+### 3.2.2 修改State
+
+```jsx
+   class ListItem extends Component {
+     constructor(props){
+     super(props)
+     this.state={
+         conunt:1 
+     }
+   }
+   addCunt(){
+       console.log('step1',this.state.count)
+       this.setState({ //修改一个state
+           count:this.state.count+1
+       })
+       console.log('step2',this.state.count)
+   }
+   render(){
+    return (
+      <div className='listItem'>
+        <span onclick={()=>this.addCount()}>{this.state.count}<span>  
+      <div>
+    )
+   }
+  } 
+```
+addCount函数中打印的2次`conut`的值是一样的，说明setState的处理过程是异步的而不是同步的,react在执行setState时候，优化执行的时机，多个setState合并在一起去执行，如果非要在state变化话后做一些操作的话，其实setState会接收第二个参数。
+
+```jsx
+   class ListItem extends Component {
+     constructor(props){
+     super(props)
+     this.state={
+         conunt:1 
+     }
+   }
+   addCunt(){
+       this.setState({ //修改一个state
+           count:this.state.count+1
+       },()=>{
+         console.log('step3',this.state.count) // 可以拿到修改后的值
+       })
+   }
+   render(){
+    return (
+      <div className='listItem'>
+        <span onclick={()=>this.addCount()}>{this.state.count}<span>  
+      <div>
+    )
+   }
+  } 
+```
+### 3.2.3 创建新的状态
+
+状态类型
+- 值类型：string、number、boolean、null、undefined
+- 数组类型
+- 对象
+
+```jsx
+// 1.状态的类型是值类型
+this.setState({
+    count:1,
+    name:'zs',
+    show:true
+})
+// 2.状态的类型是数组
+const _books=this.state.books.concat('new book')
+   // 或
+const _books=[...this.state.books,'new book')]
+this.setState({
+    books:_books
+})
+// 2.状态的类型是对象
+const _item=Object.assign({},this.state.item,{id:1,ame:'zs'})
+    // 或
+const _item={...this.state.item,id:1,ame:'zs'}
+this.setState({
+    item:_item
+})
+```
+### 3.2.4 扩展资料
+
+[React Dev Tools](https://www.npmjs.com/package/react-devtools)
+
+[状态组件和无状态组件](https://juejin.im/entry/59a980306fb9a02485103d0b)
+
+[setState异步的理解](https://juejin.im/post/5bf1444cf265da614a3a1660)
+
+## 3.3 State进阶
+
+### 3.3.1 通过条件判断优化渲染
+
+### 3.3.1 使用不可变数据
+
+### 3.3.1 状态提升
+
+### 3.3.1 使用无状态组件
+
