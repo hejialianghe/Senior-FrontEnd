@@ -134,7 +134,7 @@
  何时通知依赖去更新视图？
   在setter中调用dep.notify()
 
- ####  🚀我们用dep类去存放依赖
+ ####  🚀 我们用dep类去存放依赖
   ```javascript
    // 源代码 `src/core/observer/dep.js`
    // Dep用来管理watcher实例，watcher实例就是数据的依赖
@@ -476,7 +476,7 @@ export function parsePath (path: string): any {
  我们对data return出来的这个对象转换成响应式进行观测；我们获取数组时，肯定是obj.test;这样的话肯定会走obj的getter中，所以我们收集依赖也是在
  getter中
 
- ####  🚀收集依赖
+ ####  🚀 收集依赖
   ```javascript
     export class Observer {
         constructor (value) {
@@ -553,7 +553,7 @@ export function parsePath (path: string): any {
  1. 我们 new Observer()时候，会进去defineReactive 这个函数中，执行了observe(val)获取到了Observer 实例；并给该对象设置了getter和setter（observe(val此时传入的是数组test）
  2. 当调用该对象的getter的时候，我们对数组进行依赖收集，如果子对象中还有数组则对递归收集
 
-  ####  🚀通知依赖
+  ####  🚀 通知依赖
    ```javascript
     methodsToPatch.forEach(function (method) {
     def(arrayMethods, method, function mutator (...args) {

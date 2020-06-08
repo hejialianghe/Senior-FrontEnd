@@ -266,9 +266,247 @@ this.setState({
 
 ### 3.3.1 通过条件判断优化渲染
 
-### 3.3.1 使用不可变数据
+下面代码是我们渲染一个列表，当我们删除第一行列表的时候，其它2个列表其实没有任何变化，但是它们的render方法还是执行了，执行了render方法其实也要diff对比，当一个大型的项目，这显然也是很耗时的，所以我们要优化它，优化有2种方法：
 
-### 3.3.1 状态提升
+1. sholudComponentUpdate(利用这个钩子阻止，如果子组件没有变化就不进行渲染)
 
-### 3.3.1 使用无状态组件
+2. PureComponent（利用react提供的组件）
+
+![](~@/react/shouldUpdate.png)
+
+```jsx
+// 父组件
+import React,{Component} from 'react';
+import ListItem from './listItem'
+class Stated extends Component {
+    state = { 
+        listData: [
+            {
+              id: 1,
+              name: "Sony 65寸高清液晶电视",
+              price: 7000,
+              stock: 1
+            },
+            {
+              id: 2,
+              name: "华为 Meta30",
+              price: 6000,
+              stock: 2
+            },
+            {
+              id: 3,
+              name: "华硕画家国度笔记本电脑",
+              price: 10000,
+              stock: 3
+            }
+          ]
+     }
+     renderList(){
+      return  this.state.listData.map(item=>{
+            return <ListItem key={item.id} data={item} onDelete={this.handDelete}></ListItem>
+        })
+     }
+     handDelete=(id)=>{
+         const listData=this.state.listData.filter(item=>item.id!==id)
+         this.setState({
+            listData
+         })       
+     }
+    render() {  
+        return (  
+            <div>
+                {this.state.listData.length<=0 && <div>购物车为空</div>}
+                {this.renderList()}
+            </div>
+        );
+    }
+}
+export default Stated;
+
+// 子组件
+import React, { Component } from 'react';
+class ListItem extends Component {
+    state = {  }
+    render() { 
+        console.log('item render--虚拟dom')
+        return (  
+            <div>
+                <span>{this.props.data.name}</span>
+                <button onClick={()=>{
+                    this.props.onDelete(this.props.data.id)
+                }}>删除</button>
+            </div>
+        );
+    }
+}
+ 
+export default ListItem;
+```
+#### sholudComponentUpdate
+```jsx
+// 子组件
+import React, { Component } from 'react';
+class ListItem extends Component {
+    state = {  }
+    shouldComponentUpdate(nextProps,nextState){
+        if(nextProps.data.id===this.props.data.id) return false
+        return true
+    }
+}
+export default ListItem;
+```
+#### PureComponent
+```jsx
+// 父组件
+import React,{PrueComponent} from 'react';
+import ListItem from './listItem'
+class Stated extends PrueComponent {
+    ......
+}
+```
+
+### 3.3.2 单一数据源
+
+尊崇单一数据源，相同的子组件的数据应该由父组件通过`props`传递子组件，由父组件统一管理，避免造成数据的混乱，使用这个原则的时候，当父组件任何一个
+状态的改变，会自动更新子组件这一部分，从上而下传达到子组件的，是同步的方法，子组件想操作数据，由父组件提供更新函数。
+
+### 3.3.3 状态提升
+
+当我们的子组件都要控制同一个数据源的时候，我们需要将数据提升到它们共同的父组件当中，然后父组件通过props传递给子组件，并由父组件进行统一管理和存储。
+
+### 3.3.4 有状态组件和无状态组件
+
+#### Stateful
+
+- 类组件
+- 有状态组件
+- 容器组件
+
+#### Stateless
+
+- 函数组件
+- 无状态组件
+- 展示组件
+
+无状态组件，所有数据源都来自于父组件，它只做展示的作用
+
+尽可能通过状态提升原则，将需要的状态提取到父组件中，而其他的组件使用无状态组件编写
+
+### 3.3.5 扩展资料
+
+[不可变数据](https://github.com/immutable-js/immutable-js)
+
+[JS内存管理](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Memory_Management)
+
+[状态提升](http://huziketang.mangojuice.top/books/react/lesson17)
+
+[context管理状态](http://react.html.cn/docs/context.html)
+
+[context管理状态](https://juejin.im/post/5a90e0545188257a63112977)  
+
+
+## 3.4 生命周期
+
+### 3.4.1 三个阶段的生命周期函数
+
+#### 三个阶段生命周期
+
+创建阶段->更新阶段->卸载阶段
+
+![](~@/react/lifeCycle.png)
+
+### 3.4.2 创建阶段
+
+#### 1. 创建阶段constructor
+
+- 初始化内部状态，显性设置和隐性设置
+
+   一个类必须有`constructor`方法，如果这个方法没有显示定义，一个默认的`constructor`方法会被添加
+
+- 需要使用super()调用基类的构造函数
+
+  将父类的props注入给子组件
+
+- 可以直接修改state
+#### 2. 创建阶段componentWillMount(16.3移除)
+
+- UI渲染完成前调用
+- 只执行一次
+- 这里调用setState不会出发render
+
+ 更多的时候我们把组件里面的内容，会提前到`constructor`中，所以这个生命周期函数在项目中我们很少使用
+
+#### 3. 创建阶段render
+
+- 一个组件必须有的方法（我们的类组件）
+- 返回一个顶级的react元素
+  只能有一个根元素，不能返回并列元素
+- 渲染的是Dom Tree的一个React对象
+
+#### 4. 创建阶段componentDidMount
+
+- UI渲染完成后调用
+- 只执行一次
+- 获取一些外部数据资源
+
+需要注意的是当父组件执行render的时候，当所有子组件都完成了创建，那么父组件才能最终的完成渲染，然后父组件执行componentDidMount
+
+
+### 3.4.3 更新阶段
+
+当state和props发生变化时，进入更新阶段
+
+#### 1.更新阶段componentWillReceiveProps(16.3移除)
+
+只接收props
+- 组件接收到新props的时候触发
+- 在此对比新props和原来的props
+- 不推荐使用
+
+#### 2.更新阶段shouldComponentUpdate
+
+接收state和props
+- 是否要继续执行render方法
+- 可以由PureComponent自动实现
+
+#### 3.更新阶段componentDidUpdate
+
+- 每次UI更新时调用
+- 更新一些外部数据资源
+
+### 3.4.4 卸载阶段 componentWillmount
+- 组件移除时调用
+- 可以用来做资源的释放
+
+### 3.4.5 图解生命周期
+
+#### 旧的生命周期
+
+![](~@/react/usedLifecycle.png)
+
+#### 新的生命周期
+
+![](~@/react/newLifecycle.png)
+
+### 3.4.6 扩展资料
+
+[React新生命周期1](https://www.jianshu.com/p/514fe21b9914)
+
+
+[React新生命周期2](https://zhuanlan.zhihu.com/p/38030418)
+
+## 3.5 React组件设计模式
+
+### 3.5 高阶组件
+
+在业务中可能碰到许多要复用业务逻辑的情况，我们为了避免每个组件都写一段相同逻辑的代码，我们就用高阶组件。
+
+高阶组件就是接收组件作为参数，并返回新的组件
+
+```js
+const NewComponent=higherOrderComponent(OldComponent)
+```
+
+
+
 
