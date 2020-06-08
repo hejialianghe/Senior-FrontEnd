@@ -497,16 +497,212 @@ class Stated extends PrueComponent {
 
 ## 3.5 React组件设计模式
 
-### 3.5 高阶组件
+### 3.5.1 高阶组件
 
 在业务中可能碰到许多要复用业务逻辑的情况，我们为了避免每个组件都写一段相同逻辑的代码，我们就用高阶组件。
+
+高阶组件是对已有组件的封装，形成新的组件后，有自己的状态和逻辑；并可以传递已有的组件
 
 高阶组件就是接收组件作为参数，并返回新的组件
 
 ```js
 const NewComponent=higherOrderComponent(OldComponent)
 ```
+![](~@/react/higherOrder.png)
 
+#### 案例：假如多个组件需要鼠标滑动到上面时给个提示，移除时清空提示，那么可以把这个公共提示抽离出来复用
+
+目录
+```bash
+src/  
+    components/
+       Item/
+         index.jsx
+         withTooltip.js
+``` 
+封装Hoc组件   
+```js
+import React from 'react';
+const withTooltip=(Component)=>{
+    class Hoc extends React.Component {
+        state={
+            showToolTip:false,
+            content:''
+        }
+        handleOver=(e)=>{
+            this.setState({showToolTip:true,content:e.target.innerText})
+        }
+        handleOut=()=>{
+            this.setState({showToolTip:true,content:''})
+        }
+        render(){
+            return(
+                <div onMouseOver={this.handleOver} onMouseOut={this.handleOut}>
+                    <Component action={this.state} {...props}></Component>
+                </div>
+            )
+        }
+    }
+    return Hoc
+}
+export default withTooltip
+```
+在需要的组件引入并调用
+```jsx{13}
+import React from 'react';
+import withTooltip from './withTooltip'
+const ItemA = (props) => {
+    return (
+        <div className="container">
+            <button>Tooltip</button>
+            {
+                props.action.showToolTip && <div>{props.action.content}</div>
+            }
+        </div>
+        );
+}
+export default withTooltip(ItemA)
+```
+![](~@/react/higherOrder2.png)
+
+#### 高阶组件特性
+- 一个函数，传入一个组件，返回一个新组件
+- 一般不会有ui展现
+- 提供一些可复用的功能
+
+### 3.5.2 函数作为子组件（renderProps）
+
+解决复用业务逻辑的问题，是指一种在组件之间使用一个值为函数的props，来共享代码的的设计模式
+
+![](~@/react/renderProps.png)
+
+#### 结构
+
+```jsx
+// 1.定义子组件
+render(){
+        return (
+            <div>
+                {this.props.render(this.state)}
+            </div>
+        )
+    }
+// 2.使用函数作为Props
+<RenderPropComponent render={
+    (state)=>{
+        <div>
+            content
+        </div>
+    }
+}/>
+```
+#### 改写上面的案例
+
+目录
+```bash
+src/  
+    components/
+       Rp/
+         index.jsx
+         withTooltip.js
+``` 
+定义子组件
+```jsx
+import React from 'react';
+    class WithTooltip extends React.Component {
+        state={
+            showToolTip:false,
+            content:''
+        }
+        handleOver=(e)=>{
+            this.setState({showToolTip:true,content:e.target.innerText})
+        }
+        handleOut=()=>{
+            this.setState({showToolTip:true,content:''})
+        }
+        render(){
+            return(
+                <div onMouseOver={this.handleOver} onMouseOut={this.handleOut}>
+                    {this.props.render(this.state)}
+                </div>
+            )
+        }
+    }
+export default WithTooltip
+``` 
+定义父组件
+```jsx
+import React from 'react';
+    class WithTooltip extends React.Component {
+        state={
+            showToolTip:false,
+            content:''
+        }
+        handleOver=(e)=>{
+            this.setState({showToolTip:true,content:e.target.innerText})
+        }
+        handleOut=()=>{
+            this.setState({showToolTip:true,content:''})
+        }
+        render(){
+            return(
+                <div onMouseOver={this.handleOver} onMouseOut={this.handleOut}>
+                    {this.props.render(this.state)}
+                </div>
+            )
+        }
+    }
+export default WithTooltip
+``` 
+改写成函数作为子组件（更加直观）
+
+定义子组件
+```jsx{16}
+import React from 'react';
+    class WithTooltip extends React.Component {
+        state={
+            showToolTip:false,
+            content:''
+        }
+        handleOver=(e)=>{
+            this.setState({showToolTip:true,content:e.target.innerText})
+        }
+        handleOut=()=>{
+            this.setState({showToolTip:true,content:''})
+        }
+        render(){
+            return(
+                <div onMouseOver={this.handleOver} onMouseOut={this.handleOut}>
+                    {this.props.children(this.state)}
+                </div>
+            )
+        }
+    }
+export default WithTooltip
+``` 
+定义父组件
+```jsx{7-14}
+import React from 'react';
+import WithTooltip from './withTooltip'
+const ItemB = (props) => {
+    return (
+        <div className="container">
+              <WithTooltip>
+                {({showToolTip,content})=>(
+                    <div>
+                      <button>Tooltip</button>
+                        {
+                        showToolTip && <div>{content}</div>
+                        }
+                    </div>
+                )}
+            </WithTooltip>
+    
+        </div>
+        );
+}
+export default ItemB
+``` 
 
 
 
