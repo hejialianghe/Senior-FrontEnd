@@ -510,7 +510,7 @@ const NewComponent=higherOrderComponent(OldComponent)
 ```
 ![](~@/react/higherOrder.png)
 
-#### 案例：假如多个组件需要鼠标滑动到上面时给个提示，移除时清空提示，那么可以把这个公共提示抽离出来复用
+#### 案例：假如多个组件需要鼠标滑入时给个提示，滑出时清空提示，那么可以把这个公共提示抽离出来复用
 
 目录
 ```bash
@@ -520,7 +520,7 @@ src/
          index.jsx
          withTooltip.js
 ``` 
-封装Hoc组件   
+封装Hoc组件（withTooltip.js）
 ```js
 import React from 'react';
 const withTooltip=(Component)=>{
@@ -547,7 +547,7 @@ const withTooltip=(Component)=>{
 }
 export default withTooltip
 ```
-在需要的组件引入并调用
+在需要的组件引入并调用（index.jsx）
 ```jsx{13}
 import React from 'react';
 import withTooltip from './withTooltip'
@@ -606,7 +606,7 @@ src/
          index.jsx
          withTooltip.js
 ``` 
-定义子组件
+定义子组件（withTooltip.js）
 ```jsx
 import React from 'react';
     class WithTooltip extends React.Component {
@@ -630,7 +630,7 @@ import React from 'react';
     }
 export default WithTooltip
 ``` 
-定义父组件
+定义父组件（index.jsx)
 ```jsx
 import React from 'react';
     class WithTooltip extends React.Component {
