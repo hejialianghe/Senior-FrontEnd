@@ -178,7 +178,7 @@ export function parseHTML (html, options) {
 
   // Clean up any remaining tags
   parseEndTag()
-
+  // 用来移动解析游标，避免重复解析
   function advance (n) {
     index += n
     html = html.substring(n)

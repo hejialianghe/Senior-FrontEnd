@@ -175,6 +175,10 @@ react事件要素
 ```
 ### 3.2.2 修改State
 
+- 使用setState
+- setState是异步的
+- State的更新是一个浅合并（shalllow merge）的过程
+
 ```jsx
    class ListItem extends Component {
      constructor(props){
@@ -227,6 +231,12 @@ addCount函数中打印的2次`conut`的值是一样的，说明setState的处�
 ```
 ### 3.2.3 创建新的状态
 
+修改state我们都要遵循状态都应该是不可变数据
+
+#### 什么是不可变数据
+
+不可变数据是函数式编程的重要概念，就是我们对已经初始化的数据不进行更改，每次更改都是创建新的对象来承载新的数据状态
+
 状态类型
 - 值类型：string、number、boolean、null、undefined
 - 数组类型
@@ -254,6 +264,9 @@ this.setState({
     item:_item
 })
 ```
+
+上面创建新的对象都是浅拷贝，如果要深拷贝可以用immutable.js类库 来处理不可变数据。
+
 ### 3.2.4 扩展资料
 
 [React Dev Tools](https://www.npmjs.com/package/react-devtools)
@@ -374,7 +387,22 @@ class Stated extends PrueComponent {
 
 当我们的子组件都要控制同一个数据源的时候，我们需要将数据提升到它们共同的父组件当中，然后父组件通过props传递给子组件，并由父组件进行统一管理和存储。
 
-### 3.3.4 有状态组件和无状态组件
+
+### 3.3.4 为什么使用不可变数据
+
+1. 可回溯
+
+ 不直接在数据上修改，方便我们追溯以前的历史记录。
+ 
+2. 跟踪数据改变
+
+直接修改数据，跟踪数据的改变需要把当前数据和以前数据的版本进行对比，这样整个对象树都要遍历一次
+如果使用不可变数据，创建新的对象，这样我们发现是一个新的对象，那我们不需要对象树对比就知道数据发生了变化，因为对象不是同一个引用了
+
+3. 确定在react中何时重新渲染
+
+不可变性最主要优势在于它可以帮助我们在react中创建Pure components，我们可以轻松确定不可变数据是否发生了改变，从而确实何时对组件进行重新渲染
+### 3.3.5 有状态组件和无状态组件
 
 #### Stateful
 
@@ -392,7 +420,7 @@ class Stated extends PrueComponent {
 
 尽可能通过状态提升原则，将需要的状态提取到父组件中，而其他的组件使用无状态组件编写
 
-### 3.3.5 扩展资料
+### 3.3.6 扩展资料
 
 [不可变数据](https://github.com/immutable-js/immutable-js)
 
@@ -432,7 +460,7 @@ class Stated extends PrueComponent {
 
 - UI渲染完成前调用
 - 只执行一次
-- 这里调用setState不会出发render
+- 这里调用setState不会触发render
 
  更多的时候我们把组件里面的内容，会提前到`constructor`中，所以这个生命周期函数在项目中我们很少使用
 
@@ -708,6 +736,3 @@ export default ItemB
 [扩展阅读1](https://www.jianshu.com/p/ff6b3008820a)
 
 [扩展阅读2](https://zhuanlan.zhihu.com/p/62791765)
-
-
-serverSiderender

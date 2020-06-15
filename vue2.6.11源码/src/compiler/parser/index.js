@@ -200,7 +200,7 @@ export function parse (
       )
     }
   }
-
+// HTML解析器
   parseHTML(template, {
     warn,
     expectHTML: options.expectHTML,
@@ -210,6 +210,14 @@ export function parse (
     shouldDecodeNewlinesForHref: options.shouldDecodeNewlinesForHref,
     shouldKeepComment: options.comments,
     outputSourceRange: options.outputSourceRange,
+    // 当解析到标签开始的位置时，触发start
+    /**
+     * @param {*} tag  标签
+     * @param {*} attrs 标签属性
+     * @param {*} unary 是否闭合
+     * @param {*} start 
+     * @param {*} end 
+     */
     start (tag, attrs, unary, start, end) {
       // check namespace.
       // inherit parent ns if there is one
@@ -220,7 +228,7 @@ export function parse (
       if (isIE && ns === 'svg') {
         attrs = guardIESVGBug(attrs)
       }
-
+        // 创建元素类型的AST树
       let element: ASTElement = createASTElement(tag, attrs, currentParent)
       if (ns) {
         element.ns = ns
@@ -296,7 +304,7 @@ export function parse (
         closeElement(element)
       }
     },
-
+   // 当解析到结束标签时调用end函数
     end (tag, start, end) {
       const element = stack[stack.length - 1]
       // pop stack
@@ -307,7 +315,7 @@ export function parse (
       }
       closeElement(element)
     },
-
+    // 当解析到标签文本时候
     chars (text: string, start: number, end: number) {
       if (!currentParent) {
         if (process.env.NODE_ENV !== 'production') {
@@ -379,6 +387,7 @@ export function parse (
         }
       }
     },
+    // 当解析到标签的注释时
     comment (text: string, start, end) {
       // adding anyting as a sibling to the root node is forbidden
       // comments should still be allowed, but ignored
