@@ -633,28 +633,28 @@ export default WithTooltip
 定义父组件（index.jsx)
 ```jsx
 import React from 'react';
-    class WithTooltip extends React.Component {
-        state={
-            showToolTip:false,
-            content:''
-        }
-        handleOver=(e)=>{
-            this.setState({showToolTip:true,content:e.target.innerText})
-        }
-        handleOut=()=>{
-            this.setState({showToolTip:true,content:''})
-        }
-        render(){
-            return(
-                <div onMouseOver={this.handleOver} onMouseOut={this.handleOut}>
-                    {this.props.render(this.state)}
-                </div>
-            )
-        }
-    }
-export default WithTooltip
+import WithTooltip from './withTooltip'
+const ItemA = (props) => {
+    return (
+        <div className="container">
+              <WithTooltip 
+                  render={({showToolTip,content})=>(
+                    <div>
+                      <button>Tooltip</button>
+                        {
+                        showToolTip && <div>{content}</div>
+                        }
+                    </div>
+                )}>
+            </WithTooltip>
+        </div>
+        );
+}
+export default ItemA
 ``` 
-改写成函数作为子组件（更加直观）
+### 3.5.3 函数作为子组件（Children）
+
+改写成函数作为子组件（更加直观）推荐
 
 定义子组件
 ```jsx{16}
@@ -703,7 +703,7 @@ const ItemB = (props) => {
 }
 export default ItemB
 ``` 
-### 3.5.3 扩展阅读
+### 3.5.4 扩展阅读
 
 [扩展阅读1](https://www.jianshu.com/p/ff6b3008820a)
 
