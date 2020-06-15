@@ -10,8 +10,5 @@ before_script:
   - chmod 777 ./deploy.sh
 script:
     - yarn deploy
-branches:
-  only:
-    - develop
 on:
     branch: master
