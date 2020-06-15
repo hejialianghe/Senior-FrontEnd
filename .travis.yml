@@ -1,15 +1,15 @@
 language: node_js
 node_js:
-  - lts/*
+  - lts/* #设置语言版本
 cache:
-  directories:
-    - node_modules
+  directories: 
+    - node_modules #缓存依赖
 install:
   - yarn
-before_script:
+before_script: #构建生命周期的“钩子”
   - chmod 777 ./deploy.sh
 script:
     - ./deploy.sh
 branches:
   only:
-    - develop #只监视develop分支
+    - develop #只有指定的分支提交时才会运行脚本
