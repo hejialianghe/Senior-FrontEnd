@@ -9,7 +9,5 @@ install:
 before_script:
   - chmod 777 ./deploy.sh
 script:
-    - ./deploy.sh
-branches:
-  only:
-    - develop #只监视develop分支
+    - sh ./deploy.sh
+branches: develop #只构建develop分支
