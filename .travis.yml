@@ -6,8 +6,7 @@ cache:
     - node_modules
 install:
   - yarn
-before_script:
-  - chmod 777 ./deploy.sh
+
 script:
     - sh ./deploy.sh
 branches: develop #只构建develop分支
