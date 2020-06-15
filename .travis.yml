@@ -5,10 +5,10 @@ cache:
   directories:
     - node_modules
 install:
-  - yarn # npm ci
+  - yarn
 before_script:
   - chmod 777 ./deploy.sh
 script:
-    - ./deploy.sh # npm run docs:build
+    - yarn deploy
 on:
     branch: master
