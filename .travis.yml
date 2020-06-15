@@ -9,6 +9,7 @@ install:
 before_script:
   - chmod 777 ./deploy.sh
 script:
-    - yarn deploy
-on:
-    branch: master
+    - ./deploy.sh
+branches:
+  only:
+    - develop #只监视develop分支
