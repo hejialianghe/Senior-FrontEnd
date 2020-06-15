@@ -16,4 +16,4 @@ git commit -m 'deploy'
 
 git push -f https://${access_token}@github.com/hejialianghe/hejialianghe.github.io master
 
- cd -
+cd -
