@@ -362,4 +362,72 @@ class NavBar extends Component {
 
 ## 4.3 Ant Design
 
-### 4.3.1 测试构建
+### 4.3.1 安装与使用
+
+安装
+
+```bash
+yarn  add antd
+```
+在项目中使用
+```jsx
+    import React from 'react';
+    import 'antd/dist/antd.css';
+    import {Button} from 'antd'
+    const MyAntd = () => {
+        return ( <div>
+                    <Button type='primary'>按钮</Button>
+            </div> );
+    }
+    export default MyAntd;
+```
+按需加载
+```bash
+安装 babel-plugin-import插件
+yarn  add babel-plugin-import --dev
+
+在.babelrc配置以下
+{
+    "presets": [
+        "react-app"
+      ],
+    "plugins":[
+        ["import", { "libraryName": "antd", "libraryDirectory": "es", "style": "css" }]
+    ]
+}
+
+或者在package.json配置以下（与上面配置二选其一）
+  "babel": {
+    "presets": [
+      "react-app"
+    ],
+     "plugins":[
+        ["import", { "libraryName": "antd", "libraryDirectory": "es", "style": "css" }]
+    ]
+  }
+```
+
+### 4.3.2 Ant生态
+
+1. AvaJS
+
+基于redux轻量数据流
+
+2. UmiJs
+
+可插拔企业级应用级插件，进阶版create-react-app
+
+3. ant design pro
+
+进阶版ant design，提供一整套ui方法
+
+1. ant motion 
+
+动画库
+
+5. Antv
+
+数据可视化
+
+
+
