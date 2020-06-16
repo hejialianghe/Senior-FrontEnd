@@ -9,7 +9,7 @@ install:
 before_script: #构建生命周期的“钩子”
   - chmod 777 ./deploy.sh
 script:
-    - ./deploy.sh
+    - sh ./deploy.sh
 branches:
   only:
     - develop #只有指定的分支提交时才会运行脚本
