@@ -16,13 +16,13 @@ before_install:
 - echo -e "Host 122.51.11.29\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config # 将生产服务器地址加入到测试机的信任列表中
 install:  # 安装依赖
   - yarn
-before_script: #构建生命周期的“钩子”
-  - chmod 777 ./deploy.sh
-script:
-    - sh ./deploy.sh
-    - npm run build
+# before_script: #构建生命周期的“钩子”
+#   - chmod 777 ./deploy.sh
+script:  # 需要执行的脚本
+    # - sh ./deploy.sh
+    - yarn build
 
 addons:
-  ssh_known_hosts: 122.51.11.29
+  ssh_known_hosts: 122.51.11.29 # 添加 SSH 信任列表
 after_success:
-- scp  -o stricthostkeychecking=no -P $PORT  dist root@122.51.11.29:/home/www/assets
+- scp  -o stricthostkeychecking=no -r ./dist/* root@122.51.11.29:/home/www/assets
