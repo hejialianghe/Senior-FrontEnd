@@ -25,4 +25,4 @@ script:
 addons:
   ssh_known_hosts: 122.51.11.29
 after_success:
-- scp  dist/* root@122.51.11.29:~/home/www/assets/
+- scp  -o stricthostkeychecking=no -P $PORT  dist root@122.51.11.29:/home/www/assets
