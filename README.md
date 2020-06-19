@@ -1,4 +1,4 @@
-![](./seniorFrontEnd.png)
+![seniorFrontEnd](./seniorFrontEnd.png)
 
 [![Build Status](https://travis-ci.com/hejialianghe/Senior-FrontEnd.svg?branch=master)](https://travis-ci.com/hejialianghe/Senior-FrontEnd)
 
@@ -20,11 +20,12 @@
 ```  
 
 ## 3. 给个start哦
+
 如果有收获就给个start哦 ！！！ :pray: :pray: :pray:   [项目地址](https://github.com/hejialianghe/seniorFrontEnd)
 
 ## 4.赞赏
 
-![](./money.f845196d.png)
+![赞赏方式](./money.f845196d.png)
 
 ### 赞赏名单:art:
 | 昵称  |  赞赏时间  | 赞赏方式 | 赞赏金额 |   备注   |
