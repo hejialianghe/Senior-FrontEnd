@@ -11,7 +11,7 @@ cache:
     - node_modules #缓存依赖
 before_install:
 - openssl aes-256-cbc -K $encrypted_844372f51c48_key -iv $encrypted_844372f51c48_iv
-  -in id_rsa.enc -out /usr/local/ruby/id_rsa -d # id_rsa.enc加密的私钥
+  -in id_rsa.enc -out  ~/.ssh/id_rsa -d # id_rsa.enc加密的私钥
 - chmod 600 /usr/local/ruby/id_rsa
 - echo -e "Host 122.51.11.29\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config # 将生产服务器地址加入到测试机的信任列表中
 install:  # 安装依赖
