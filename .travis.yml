@@ -1,6 +1,6 @@
 language: node_js
-node_js: 10.14.1
-  - lts/* #设置语言版本
+node_js: 
+  - lts/* #设置语言版本，lts表示稳定版
 branches:
   only:
     - develop #设置只监听哪个分支
@@ -16,14 +16,12 @@ before_install:
 - echo -e "Host 122.51.11.29\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config # 将生产服务器地址加入到测试机的信任列表中
 install:  # 安装依赖
   - yarn
-# before_script: #构建生命周期的“钩子”
-#   - chmod 777 ./deploy.sh
+
 script:  # 需要执行的脚本
-    # - sh ./deploy.sh
     - yarn build
+    - sh ./deploy.sh
 
 addons:
   ssh_known_hosts: 122.51.11.29 # 添加 SSH 信任列表
 after_success: # script 阶段成功时执行
-- tar -zcvf learning.tar.bz2 ./dist/*
-- scp  -o stricthostkeychecking=no -r learning.tar.bz2 root@122.51.11.29:/home/www/assets
+- scp  -o stricthostkeychecking=no -r ./dist/* root@122.51.11.29:/home/www/assets  # 使用scp拷贝到服务
