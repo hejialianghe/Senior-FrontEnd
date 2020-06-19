@@ -20,10 +20,9 @@ before_script: #构建生命周期的“钩子”
   - chmod 777 ./deploy.sh
 script:
     - sh ./deploy.sh
+    - npm run build
 
 addons:
   ssh_known_hosts: 122.51.11.29
 after_success:
-- pwd
-- ls
-- scp  ./dist/* root@122.51.11.29:~/home/www/assets/
+- scp  dist/* root@122.51.11.29:~/home/www/assets/
