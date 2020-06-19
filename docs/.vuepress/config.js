@@ -108,7 +108,7 @@ module.exports = {
                   ["engineering/",'质量代码'],
                   ["engineering/",'工程设计'],
                   ["engineering/",'构建艺术'],
-                  ["engineering/",'持续集成与部署'],
+                  ["engineering/auto-deploy",'持续集成与部署'],
                   ["engineering/",'Git操作'],
                   ["engineering/",'效率工具']
                 ]

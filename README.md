@@ -2,7 +2,7 @@
 
 <p align="center">
    <a href="https://github.com/hejialianghe/seniorFrontEnd" target="_blank">
-      <img src="http://h5.youliaowu.com/assets/img/seniorFrontEnd.png"/>
+      <img src="https://raw.githubusercontent.com/hejialianghe/Senior-FrontEnd/master/seniorFrontEnd.png"/>
    </a>
 </p>
 
@@ -29,8 +29,10 @@
 ## 4.赞赏
 
 <p align="center">
-      <img src="http://h5.youliaowu.com/assets/img/money.png"/>
+      <img src="https://raw.githubusercontent.com/hejialianghe/Senior-FrontEnd/master/money.f845196d.png"/>
 </p>
+
+
 
 ### 赞赏名单:art:
 | 昵称  |  赞赏时间  | 赞赏方式 | 赞赏金额 |   备注   |
@@ -43,4 +45,4 @@
 |  *润威  | 2020-01-11|   支付宝  | ￥ 20.20 |    -     |
 |  s*n | 2020-05-14|   微信  | ￥ 10.00 |    -     |
 
-
+![](./money.f845196d.png)
