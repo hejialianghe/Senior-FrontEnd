@@ -3,7 +3,7 @@ node_js:
   - lts/* #设置语言版本，lts表示稳定版
 branches:
   only:
-    - develop #设置只监听哪个分支
+    - master #设置只监听哪个分支
 cache:
   apt: true
   yarn: true
