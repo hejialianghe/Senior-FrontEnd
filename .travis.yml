@@ -24,5 +24,5 @@ script:  # 需要执行的脚本
 
 addons:
   ssh_known_hosts: 122.51.11.29 # 添加 SSH 信任列表
-after_success:
+after_success: # script 阶段成功时执行
 - scp  -o stricthostkeychecking=no -r ./dist/* root@122.51.11.29:/home/www/assets
