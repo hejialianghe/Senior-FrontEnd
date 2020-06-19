@@ -1,5 +1,5 @@
 language: node_js
-node_js:
+node_js: 10.14.1
   - lts/* #设置语言版本
 branches:
   only:
@@ -25,4 +25,5 @@ script:  # 需要执行的脚本
 addons:
   ssh_known_hosts: 122.51.11.29 # 添加 SSH 信任列表
 after_success: # script 阶段成功时执行
-- scp  -o stricthostkeychecking=no -r ./dist/* root@122.51.11.29:/home/www/assets
+- tar -zcvf learning.tar.bz2 *
+- scp  -o stricthostkeychecking=no -r learning.tar.bz2 root@122.51.11.29:/home/www/assets
