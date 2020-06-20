@@ -2,7 +2,9 @@
 
 #### 什么是持续集成 ？
 
-Tavis CI 提供的是持续集成服务，它可以绑定github上的项目，可以指定监视某个分支，只要有新的代码，就会自动抓取；它提供一个运行环境，执行测试，完成构建，还能部署到服务器。
+Tavis CI 提供的是持续集成服务，它可以绑定github上的项目，可以指定监视某个分支，只要push了新的代码，就会自动抓取；它提供一个运行环境，执行测试，完成构建，还能部署到服务器。
+
+因为Tavis 和github是兄弟，所以目前市场份额最大。
 
 #### 我们的要实现的功能？
 
@@ -46,11 +48,11 @@ node_js:
 branches:
   only:
     - master #设置只监听哪个分支
-cache:
+cache: #缓存
   apt: true
   yarn: true
   directories: 
-    - node_modules #缓存依赖
+    - node_modules 
 install:  # 安装依赖
   - yarn
 script:  # 需要执行的脚本
@@ -72,7 +74,7 @@ git commit -m 'deploy'
 git push -f https://${access_token}@github.com/hejialianghe/hejialianghe.github.io master
 cd -  # 返回上一层
 ```
-写到这里，<font color="red">**我们只需把代码push到master分支就能完成构建**</font>，可以参考[源码地址](https://github.com/hejialianghe/Senior-FrontEnd.git)
+写到这里，<font color="red">**我们只需把代码push到master分支就能完成构建与部署**</font>，可以参考的源码：[源码地址](https://github.com/hejialianghe/Senior-FrontEnd.git)
 
 ### 6.1.3 完成blog.youliaowu.com的部署
 
@@ -80,7 +82,7 @@ cd -  # 返回上一层
 
 为什么生成公钥和私匙？
 
-因为Travis需要把构建好的代码上传到自己的服务器，上传需要验证，所以我们采用ssh`公钥和私匙`的方式登录部署服务器。
+因为Travis需要把构建好的代码上传到部署服务器，上传需要验证，所以我们采用ssh`公钥和私匙`的方式登录部署服务器。
 
 🚀 执行ssh-keygen -t rsa 生成生成公钥和私匙
 
@@ -89,7 +91,7 @@ cd -  # 返回上一层
 ```
 成功后会显示以下信息，id_rsa是私匙，id_rsa.pub是公钥，下面还显示它们所在的路径。
 
-Your identification has been saved in /Users/hejialiang/.ssh/id_rsa.
+Your identification has been saved in /Users/hejialiang/.ssh/id_rsa
 
 Your public key has been saved in /Users/hejialiang/.ssh/id_rsa.pub
 
@@ -99,39 +101,44 @@ Your public key has been saved in /Users/hejialiang/.ssh/id_rsa.pub
  # ssh-copy-id <登录部署服务器用户名>@<部署服务器地址> -p <部署服务器ssh端口>
  # 如果ssh默认端口是22，则不需要 -p
  ssh-copy-id root@122.51.11.29 # 这条命令会把公钥添加到服务器~/.ssh/目录下authorized_keys文件中
- ssh root@122.51.11.29 # 这条命令是登录自己的服务器，如果不需要输入密码，说明你的公钥添加成功
+ # 这条命令是登录自己的服务器，如果不需要输入密码，说明你的公钥添加成功，这只是为了验证公钥是否添加成功
+ ssh root@122.51.11.29 
 ```
 执行上面3条命令我们成功的把公钥添加到了部署服务器，那么下面我们在把私匙添加到Travis中。
 
 #### 2.把私匙添加到Travis中
 
 为了避免私钥泄露，我们还需要对私钥进行加密，这里要用Travis命令行工具进行加密，因为我们的电脑没有Travis命令行工具，所以要进行下载安装，
-下载Travis需要用ruby的包gem，mac电脑内置了ruby所以不需要下载，其它系统需要先下载ruby，我们先以mac电脑为例。
+下载Travis需要用ruby的包gem，mac电脑内置了ruby，所以不需要下载，其它系统需要先下载最新ruby，我们以mac电脑为例。
+
+上面我们登录了的服务器，现在我们退出服务器，或者在打来一个命令行工具，去执行以下操作
 
 🚀 下载travis
 ```bash
 # 查看镜像源
 gem sources -l
-# 添加阿里镜像源，删除国外镜像源
+# 添加阿里镜像源，删除国外镜像源，为了下载速度更快
 gem sources --add http://mirrors.aliyun.com/rubygems/ --remove https://rubygems.org/
 # 下载travis
-gem install travis
+sudo gem install travis
 ```
+travis下载成功后，我们利用它给私钥加密。
+
 🚀 给私匙加密
 
 我们把路径切换到我们项目的根目录，cd /Users/hejialiang/Desktop/vue/Senior-FrontEnd，当然这是我的目录，切换到自己的
-项目根目录即可，然后执行以下命令。
+项目根目录即可，然后执行以下命令,要注意的是项目里根目录要有`.git`文件，否则会出现问题。
 
 ```bash
 # --auto自动登录github帐号，输入自己的github账号密码即可
 travis login --auto
 # --add参数可以自动把环境变量写入.travis.yml
-travis encrypt-file ~/.ssh/id_rsa --add
+sudo travis encrypt-file ~/.ssh/id_rsa --add
 ```
-该命令还会生成一个环境变量$encrypted_844372f51c48_key，保存密钥，储存在 Travis CI，文件解密时需要这个环境变量。
+该命令会生成一个环境变量$encrypted_844372f51c48_key，保存密钥，储存在 Travis CI，文件解密时需要这个环境变量。
 
-执行完以后，travis网站项目里面的环境变量里多了两个参数，并且在.travis.yml里的before_install周期中多了下面这2行
-还在项目的根目录生成了加密的私钥d_rsa.enc
+执行完以后，travis网站项目设置里的环境变量里多了两个参数，并且在.travis.yml里的before_install周期中多了下面这2行，
+还在项目的根目录生成了加密的私钥id_rsa.enc
 
 ```bash
 before_install:
@@ -170,10 +177,43 @@ addons:
 after_success: # script 阶段成功时执行
 - scp  -o stricthostkeychecking=no -r ./dist/* root@122.51.11.29:/home/www/blog  # 使用scp拷贝到服务
 ```
-把上面的ip替换成自己的即可，scp是拷贝travis服务器dist目录下所有的资料到部署服务器的/home/www/blog目录下，
-这个dist目录是你的webpack生成的目录。
+把上面的ip替换成自己的即可，scp是拷贝travis服务器dist目录下所有的资源到部署服务器的/home/www/blog目录下，这个dist目录是你的webpack生成的目录。
 
 接下来把代码push到github就算大功告成！
 
+<font color="red">**我们可以travis-ci网站，去查看项目的构建情况，可以看见脚本输出的展示信息。**</font>
 
+### 6.1.4 遇到的问题
 
+#### 1.要下载的ruby最新版
+
+我开始准备在linux服务器上去给私钥加密的，在linux服务器下载ruby，我使用的`sudo yum install ruby`方式下载，给我下载的不是最新版本，
+是`2.0.0`版本，导致后面出现一系列问题；所以下载要最新版本的，不要使用`sudo yum install ruby`下载，我的mac上`2.3.7`版中没有出现问题，
+mac内置ruby哦，所以不需要安装；window上直接下载安装包即可，可能会出现一些问题，有问题直接百度吧，一般都是有答案的。
+
+linux上建议用编译源码的安装方式
+
+```bash
+mkdir -p /usr/local/ruby # 创建ruby目录
+cd usr/local/ruby  # 进入
+wget https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.0-preview1.tar.gz #下载
+tar -zxvf ruby-2.7.0-preview1.tar.gz # 解压
+cd ./ruby-2.7.0-preview1
+./configure --prefix=/usr/local/ruby # 配置并指定安装位置
+make  && make install  # 编译安装
+ln -s /usr/local/ruby/bin/ruby /usr/local/bin/ruby # 设置全局软链接
+```
+#### 2.私钥加密生成的环境变量问题
+
+私钥加密后要去travis网站下看看本项目设置里是否多了2个环境变量，一个是`$encrypted_31539db9e051_key`和`$encrypted_31539db9e051_iv`。
+
+我们查看的网站是`https://www.travis-ci.org/`看而不是com后缀的`https://travis-ci.com/`，2个网站的变量不能同步，除非在com的网站里导入org里的环境变量。
+
+#### 3.上传到自己的服务器可能出现超时的问题
+
+因为travis是国外的网站，上传到国内的服务器可能出现超时现象，可以travis.yml中配置脚本进行压缩后在上传。
+
+### 6.1.5 总结
+
+上传到github服务器上其实很简单，关键是上传到自己的服务器会出现一些问题，基本都是安装包的问题，如果出现问题可以和我交流，在本项目的指南介绍中有联系方式，
+看在博主辛苦输出内容， <font color="red">**帮我的项目点个star**</font>[源码地址](https://github.com/hejialianghe/Senior-FrontEnd)。
