@@ -3,5 +3,6 @@ docs/.vuepress/dist/
 dist
 .vscode
 .DS_Store
+.gitee
 yarn.lock
 html
