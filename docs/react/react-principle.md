@@ -46,7 +46,7 @@ class Avatar extends Component {
     }
 }
 funtion HocAvatar(Component){
-    return ()=> <Component name='王一瑾'/>
+    return ()=> <Component name='王艺瑾'/>
 }
 ```
 - 通过对现有组件进行扩展、增强的方式来实现复用，通常采用包裹方法来实现
@@ -68,13 +68,13 @@ export function HooksAvatar (){
 ### 5.4.2 hooks原理
 
 hooks不是一个新ap也不是一个黑魔法，就是单纯的一个数组，看上面的例子hook api返回一个数组，一个是当前值，一个是设置当前值的函数
-#### hooks的demo 
+#### hooks中的useState
 
 ```jsx
 import React ,{useState}from 'react';
 
 const App = () => {
-    const [name,setName]=useState('王一瑾')
+    const [name,setName]=useState('王艺瑾')
     return (<div>
              <div>{name}</div>
              <button
@@ -153,8 +153,7 @@ function mountState<S>(initialState:(()=>S | S,):[S,Dispatch<BasicStateAction<S>
 - useState 
  函数组件中的state方法
 - useEffect
-函数组件处理副作用的方法
-什么是副作用？异步请求、订阅原生的dom实事件、setTimeoutd等
+函数组件处理副作用的方法，什么是副作用？异步请求、订阅原生的dom实事件、setTimeoutd等
 - useReducer
 另一种"useState"，跟redux有点类似
 - useRef
@@ -162,6 +161,132 @@ function mountState<S>(initialState:(()=>S | S,):[S,Dispatch<BasicStateAction<S>
 -useCustom
 自定义Hooks组件
 
-#### test
+1. useState 
 
+```jsx
+import React,{useState} from 'react'
+const HooksTest = () => {
+    // 声明一个count的state变量，useState可以给一个默认值
+    const [count,setCount]=useState(0) 
+    /*
+        useState也可以传递一个函数，这个函数第一个参数可以拿到上一次的值，
+        在可以在函数里做一些操作
+        const [count,setCount]=useState((preState)=>{
+            return {...preState,..updatedValues}
+        }) 
+     */
+  return (
+        <div>
+            {/*通过setCount来改变count的值*/}
+            <button onClick={()=>{
+               setCount(count+1) 
+            }}
+            >Add</button>
+            {count}
+        <div>
+    )
+} 
+```
+2. useEffect
+
+```jsx
+import React,{useEffect} from 'react';
+// 我们可以把useEffect 看做componentDidmount、componentDidUpdate、componntWillUnmount
+const HooksTest = () => {
+    const [count, setCount] = useState(0);
+    // useEffect可以让你在第一个参数的函数中执行副作用操作，就是请求数据，dom操作之类的
+    // useEffect返回一个函数，函数里表示要清除的副作用，例如清除定时器,返回的函数会在卸载组件时执行
+    useEffect(()=>{
+        document.title = `You clicked ${count} times`;
+        return ()=>{
+            clearIntercal(timer)
+        }
+    })
+    /*
+      useEffect的第二个参数，通过在数组中传递值，例如只有count变化时才调用Effect，达到
+      不用每次渲染后都执行清理或执行effect导致的性能问题
+    */
+    useEffect(()=>{
+     document.title = `You clicked ${count} times`;
+    },[count])
+
+    /*
+    如果想执行只运行一次的effect（仅在组件挂载和卸载时执行），可以传递一个空数组，
+    告诉React你的Effect不依赖与props或state中任何值
+    */
+    useEffect(()=>{
+     document.title = `You clicked ${count} times`;
+    },[])
+
+    /* 
+      可以使用多个Effect，将不相关的逻辑分离到不同的effect中
+    */
+   useEffect(()=>{
+       axios.get('login')
+   },[])
+    return(
+         <div>
+            <p>You clicked {count} times</p>
+            <button onClick={() => setCount(count + 1)}>
+                Click me
+            </button>
+         </div>
+    )
+}
+```
+3. useReducer
+
+useReducer是useState的替代方案，它接受一个形如(state,action)=>newState的reducer，并返回当前的state以及与其配套的dispatch方法
+```jsx
+import React,{useReducer} from 'react'
+const initialState={count:0}
+function reducer (state,action){
+    switch (action.type){
+        case 'increment':
+            return {count:state.count+1}
+        case 'decrement':
+            return {count:state.count-1}
+        default:
+            throw new Error()
+    }
+
+}
+const [state.dispatch]=useReducer(reducer,initialState)
+const HooksTest = () => {
+
+  return (
+        <div>
+            {state.count}
+            <button onClick={()=>{
+             dispatch({type:'increment'})
+            }}>increment</button>
+            <button onClick={()=>{
+             dispatch({type:'decrement'})
+            }}>increment</button>
+        <div>
+    )
+}   
+```
+
+3. useRef
+
+```jsx
+import React,{useRef} from 'react'
+const HooksTest = () => {
+    const inputEl=useRef(null)
+   function onButtion () {
+      console.log('inputEl',inputEl)
+      inputEl.current.focus() 
+   }
+  return (
+        <div>
+            <input type='text' ref={inputEl}>
+            <button onClick={onButtion}
+            >Add</button>
+            {count}
+        <div>
+    )
+} 
+
+```
 

@@ -8,7 +8,9 @@
 
 创建一个项目：npx create-react-app my-app
 
-终端输入：`yarn eject` 生成一个项目的依赖
+建一个ts项目：npx create-react-app my-app --typescript
+
+终端输入：`yarn eject` （慎用，会把潜藏的react-script弹射到应用层，此操作不可逆）
 
 文档目录
 ```bash
