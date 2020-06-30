@@ -1,3 +1,90 @@
+## 5.1 React Virtual DOM原理
+
+### 5.1.1 Virtual DOM是什么？
+
+官方定义：virtual DOM是一种编程理念，将ui虚拟的保持到内存中，并且通过某些库渲染成真实的dom。
+
+总结：virtual dom是一种编程理念，将ui节点抽象成js对象。
+
+#### ui节点抽象
+
+Learn Once，Write anywhere：因为提供了对HTML DOM的抽象，所以在web开发中，通常不需要去调用DOM API，也是因为抽象，所以React也可以开发Native（React Native）
+
+#### Virtual dom 构建UI
+
+以我们经常见的web开发为例，来看下React是怎么通过Virtual DOM渲染成HTML元素的。
+
+```jsx
+    class App extends Component {
+        state={
+            text:'Virtual DOM'
+        }
+        render () {
+            const {text}=this.state
+            return (
+                <div>
+                    {text}
+                <div>
+            )
+        }
+    }
+```
+可以看到React是通过render方法渲染Virtual DOM ，从而绘制出真实DOM。意味着每次修改state的值就会执行render方法
+
+### 5.1.2 Virtual DOM VS 原生DOM
+
+- 原生DOM更新
+
+DOM API 调用更新UI
+
+- Virtual DOM更新
+
+1. 每次render都会产生一份新的’react dom‘
+2. Virtual DOM要对新旧‘react dom’进行比较，从而确定在旧‘dom’的基础上进行多少变更
+3. 确定最优的变更策略之后调用DOM API更新
+
+Virtual DOM数据结构
+
+```js
+    const globaldom={
+        tagname:'html',
+        children:[{
+            tagname:'head'
+        },{
+            tagname:'body',
+            children:[
+                {
+                  tagName:'div',
+                  attributes:{
+                      className:'test'
+                  }
+                }
+            ]
+         }
+        ]
+    }
+```
+对UI节点抽象
+
+在Virtual DOM中，对HTML节点进行抽象，用js对象的形式表示HTML
+
+改变了过去对HTML节点的理解
+
+呈现在用户面前的页面就是一个复杂的递归对象
+
+### 5.1.3 Virtual DOM Diff
+
+- Virtual DOM如何提搞性能
+
+1. 我们将render产生的Virtual DOM简称 ‘Vdom’
+2. 通常调用setState方法触发Vdom更新
+3. 通过对比新旧‘Vdom’确定最优实现新的‘vdom’所需的操作
+
+- Virtual DOM Diff的层次
+
+1. 层级级别的比较
+2. 元素级别的比较
+
 ## 5.4 React-hooks
 
 ### 5.4.1 hooks使命
