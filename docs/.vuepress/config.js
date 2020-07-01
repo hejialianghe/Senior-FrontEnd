@@ -87,7 +87,9 @@ module.exports = {
                   ["react/react-base",'步入react'],
                   ["react/react-positive",'react正篇'],
                   ["react/react-ecology",'react生态'],
-                  ["react/react-principle",'react原理']
+                  ["react/react-principle",'react原理'],
+                  ["react/react-state-mana",'react状态管理'],
+                  ["react/react-actualCombat",'react高级实战']
                 ]
               },
               {

@@ -2,7 +2,7 @@
 
 ### 5.1.1 Virtual DOM是什么？
 
-官方定义：virtual DOM是一种编程理念，将ui虚拟的保持到内存中，并且通过某些库渲染成真实的dom。
+官方定义：virtual DOM是一种编程理念（数据驱动视图），将ui虚拟的保持到内存中，并且通过某些库渲染成真实的dom，这个过程又叫做协调。
 
 总结：virtual dom是一种编程理念，将ui节点抽象成js对象。
 
@@ -84,6 +84,70 @@ Virtual DOM数据结构
 
 1. 层级级别的比较
 2. 元素级别的比较
+
+#### Component Diff
+
+![](~@/react/componentdiif.png)
+
+假设将图中的D节点更换成G节点，会把D节点删掉，然后创建G节点；只会同层级比较，这样会降低diff的复杂度，大概率下面的层级不一样的。
+
+#### Element Diff
+
+1. createChild
+2. moveChild
+3. removeChild
+
+我们元素之间的对比中，会有3种情况：创建节点、删除节点、移动节点
+
+- 创建节点
+
+```js
+    createChild:function(child,afterNode,mountImage){
+        return makeInserMarku(mountImage,afterNode,child._mountIndex)
+    }
+```
+- 删除节点
+
+```js
+    removeChild:function(child,node){
+        return makeRemove(child，node)
+    }
+```
+- 移动节点
+
+
+假设我们把节点3移动到第一的位置
+
+![](~@/react/moveChild.png)
+
+```js
+// 老的节点和新的节点相同，说明需要移动节点
+if(preChild===nextChild){
+    updates=enqueue(updates,this.moveChild(preChild,lastPlaceNode,nextIndex,lastIndex))
+    lastIndex=Math.max(preChild._mountIndex,lastIndex)
+    preChild._mountIndex=nextIndex
+}
+// 移动的方法
+moveChild:function (child,afterNode,toIndex,lastIndex){
+    // _mountIndex是这个元素在原有节点的顺序，lastIndex是这次要更新的顺序
+    if(child._mountIndex<lastIndex){
+        return makeMove(child,afterNode,toIndex)
+    }
+}
+```
+在实际中最后一个节点移动到第一位置的时候，不是把最后一个节点直接移动到第一的位置，而是把这个节点前面的节点依次往后移动，直到最后一个节点成为第一的位置。
+
+### 5.1.3 扩展资料
+
+[Virtual DOM 定义](https://reactjs.org/docs/faq-internals.html#what-is-the-virtual-dom)
+
+[Virtual DOM Node](https://mithril.js.org/vnodes.html)
+
+[VDom与 DOM 的区别](https://reactkungfu.com/2015/10/the-difference-between-virtual-dom-and-dom/)
+
+[React性能优化：Virtual Dom原理浅析](https://juejin.im/entry/5af99e786fb9a07ac90d5664)
+
+[[译] Virtual Dom 和 Diff 算法](https://juejin.im/post/5c504f736fb9a049ef26fcd3)
 
 ## 5.4 React-hooks
 
@@ -376,4 +440,8 @@ const HooksTest = () => {
 } 
 
 ```
+### 5.4.4 扩展资料
 
+[React Hooks 官方文档](https://reactjs.org/docs/hooks-intro.html)
+
+[useEffect 完整指南](https://overreacted.io/zh-hans/a-complete-guide-to-useeffect/)
