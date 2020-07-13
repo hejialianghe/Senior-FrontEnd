@@ -249,3 +249,81 @@ nameWrapper.setName(123)
 [入门教程](https://ts.xcatliu.com/)
 
 [更好的理解 TS 泛型](https://medium.com/@rossbulat/typescript-generics-explained-15c6493b510f)
+
+## 7.3 React 组件性能优化
+
+### 7.3.1 React 组件性能探寻
+
+#### React Devtools （react中的性能分析工具）推荐
+
+- React v16.5.0+（开发模式）
+- React Developer Tools V3.3.2+
+
+追踪用户行为
+
+1. 安装schedule包， yarn add schedule
+
+2. 在需要追踪的地方嵌入代码
+
+```jsx
+import { unstable_track as track} from 'schedule/track'
+
+export default class Home extends Component {
+    handleSubmit =e=>{
+        const text = e.target.value.trim()
+        // 用户点击了回车按钮就进行追踪
+        if(e.which===13){
+            track("Add TOdo",performance,now,()=>{
+                this.props.onSave(text)
+                if(this.props.newTodo){
+                    this.setState({text:''})
+                }
+            })
+        }
+    }
+}
+
+```
+#### React Profiler API（react中的性能分析工具）
+
+1. Profilter在“react”包中。
+2. onRender回调函数，返回一系列信息。
+
+### 7.3.2 组件性能优化
+
+#### PureComponent
+
+- class 组件优化工具
+
+- 实质是shouldComponentUpdate 方法中进行浅比较
+
+#### memo 
+
+- 函数组件优化工具
+
+- 是一个高阶函数，在其内部进行类似shouldComponentUpdate的比较
+
+- 可以指定比较函数
+
+#### 原生事件、定时器的销毁
+
+![](~@/react/reactNature.png)
+
+#### Web Workers API 尝试
+
+- Web Workers 使用后，Web应用程序可以：
+ - 在独立于主线程的后台线程中运行一个脚本；
+ - 在独立线程中执行费时的处理人物，避免一些耗时的任务阻断用户体验
+
+- 通信机制 Web Worker执行完耗时任务后与主线程的通信--postMessage
+
+### 7.3.3 扩展资料
+
+[React Profiler 博客](https://reactjs.org/blog/2018/09/10/introducing-the-react-profiler.html)
+
+[理解火焰图](http://www.brendangregg.com/flamegraphs.html)
+
+[React Profiler API](https://reactjs.org/docs/profiler.html#gatsby-focus-wrapper)
+
+[React 优化手段](https://www.codementor.io/blog/react-optimization-5wiwjnf9hj)
+
