@@ -97,8 +97,6 @@ module.exports = {
                 collapsable: false,
                 children: [
                   ["node/",'Node.js基础'],
-                  ["node/",'Web服务及koa'],
-                  ["node/",'企业级Nodejs框架'],
                 ]
               },
               {
