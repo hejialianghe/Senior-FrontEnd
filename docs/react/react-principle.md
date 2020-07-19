@@ -149,6 +149,43 @@ moveChild:function (child,afterNode,toIndex,lastIndex){
 
 [[译] Virtual Dom 和 Diff 算法](https://juejin.im/post/5c504f736fb9a049ef26fcd3)
 
+## 5.3 new componentLifecyle（新生命周期）
+
+### 5.3.1 React组件新生命周期详解
+
+老的生命周期
+
+![](~@/react/oldLIfeCycle.png)
+
+react 16.3
+
+![](~@/react/react16.3.png)
+
+react 16.4中增加了在setState和forceUpdate()都会执行这个静态方法`getDeriveStateFromProps`
+
+![](~@/react/newLifecycle.png)
+
+### 5.3.2 挂载阶段
+
+1. 挂载阶段的函数
+
+- constructor 构造函数，初始化state，以及为事件处理函数绑定实例
+- getDeriveStateFromProps 新增的静态方法，返回一个新的state，或者是null，静态方法里的，这里面的this是指向全局变量
+- render 渲染函数
+- componentDidMount 挂载成功后立即调用
+
+2. 更新阶段的函数
+
+- getDeriveStateFromProps props变化或者state方法触发
+- shouldComponentUpdate 判断是否进行更新
+- render 函数
+- getSnapshotBeforeUpdate render方法调用之后，返回一个dom更新之前的快照，将配合后续的componentDidUpdate
+- componentDidUpdate 更新后会被立即调用
+
+3. 卸载阶段的函数
+
+- componentWillUnmount 卸载函数，组件卸载及销毁之前直接调用，主要用于清除一些在组件生命周期订阅，真实DOM事件以及setTimeout/setinterval的返回值
+
 ## 5.4 React-hooks
 
 ### 5.4.1 hooks使命

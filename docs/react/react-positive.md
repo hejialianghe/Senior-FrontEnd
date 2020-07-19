@@ -514,6 +514,8 @@ class Stated extends PrueComponent {
 
 #### 新的生命周期
 
+16.3以后移除了 componentWillmount、componentWillReceiveProps、componentWillUpdate
+
 ![](~@/react/newLifecycle.png)
 
 ### 3.4.6 扩展资料
