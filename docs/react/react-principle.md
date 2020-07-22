@@ -370,6 +370,9 @@ function mountState<S>(initialState:(()=>S | S,):[S,Dispatch<BasicStateAction<S>
  函数组件中的state方法
 - useEffect
 函数组件处理副作用的方法，什么是副作用？异步请求、订阅原生的dom实事件、setTimeoutd等
+- useContext
+接受一个context对象（React.createContext的返回值）并返回该context的当前值，当前的context由上层组件中距离最近的`<Mycontext.provider></Mycontext.provider>`的
+value prop决定
 - useReducer
 另一种"useState"，跟redux有点类似
 - useRef
@@ -450,7 +453,50 @@ const HooksTest = () => {
     )
 }
 ```
-3. useReducer
+
+3. useContext
+
+```jsx
+// 1. 创建一个上下文管理组件context-manager.js，用于统一导出context实例
+import React from 'react'
+export const ItemsContext = Taro.createContext({ name: '' }) //接受一个默认值
+
+// 2. 父组件提供数据
+import React from 'react'
+import Child from './child'
+import { ItemsContext } from './context-manager'
+import './index.scss'
+
+const items = { name: '测试' }
+const Father = () => {
+  return (
+    <div className='father'>
+      <ItemsContext.Provider value={items}>
+        <Child></Child>
+      </ItemsContext.Provider>
+    </div>
+  )
+}
+
+export default Father
+
+// 3.子组件用useContext解析上下文
+import React ,{useContext} from 'react'
+import { ItemsContext } from './context-manager'
+import './index.scss'
+const Child = () => {
+  const items=useContext(ItemsContext)
+  return (
+    <div className='child'>
+        子组件
+        {items.name}
+    </div>
+  )
+}
+export default Child
+```
+
+4. useReducer
 
 useReducer是useState的替代方案，它接受一个形如(state,action)=>newState的reducer，并返回当前的state以及与其配套的dispatch方法
 ```jsx
@@ -484,7 +530,7 @@ const HooksTest = () => {
 }   
 ```
 
-3. useRef
+5. useRef
 
 ```jsx
 import React,{useRef} from 'react'
