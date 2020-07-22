@@ -186,6 +186,34 @@ react 16.4中增加了在setState和forceUpdate()都会执行这个静态方法`
 
 - componentWillUnmount 卸载函数，组件卸载及销毁之前直接调用，主要用于清除一些在组件生命周期订阅，真实DOM事件以及setTimeout/setinterval的返回值
 
+### 异常捕获
+
+- componentDidCatch 生命周期方法在后代组件抛出错误后被调用，方法接受两个参数（err，info），分别是错误信息和错误组件的栈信息
+- getDerivedStateFromError 在后代组件抛出错误后调用，接受一个参数（error）表示具体的错误信息
+
+### 5.3.3 新版组件升级（React15版本升级中需要处理的三个方法）
+
+- componetWillMount 
+  - render 方法之前调用，在此调用setState并不会触发再次渲染
+  - 通常会在这个方法中进行页面标题的一些修改以及其他与再次render不相关的操作
+- UNSAFE_componentWillMount 
+   - 与state相关的操作挪到constructor方法中执行
+   - 异步操作挪到componentDidMount中执行
+
+- componentWillUpdate
+   - 在组件收到新的props或state时，会在渲染之前调用
+   - 方法内不能调用setState，触发循环，内存泄漏
+- UNSAFE_componentWillUpdate
+   - 应该在shouldComponentUpdate
+
+- componentWillReceiveProps
+  - 接受父级传递过来最新的props，转化为组件内的state
+  - 判断是否进行更新或者执行异步请求数据
+- UNSADFE_componentWillReceiveProps
+  - 与渲染相关的props直接渲染，不需要处理为组件内的state
+  - 异步数据请求在componentDidUpdate中处理
+  - getDerivedStateFromPropss方法替换，需要考虑生命周期的执行顺序
+
 ## 5.4 React-hooks
 
 ### 5.4.1 hooks使命
