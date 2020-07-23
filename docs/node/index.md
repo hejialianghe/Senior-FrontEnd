@@ -172,3 +172,109 @@ EventEmitter的核心就是事件触发的Emitter，事件监听的on功能进�
 
 
 这些可以不用太深入，至少有这个概念，node架构最底层的数据类型，其实有这些数据类型，在上层去实现复杂的业务逻辑的时候；就可以调用这些数据类型，这是node帮我们封装好的；不用在再去造轮子。
+
+### 1.2.2 Nodejs 工具库
+
+#### Nodejs工具库-util
+
+本是内置模块开发时的公共工具集，现在开放给开发者使用
+
+🚀 风格转换
+
+  - promisify<=>callbackify、TextEncoder<=>TextDecoder
+
+🚀 调试工具
+
+ - debuglog、inspect、format、getSystemErrorName
+
+🚀 类型判断
+
+ - types.isDate(value)
+
+ #### Nodejs断言等价-assert
+
+ 内置断言库，需要配合测试框架使用，主动抛出AssertionError错误
+
+ 🚀 断言真假
+
+ - assert(value,msg),match(string,reg)
+
+ 🚀 断言等价
+
+ - strictEqual/deepStrictEqual以及相反操作equal/deepEqual弃用
+
+ 🚀 断言成功失败
+
+ - fail/throws doesNotThrow/ifError/rejects
+
+#### Nodejs工具库-querystring
+
+官方提供的解析和格式化URL查询字符串的实用工具
+
+- 查询字符串转键值对 querystring.parse(str[,sep[eq[,options]]])
+
+- 键值对转查询字符串 querystring.stringify(obj)
+
+### 1.2.3 Nodejs的文件操作能力
+
+#### Nodejs的文件操作能力-os
+
+- os模块提供了与操作系统相关的实用方法和属性
+
+- 通过兼容的方式调用不同平台的底层命令，形成系统快照
+
+  `cpus、platform、type、uptime、userInfo`
+
+- 定义操作系统级别的枚举常量
+
+ `信号常量SIG*、错误常量E*、windows特有WSA*、优先级PRIORITY_*`
+
+#### Nodejs的文件操作能力-fs
+
+- fs模块模拟Linux环境，提供了用于与文件系统进行交互的API
+- 所有的文件系统操作都具有同步和异步的形式
+- URI作为特殊的文件也可以被fs模块实用
+- 操作文件夹
+  - mkdir/rmdir
+- 操作文件
+  - chmod/open/read/write
+
+## 1.3 Nodejs提供的原生API能力（下）
+
+### 1.3.1 Nodejs的模块机制及原理
+
+#### Nodejs的模块机制-CommonJS
+
+- 模块引用
+
+ 通过require（module）来引入module
+
+- 模块定义
+
+通过挂载在module.exports对象上实现定义
+
+- 模块标识
+
+通过路径标识引入的是哪个模块
+
+在node引入一个模块会经历下面这4个阶段
+
+![](~@/node/moduleme.png)
+
+#### 路径分析
+
+- 内置模块
+
+ - 在Node进程开始的时候就预加载了
+ - 加载的是二进制文件，需要定位和编译
+
+- 文件模块
+
+ - 通过NPM安装的第三方模块
+ - 本地模块
+
+- 模块内容
+
+ - 函数、对象或者属性，如函数、数组甚至任意类型的JS对象
+ 
+

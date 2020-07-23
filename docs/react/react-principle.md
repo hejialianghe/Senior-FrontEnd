@@ -157,7 +157,7 @@ moveChild:function (child,afterNode,toIndex,lastIndex){
 
 ![](~@/react/oldLIfeCycle.png)
 
-react 16.3
+react 16.3 增加了getDeriveStateFromProps和getSnapshotBeforeUpdate 2个静态方法
 
 ![](~@/react/react16.3.png)
 
@@ -179,7 +179,7 @@ react 16.4中增加了在setState和forceUpdate()都会执行这个静态方法`
 - getDeriveStateFromProps props变化或者state方法触发
 - shouldComponentUpdate 判断是否进行更新
 - render 函数
-- getSnapshotBeforeUpdate render方法调用之后，返回一个dom更新之前的快照，将配合后续的componentDidUpdate
+- getSnapshotBeforeUpdate 生命周期方法在更新之前（如：更新 DOM 之前）被调用。此生命周期的返回值将作为第三个参数传递给 componentDidUpdate。（通常不需要，但在重新渲染过程中手动保留滚动位置等情况下非常有用。）
 - componentDidUpdate 更新后会被立即调用
 
 3. 卸载阶段的函数
@@ -191,25 +191,25 @@ react 16.4中增加了在setState和forceUpdate()都会执行这个静态方法`
 - componentDidCatch 生命周期方法在后代组件抛出错误后被调用，方法接受两个参数（err，info），分别是错误信息和错误组件的栈信息
 - getDerivedStateFromError 在后代组件抛出错误后调用，接受一个参数（error）表示具体的错误信息
 
-### 5.3.3 新版组件升级（React15版本升级中需要处理的三个方法）
+### 5.3.3 新版组件升级
 
-- componetWillMount 
+- componetWillMount (17.0被移除)
   - render 方法之前调用，在此调用setState并不会触发再次渲染
   - 通常会在这个方法中进行页面标题的一些修改以及其他与再次render不相关的操作
-- UNSAFE_componentWillMount 
+- UNSAFE_componentWillMount （16.3 新增不安全的生命周期引入别名）
    - 与state相关的操作挪到constructor方法中执行
    - 异步操作挪到componentDidMount中执行
 
-- componentWillUpdate
+- componentWillUpdate(17.0被移除)
    - 在组件收到新的props或state时，会在渲染之前调用
    - 方法内不能调用setState，触发循环，内存泄漏
-- UNSAFE_componentWillUpdate
+- UNSAFE_componentWillUpdate（16.3 新增不安全的生命周期引入别名）
    - 应该在shouldComponentUpdate
 
-- componentWillReceiveProps
+- componentWillReceiveProps(17.0被移除)
   - 接受父级传递过来最新的props，转化为组件内的state
   - 判断是否进行更新或者执行异步请求数据
-- UNSADFE_componentWillReceiveProps
+- UNSADFE_componentWillReceiveProps（16.3 新增不安全的生命周期引入别名）
   - 与渲染相关的props直接渲染，不需要处理为组件内的state
   - 异步数据请求在componentDidUpdate中处理
   - getDerivedStateFromPropss方法替换，需要考虑生命周期的执行顺序

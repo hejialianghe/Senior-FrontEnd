@@ -12,7 +12,7 @@
 ├── javaScript进阶          # 大厂如何去做防抖和节流
 ├── 计算机网络               # 学会基础知识，才能更好的理解下面的知识
 ├── vue                     # 源码讲解，涉及3.0
-├── react                   # 源码讲解，涉及16.7hook
+├── react                   # 源码讲解，涉及16.8hook
 ├── node.js                 # koa源码
 ├── 工程化                   # 涉及cli
 ├── 项目实践                 #有道云笔记
@@ -21,7 +21,7 @@
 
 ## 3. 给个start哦
 
-如果有收获就给个start哦 ！！！ :pray: :pray: :pray:   [项目地址](https://github.com/hejialianghe/seniorFrontEnd)
+如果有收获就给个start哦 ！！！ :pray: :pray: :pray:  [文档阅读地址](https://hejialianghe.github.io/)
 
 ## 4.赞赏
 
