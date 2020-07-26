@@ -276,5 +276,121 @@ EventEmitter的核心就是事件触发的Emitter，事件监听的on功能进�
 - 模块内容
 
  - 函数、对象或者属性，如函数、数组甚至任意类型的JS对象
- 
 
+#### 模块记载优先级
+
+![](~@/node/modulepriority.png)
+
+#### 模块文件定位
+
+![](~@/node/moduleLocation.png)
+
+#### 编译模块执行
+
+- .js 文件：
+  - 通过fs模块同步读取后编译执行，未识别类型也会当作js处理
+
+- .json 文件：
+  - 通过fs模块同步读取后，用JSON.parse()解析并返回结果
+
+- .node 文件：
+  - 这是用C/C++写的扩展文件，通过process.dlopen()方法加载最后编译生成的
+
+#### 模块js文件的编译
+
+- 注入全局变量
+  - 以参数形式，注入module/exports/require方法
+  - 同时注入路径解析时得到的__filename/__dirname
+- 构造上下文执行环境
+  - 闭包产生作用域，通过runlnThisContext()执行
+  - 将function对象挂载到exports对象上，并导出
+
+#### 加入缓存以及清除缓存
+
+- 核心模块
+  - 登记在NativeModeule._cache上
+
+- 文件模块
+  - 封装后的方法以字符串形式存储，等待调用
+
+- 清除缓存
+  - 通过delete require.catch[require.resolove(module)]
+
+#### import vs require
+
+- import 
+  - ES6规范
+  - 静态加载模块
+  - 编译的时候执行代码 
+  - 缓存执行结果
+  - 按需引入，节省内存
+
+- require
+  - commonJS规范
+  - 动态加载模块
+  - 调用的时候加载源码
+  - 加载全部代码
+
+  ### 1.3.2 Nodejs的网络编程能力
+
+  #### 网络模型 OSI & TCP/IP
+
+ ![](~@/node/networkmodel.png)
+
+  #### Soket
+
+  - 实现底层通信，几乎所有的应用层都是通过socket进行通信
+  - 对TCP/IP协议进行封装，向应用层协议暴露接口调用
+  - TCP/IP协议中，传输层存在两种通用协议：TCP、UDP
+  - 两种协议不同，因为不同参数的socket实现过程也不一样
+
+  #### Nodejs网络基础模块-net/dgram
+
+  - net 模块是TCP/IP的Node实现，提供一些用于底层的网络通信的小工具
+  - http.Server 继承自net.Server
+  - http 客户端与http服务端的通信均依赖与socket（net.Socket）
+    - net.Server: TCP server,内部通过socket来实现与客户端的通信
+    - net.Socket: 本地socket与node版实现，它实现了全双工的stream接口
+
+ #### Nodejs网络基础模块-net.Socket
+
+  - net.Socket 对象是TCP或UNIX Socket 的抽象
+  - net.Socket 实例实现了一个双工流接口
+
+  - API归纳
+    - 连接相关connect
+    - 数据读写 write
+    - 数据属性 bufferSize
+    - 地址相关 address
+
+ #### Nodejs网络基础模块-http/https/http2
+
+ - Http模块是Node的门脸，是编写Web Server最常见的模块
+ - Server部分继承自net.Server,并对请求和响应数据进行封装
+ - 也提供了request/get的能力，允许向其他服务端发起HTTP请求
+ - Node封装了HTTPS/HTTP2的实现，可以轻松创建类HTTP服务
+
+  ### 1.3.3 的进程管理
+
+  #### 操作系统的进程和线层
+
+  - 运行任务的程序叫做“进程”，一个进程只能执行一个任务
+  - 进程并发：以多进程形式，允许多个任务同时运行
+  - 线层并发：以多线程形式，允许单个任务分成不同的部分运行
+  - 操作系统提供协调机制，防止冲突，共享资源
+  - javascript是单线层语言，所以多个任务只能排队运行
+
+  #### 多进程vs多线程
+
+| 维度  |  多进程  | 多线程 | 比较 | 
+| :---: | :--------: | :------: | :---: | 
+|  数据共享  | 数据共享复杂，需要用IPC；数据是分开的，同步简单 |  因为共享进程数据，数据共享简单，同步复杂  |  各有千秋   |
+|  资源利用  | 占用内存，切换复杂，CPU利用率低 |  占用内存少，切换简单，cpu利用高  |   多线程更好  |
+|  性能开销  | 创建销毁、切换复杂、速度慢 | 创建销毁、切换简单、速度很快  |   多线程更好  |
+|  编码实践  | 编码简单、调试方便 |  编码、调试复杂  |   多进程更好  |
+|  可靠性  | 进程独立运行，不会相互影响 |  线程呼吸共命运  |  多进程更好   |
+|  分布式支持  | 可用于多机多核分布式，易于扩展 |  只能用于多核分布式 |   多进程更好  |
+
+  #### Event Loop
+
+  
