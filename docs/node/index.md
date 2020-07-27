@@ -239,6 +239,16 @@ EventEmitter的核心就是事件触发的Emitter，事件监听的on功能进�
 - 操作文件
   - chmod/open/read/write
 
+### 1.2.4 Nodejs的文件操作能力
+
+ [MDN 中提供的 Nodejs 课程](https://developer.mozilla.org/zh-CN/docs/learn/Server-side/Express_Nodejs)
+
+  [Nodejs中文文档站点](http://nodejs.cn/)
+
+  [Nodejs安装详解](https://juejin.im/post/5d4fb52c518825219c281bd1)
+
+  [Nodejs优秀项目集合](https://github.com/sindresorhus/awesome-nodejs)
+
 ## 1.3 Nodejs提供的原生API能力（下）
 
 ### 1.3.1 Nodejs的模块机制及原理
@@ -391,6 +401,57 @@ EventEmitter的核心就是事件触发的Emitter，事件监听的on功能进�
 |  可靠性  | 进程独立运行，不会相互影响 |  线程呼吸共命运  |  多进程更好   |
 |  分布式支持  | 可用于多机多核分布式，易于扩展 |  只能用于多核分布式 |   多进程更好  |
 
-  #### Event Loop
+#### Event Loop
 
-  
+- javascript通过EventLoop的形式解决单线程任务调度问题
+- EventLoop是一个程序结构，用于等待和发送消息和事件
+- 浏览器的Event loop和Node的Event loop是两个概念
+
+#### 浏览器的Event Loop
+
+![](~@/node/browserEventloop.png)
+
+#### Nodejs-Event Loop
+
+![](~@/node/nodeventloop.png)
+
+node采用v8作为js解析引擎，io处理方面用到了自己的LIBUV，LIBUV是跨平台的抽象层，封装了不同平台的底层特性，对外提供了统一的api；事件循环机制也是它里面实现的，所以v8引擎解析js脚本，解析后的代码调用nodeAPI；LIBUV库负责nodeAPI的执行，将不同的任务分配给不同的线程形成一个Eventloop，将不同的任务分配给不同的线程，以异步的形式将结果返回给v8，v8在将结果返回给用户；LIBUV引擎分为6个阶段，它会按照顺序反复执行，每当
+进入某个阶段的时候，都会从对应的回调队列中抽取函数去执行，当队列为空或回调函数达到系统设置的值的时候，就会进入下一个阶段
+
+#### Nodejs进程-process
+
+- Process是一个全局的对象，无需require直接使用，提供进程描述
+- process对象是EventEmiter的实例，暴露了进程事件的钩子
+   - exit 监听进程退出
+   - uncaughException 监听异常
+- 提供标准的输出，对应的是进程的I/O操作
+  - node版本的console底层是由stdio实现的
+  - 数据流与其他双工数据流不同，同步写会阻塞进程导致性能开销
+
+#### Nodejs进程创建-child_process(子进程)/cluster
+
+- child_process 是 Node.js的内置模块
+  - spawn：适用于返回大量数据，例如图像处理，二进制数据处理
+  - exec：适用于小量数据，maxBuffer默认值为200*1024超出崩溃
+  - fork：衍生新的进程，进程之间是相互独立的，每个进程独立
+
+- cluster 是Node.js 的内置模块
+  - Worker 对象包含了关于工作进程的所有公共的信息和方法
+  - fork：衍生新的进程，进程之间是相互独立的，每个进程独立
+  - 使用主从模型轮询处理服务的负载任务，通过IPC通信
+
+#### 进程守护
+
+pm2
+
+### 1.3.4 扩展资料
+
+  [浏览器与Node的事件循环(Event Loop)有何区别?](https://blog.fundebug.com/2019/01/15/diffrences-of-browser-and-node-in-event-loop/)
+
+  [Nodejs原生模块整理](https://itbilu.com/nodejs/core/N1tv0Pgd-.html)
+
+  [Nodejs中的模块机制](https://juejin.im/entry/5b4b5081e51d451984696cb7)
+
+  [深入理解Nodejs中的进程与线程](https://juejin.im/post/5d43017be51d4561f40adcf9)
+
+  [Nodejs中文文档站点](http://nodejs.cn/)
