@@ -455,3 +455,52 @@ pm2
   [深入理解Nodejs中的进程与线程](https://juejin.im/post/5d43017be51d4561f40adcf9)
 
   [Nodejs中文文档站点](http://nodejs.cn/)
+
+## 1.4 Nodejs原生Web Server实战
+
+### 1.4.1 Web Server的构成
+
+- 处理HTTP：对HTTP的动词（GET/POST/PUT）进行响应
+- 路由管理：分别处理不同URL路径的请求，返回对应的网络资源
+- 静态文件托管：对网络请求的静态资源进行响应或使用模版动态响应请求
+- 文件数据存储：将请求携带的数据存储到文件或则数据库中
+
+#### Web Server的基本架构
+
+![](~@/node/baseFramework.png)
+
+### 1.4.2 Web Server的优势
+
+- 并发性能优势
+  
+  基于事件驱动的服务在响应请求的场景中有极高的并发性能表现
+
+- javascript
+
+ 减少学习成本，使用最流行的javascript或其他可编译/转换为javascript的语言均可实现
+
+- 生态活跃完善
+
+npm提供了数十万个可重用的工具包，它还提供了一流的依赖解决方案，可实现自动化工具链构建
+
+- 代码可移植
+
+兼容各种操作系统运行环境，一份代码可以运行在多种环境中
+
+- 框架高度包容
+
+Node及Node的Web框架都拥有天然的包容性，易于扩展和维护
+
+- 友好的社区氛围
+
+丰富的生态诞生了大量的开源社区，聚集了众多优秀的开发人员
+
+### 1.4.3 Web Server的最小系统
+
+```js
+    var http=require('http')
+    http.creareServer(function(req,res){
+        res.write('Hello World')
+        res.end()
+    }).listen
+```
