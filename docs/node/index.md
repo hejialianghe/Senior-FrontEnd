@@ -613,3 +613,72 @@ http.createServer((req,res)=>{
     }
 }).listen(1000)
 ```
+
+### 1.4.3 扩展
+
+[Nodejs官网 http模块](http://nodejs.cn/api/http.html)
+
+[Node.js超详细零基础教程(1)—处理GET、POST请求](https://juejin.im/post/5d5277a7f265da03cd0a74a7)
+
+[尝试手写一个 nodejs http-server](https://juejin.im/post/5b75739ee51d45554762288e)
+
+## 1.5 使用Express搭建Web server
+
+### 1.5.1 Express 框架概览
+
+- 高度包容，快速而简单的Node.js Web框架
+- 拥有稳定可靠丰富的社区和中间件生态
+- 易于学习，可定制程度高，开箱即用
+- 精巧的Express为Web和移动应用程序提供了一组强大的功能
+
+### 1.5.2 Express的能力
+
+- 封装http模块，方便地创建Web应用
+- 通过中间件机制实现可扩展性
+- 提供路由机制，便于组织业务应用
+- 提供多种模版引擎，支持了静态文件的渲染和托管
+- 便于添加错误处理，方便对系统进行容错处理
+- 便于添加数据库连接，操作数据库数据
+
+#### Express中间件
+
+- 路由和中间件是Express的基础，路由是特殊的中间件
+
+- Express是一系列中间件函数调用的过程
+
+- 中间件是对处理过程的封装，输入请求对象/响应对象，通过next进入下一个中间件处理过程
+
+- 使用app.use()将中间件注册到应用实例上，路由中间件注册到路由实例上
+
+![](~@/node/routerMiddle.png)
+
+#### 编写Express中间件
+
+![](~@/node/writeMiddle.png)
+
+#### Express 路由机制
+
+- 路由是一段Express代码，它将http动词、URL路径/模式和处理函数三者关联起来
+
+- Express的应用程序设计要从路由设计入手，将服务的能力描述起来
+
+- 还可以使用Router中间件，实现路由逻辑模块化设计
+
+![](~@/node/routingMe.png)
+
+#### Express 性能评估
+
+![](~@/node/preform.png)
+
+#### Express 最佳实践
+
+- 使用中间件压缩响应数据，在反向代理层做最佳
+
+- 避免在业务逻辑处理中使用同步阻塞操作
+
+- 引入完善的基建保障，记录日志，处理异常
+
+- 需要重启的时候立即重启，保证程序可以自动重启启动
+
+### 1.5.3 Express Web Server实战
+
