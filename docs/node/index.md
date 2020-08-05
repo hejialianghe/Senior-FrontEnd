@@ -613,3 +613,150 @@ http.createServer((req,res)=>{
     }
 }).listen(1000)
 ```
+
+### 1.4.3 扩展
+
+[Nodejs官网 http模块](http://nodejs.cn/api/http.html)
+
+[Node.js超详细零基础教程(1)—处理GET、POST请求](https://juejin.im/post/5d5277a7f265da03cd0a74a7)
+
+[尝试手写一个 nodejs http-server](https://juejin.im/post/5b75739ee51d45554762288e)
+
+## 1.5 使用Express搭建Web server
+
+### 1.5.1 Express 框架概览
+
+- 高度包容，快速而简单的Node.js Web框架
+- 拥有稳定可靠丰富的社区和中间件生态
+- 易于学习，可定制程度高，开箱即用
+- 精巧的Express为Web和移动应用程序提供了一组强大的功能
+
+### 1.5.2 Express的能力
+
+- 封装http模块，方便地创建Web应用
+- 通过中间件机制实现可扩展性
+- 提供路由机制，便于组织业务应用
+- 提供多种模版引擎，支持了静态文件的渲染和托管
+- 便于添加错误处理，方便对系统进行容错处理
+- 便于添加数据库连接，操作数据库数据
+
+#### Express中间件
+
+- 路由和中间件是Express的基础，路由是特殊的中间件
+
+- Express是一系列中间件函数调用的过程
+
+- 中间件是对处理过程的封装，输入请求对象/响应对象，通过next进入下一个中间件处理过程
+
+- 使用app.use()将中间件注册到应用实例上，路由中间件注册到路由实例上
+
+![](~@/node/routerMiddle.png)
+
+#### 编写Express中间件
+
+![](~@/node/writeMiddle.png)
+
+#### Express 路由机制
+
+- 路由是一段Express代码，它将http动词、URL路径/模式和处理函数三者关联起来
+
+- Express的应用程序设计要从路由设计入手，将服务的能力描述起来
+
+- 还可以使用Router中间件，实现路由逻辑模块化设计
+
+![](~@/node/routingMe.png)
+
+#### Express 性能评估
+
+![](~@/node/preform.png)
+
+#### Express 最佳实践
+
+- 使用中间件压缩响应数据，在反向代理层做最佳
+
+- 避免在业务逻辑处理中使用同步阻塞操作
+
+- 引入完善的基建保障，记录日志，处理异常
+
+- 需要重启的时候立即重启，保证程序可以自动重启启动
+
+### 1.5.3 Express Web Server实战
+
+- 实现一个可以生成邮件的模版管理系统
+- 有配置界面，可以沉淀业务域中的邮件模版，可以新增模版
+- 可以预览最终的邮件样式
+
+![](~@/node/requirement.png)
+
+#### 邮件模版系统-功能设计
+
+![](~@/node/fundesign.png)
+
+### 1.5.4扩展学习
+
+[MDN 中提供的 Express 课程](https://developer.mozilla.org/zh-CN/docs/learn/Server-side/Express_Nodejs/Introduction)
+
+[使用 Node.js + Express 搭建一个简单的微博网站](https://cythilya.github.io/2014/11/23/nodejs-express-microblog/)
+
+[NodeJS express框架核心原理全揭秘](https://zhuanlan.zhihu.com/p/56947560)
+
+## 1.6 使用Nodejs编写 RESTful API
+
+### 1.6.1 RESTful API
+
+rest是暴露服务端资源的一种约定方式，同时提供获取这种资源的动词，基于rest架构的web server api，我们就称为RESTful API。
+
+#### REST概念
+
+- URI资源定位
+
+REST是面向资源，而资源通过URI进行暴露
+
+- 链接资源状态
+
+服务器生成包含状态转移的表征数据，用来响应客户端对一个资源的请求，客户端可据此了解状态转移的方式
+
+- 使用HTTP已有特性
+
+REST很用利用了HTTP本身的一些特性，如HTTTP动词、HTTP状态码、HTTP头部信息
+
+- 统一资源规范
+
+包含一组受限的预定义的操作，资源都通过使用项目接口进行资源的访问
+
+#### 充分利用HTTP描述URI资源
+
+![](~@/node/httpres.png)
+
+### 1.6.2 REST 工程实践
+
+### REST 接口设计-路由
+
+```js
+  GET /xhr/v1/templateList?page=1&size=10 // 获取模版列表
+  GET /xhr/v1/templateDetail/1   // 模版单个模版详情
+  POST /xhr/v1/templateCreate // 创建模版
+  PUT  /xhr/v1/templateChange // 修改模版
+  DELETE /xhr/v1/templateDelate // 删除模版
+```
+### 数据表设计-封装数据服务
+
+- 选用MongoDB存储数据
+- 引用mongoose构建数据模型
+
+- 邮件模版Schema
+  - id String 唯一识别邮件模版的id
+  - template text 可支持HTML
+  - data邮件模版中填充的数据
+
+  ### 1.6.3 REST 最佳实践
+
+ - 充分理解并使用HTTP请求
+ - 使用API测试工具而非浏览器测试你的API接口
+ - 选择合适的文档生成工具，删除API文档
+ - REST只是规范并不强制，最合适团队的才是最好的
+ - 找个实践REST较好的框架胜过自己造轮子
+
+ 
+
+
