@@ -459,7 +459,7 @@ const HooksTest = () => {
 ```jsx
 // 1. 创建一个上下文管理组件context-manager.js，用于统一导出context实例
 import React from 'react'
-export const ItemsContext = Taro.createContext({ name: '' }) //接受一个默认值
+export const ItemsContext = React.createContext({ name: '' }) //接受一个默认值
 
 // 2. 父组件提供数据
 import React from 'react'
