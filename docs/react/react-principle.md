@@ -459,7 +459,7 @@ const HooksTest = () => {
 ```jsx
 // 1. 创建一个上下文管理组件context-manager.js，用于统一导出context实例
 import React from 'react'
-export const ItemsContext = Taro.createContext({ name: '' }) //接受一个默认值
+export const ItemsContext = React.createContext({ name: '' }) //接受一个默认值
 
 // 2. 父组件提供数据
 import React from 'react'
@@ -532,12 +532,14 @@ const HooksTest = () => {
 
 5. useRef
 
+- 获取dom
+  
 ```jsx
 import React,{useRef} from 'react'
 const HooksTest = () => {
     const inputEl=useRef(null)
    function onButtion () {
-      console.log('inputEl',inputEl)
+    //  inputEl.current 就是我们获取的dom对象
       inputEl.current.focus() 
    }
   return (
@@ -550,6 +552,19 @@ const HooksTest = () => {
     )
 } 
 
+```
+- 存变量
+  
+因为在函数式组件里没有this来存放一些实例的变量，所以React建议使用useRef来存放有一些会发生变化的值，useRef 不单是为了DOM的ref，同时也是为了存放实例属性
+
+```jsx
+const intervalRef=useRef()
+useEffect(()=>{
+    intervalRef.current=setInterVal(()=>{})
+    return ()=>{
+        clearInterval(intervalRef.current)
+    }
+})
 ```
 ### 5.4.4 扩展资料
 
