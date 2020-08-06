@@ -7,3 +7,4 @@ const templateSchema=mongoose.Schema({
 })
 //第一个参数 当前模型名称，第二个参数 schema
 module.exports=mongoose.model('template',templateSchema)
+
