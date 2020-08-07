@@ -226,11 +226,11 @@ jsx需要一个根元素包裹，因为jsx是通过babel进行转译，其实就
   class main extends Components {
     render(){
       return (
-        <React.Fragments>
+        <React.Fragment>
           <p>{this.state.name}</p>
           <p>{this.state.age>18?'成年':'未成年'}</p>
           <p>{this.addage()}</p>
-       </React.Fragments>
+       </React.Fragment>
       )
     }
   }
