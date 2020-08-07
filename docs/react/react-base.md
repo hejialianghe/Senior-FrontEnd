@@ -226,11 +226,11 @@ jsx需要一个根元素包裹，因为jsx是通过babel进行转译，其实就
   class main extends Components {
     render(){
       return (
-        <React.Fragments>
+        <React.Fragment>
           <p>{this.state.name}</p>
           <p>{this.state.age>18?'成年':'未成年'}</p>
           <p>{this.addage()}</p>
-       </React.Fragments>
+       </React.Fragment>
       )
     }
   }
@@ -485,8 +485,9 @@ css管理工具
  //在ListItem导入对象
     import style from 'index.module.css' 
     import classnames from 'classnames/bind'
-    import cn from 'classnames'
     const cls=classnames.bind(style)
+
+    import cn from 'classnames'
     class ListItem extends Component {
      constructor(props){
      super(props) //子类中调用父类构造函数
@@ -499,8 +500,10 @@ css管理工具
      })
     return (
       <div className='listItem'>
+        {/* css Module+classnames/bind */}
         <span className={cls('title')}>header<span>
-        <span className={cn}></span>
+        {{/* classnames */}
+        <span className={_cn}></span>
       <div>
     )
    }
