@@ -788,7 +788,7 @@ body-parser：处理post请求时返回thunk，它会自动帮我们加入res.bo
 
 3. 编写入口文件index.js
 
-编写入口文件，需要连接数据库，这里我们使用mogodb，mongodb的安装教程在本文的最下面，当然果会mysql，也可以用mysql。
+编写入口文件，需要连接数据库，这里我们使用mogodb，mongodb的安装教程在本文的最下面，当然会mysql，也可以用mysql。
 
 ```js
 const express=require('express')
@@ -920,7 +920,7 @@ module.exports=router
 测试接口可以用postman
 
 ```json
-创建模版接口示例：
+创建模版接口示例：http://localhost:2000/xhr/v1/templateCreate
 在headers要加入Content-Type:application/json
 请求的参数：
 {
