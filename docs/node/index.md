@@ -733,13 +733,13 @@ REST很用利用了HTTP本身的一些特性，如HTTTP动词、HTTP状态码、
 ### REST 接口设计-路由
 
 ```js
-  GET /xhr/v1/templateList?page=1&size=10 // 获取模版列表
-  GET /xhr/v1/templateDetail/1   // 模版单个模版详情
+   //接口要遵循http动词
+  GET /xhr/v1/templateList // 获取模版列表
+  GET /xhr/v1/templateDetail?id=xx   // 模版单个模版详情
   POST /xhr/v1/templateCreate // 创建模版
-  PUT  /xhr/v1/templateChange // 修改模版
-  DELETE /xhr/v1/templateDelate // 删除模版
+  PUT  /xhr/v1/templateChange/1 // 修改模版,
+  DELETE /xhr/v1/templateDelate/1 // 删除模版
 ```
-接口要遵循http动词
 
 ### 数据表设计-封装数据服务
 
@@ -816,9 +816,9 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
     extended:false
 }))
-// 我们的路由前缀/xhr/v1/，如果匹配在url中匹配到了/xhr/v1/，就会进入templateRouter的管道中
+// 我们的路由前缀/xhr/v1/，如果匹配在url中匹配到了/xhr/v1/，就会进入子路由templateRouter
 app.use('/xhr/v1/',templateRouter)
-// 前面都没有匹配到就会进入最后一个管道
+// 前面都没有匹配到调用next()就会进入下一个中间件
 app.use((req,res,next)=>{
     const err = new Error('Not Found');
     err.status = 404;
@@ -920,12 +920,12 @@ module.exports=router
 测试接口可以用postman
 
 ```json
-创建模版接口示例：http://localhost:2000/xhr/v1/templateCreate
+请求创建模版接口示例：http://localhost:2000/xhr/v1/templateCreate
 在headers要加入Content-Type:application/json
 请求的参数：
 {
 	"name":"test1",
-	"template":"<h1>expree<h1>",
+	"template":"<h1>express<h1>",
 	"data":"{name:'test1'}"
 	
 }
@@ -937,7 +937,7 @@ module.exports=router
         {
             "_id": "5f2c19c81a53ff25e7d94953",
             "name": "test1",
-            "template": "<h1>node<h1>",
+            "template": "<h1>express<h1>",
             "data": "{name:'test1'}",
             "__v": 0
         }
