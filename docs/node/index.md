@@ -769,7 +769,7 @@ REST很用利用了HTTP本身的一些特性，如HTTTP动词、HTTP状态码、
   │   ├──  model      # 数据模型，接口的数据模型
   │   ├──  routes     # 接口的业务代码
   │   ├── index.js    # 入口文件
-  └─ package.json     # 工程配置文件                                     
+  └─ package.json     # 管理项目运行的依赖、及描述信息                                  
  ```
  2. 下载所需要的依赖
 
