@@ -72,11 +72,11 @@ app.listen(3000)
 
 ```js
    //接口要遵循http动词
-  GET /xhr/v1/templateList // 获取模版列表
-  GET /xhr/v1/templateDetail?id=xx   // 模版单个模版详情
-  POST /xhr/v1/templateCreate // 创建模版
-  PUT  /xhr/v1/templateChange/1 // 修改模版,
-  DELETE /xhr/v1/templateDelate/1 // 删除模版
+  GET /xhr/v2/templateList // 获取模版列表
+  GET /xhr/v2/templateDetail?id=xx   // 模版单个模版详情
+  POST /xhr/v2/templateCreate // 创建模版
+  PUT  /xhr/v2/templateChange/1 // 修改模版,
+  DELETE /xhr/v2/templateDelate/1 // 删除模版
 ```
 
 我们使用社区提供的优秀脚手架去构建项目,github上搜索`awesome-koa`可以找到koa相关社区资源，例如：`https://github.com/fineen/awesome-koa`，在文档里找到这`koa-rest-api-boilerplate `这个脚手架;一个小技巧，以awesome为前缀去找框架相关资源。
@@ -89,8 +89,46 @@ app.listen(3000)
 ```
 看一个框架，首先看`package.json`文件，看脚本运行了哪些命令，然后看入口文件。
 
+ ```bash
+  ├── app  
+      ├──  config 
+      │ ├── cors.js # 配置cors，跨域相关配置
+      │ ├── index.js # 项目环境相关配置
+      │ └──  logger.js # 配置错误相关
+      ├── connections 
+      │ └── apm.js # 实时监控应用性能和当前工作负载
+      ├── constants # 常量
+      ├── controllers # 业务层
+      ├── middlewares # 中间件  
+      ├──  model # 数据模型     
+      ├──  routes  # 路由  
+      ├── index.js 
+      └──  utils
+       ├── http.js # 请求封装
+       └── reponse.js # 响应数据封装        
+  └─ package.json       
+ ```
 
-### 2.1.4 扩展学习资料
+
+### 2.1.4 Koa VS Express
+
+#### koa
+
+- 更优雅的编程体验
+- 核心轻量，插件生态庞大
+- 内置异步流控制
+- 于Express生态不兼容，有自己的开发生态
+- 入手简单，便于企业生态实践
+
+#### Express
+
+- Nodejs至今最流行框架
+- 提供了Web中间件的标准
+- 简单快捷可扩展
+- 维护成本高，对系统设计能力要求高
+- 学习曲线低，入手简单
+
+### 2.1.5 扩展学习资料
 
 [Koa官网](https://koajs.com/)
 [Koa源码](https://github.com/koajs/koa)
