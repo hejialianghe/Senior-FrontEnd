@@ -99,9 +99,12 @@ app.listen(3000)
       │ └── apm.js # 实时监控应用性能和当前工作负载
       ├── constants # 常量
       ├── controllers # 业务层
+      │       └── template.js
       ├── middlewares # 中间件  
-      ├──  model # 数据模型     
+      ├──  model # 数据模型    
+      │      └── template.js
       ├──  routes  # 路由  
+      │      └── template.js # template模块的路由
       ├── index.js 
       └──  utils
        ├── http.js # 请求封装
@@ -109,7 +112,107 @@ app.listen(3000)
   └─ package.json       
  ```
 
+#### 1. 编写数据模型
 
+```js
+    const mongoose = require('mongoose');
+    const templateSchema = mongoose.Schema({
+        name: String,
+        template: String,
+        data: String
+    });
+    module.exports = mongoose.model('template', templateSchema);
+```
+
+#### 2. 编写router
+
+```js
+const Router = require('koa-router');
+const templateController = require('../controllers/template');
+const router = new Router();
+
+router.prefix('/xhr/v2');
+
+router.get('/templateList', templateController.templateList);
+
+router.post('/templateCreate', templateController.templateCreate);
+
+router.get('/templateDetail', templateController.templateDetail);
+
+router.put('/templateChange/:id', templateController.templateChange);
+
+router.del('/templateDelate/:id', templateController.templateDelate);
+
+module.exports = router;
+
+```
+#### 3. 在controllers编写业务
+
+```js
+'use strict';
+const Template = require('../models/template');
+const Response = require('../utils/response');
+const logger = require('../logger');
+// 查询列表
+exports.templateList = async (ctx)=>{
+  const temps = await Template.find({}).sort({ update_at: -1 });
+  return Response.success(ctx, {
+    code: 200,
+    data: temps,
+    message: 'success'
+  });
+};
+// 创建列表
+exports.templateCreate = async (ctx)=>{
+  const result = await Template.create(ctx.request.body);
+  return Response.success(ctx, {
+    code: 200,
+    data: result,
+    message: 'success'
+  });
+};
+// 查询某个详情
+exports.templateDetail = async (ctx)=>{
+  logger.info({ reuslt: ctx.rquery, event: 'reuslt' });
+  const result = await Template.findById({ _id: ctx.query.id });
+  if(result) {
+    return Response.success(ctx, {
+      code: 200,
+      data: result,
+      message: 'success'
+    });
+  }else {
+    return Response.fail(ctx);
+  }
+};
+// 更新某个
+exports.templateChange = async (ctx)=>{
+  const result = await Template.findByIdAndUpdate({ _id: ctx.params.id }, ctx.request.body, { new: true }); //new 为true是返回修改后的
+  if(result) {
+    return Response.success(ctx, {
+      code: 200,
+      data: result,
+      message: 'success'
+    });
+  }else {
+    return Response.fail(ctx);
+  }
+};
+// 删除某个
+exports.templateDelate = async (ctx)=>{
+  try {
+    await Template.findOneAndDelete({ _id: ctx.params.id });
+    return Response.ok(ctx, {
+      code: 200,
+      message: '删除成功'
+    });
+  }catch(err) {
+    return Response.noContent(ctx);
+  }
+};
+
+```
+源码参考：[源码](https://github.com/hejialianghe/koa-rest-base)
 ### 2.1.4 Koa VS Express
 
 #### koa
