@@ -318,7 +318,8 @@ exports.templateDelate = async (ctx)=>{
 
 #### 目录结构
 
-下面结构是tree生成，电脑没有的可以先下载它，有的执行`tree -L 2 -i` 生成2级树结构
+下面结构是tree生成，电脑没有的可以先下载它，有的执行`tree -L 2 -i` 生成2级树结构，
+mac 可以用此命令模拟`find . -print | sed -e's;[^/]*/;|____;g;s;____|; |;g'`
 
  ```bash
 .
