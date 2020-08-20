@@ -320,8 +320,8 @@ exports.templateDelate = async (ctx)=>{
  ```bash
 .
 |____package.json
-|____benchmarks
-| |____Makefile
+|____benchmarks # 性能基准测试
+| |____Makefile 
 | |____middleware.js
 | |____run
 |____ docs
