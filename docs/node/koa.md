@@ -324,14 +324,14 @@ exports.templateDelate = async (ctx)=>{
 | |____Makefile 
 | |____middleware.js
 | |____run
-|____ docs
+|____ docs # 文档目录
 | |____FUNDING.yml
-|____lib
+|____lib # 核心文件
 | |____response.js
 | |____request.js
 | |____context.js
-| |____application.js
-|____test 
+| |____application.js # 主应用
+|____test #单元测试
  ```
 
 #### 源码架构
