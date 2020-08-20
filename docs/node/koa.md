@@ -317,6 +317,7 @@ exports.templateDelate = async (ctx)=>{
 ```
 
 #### 目录结构
+下面结构是tree
  ```bash
 .
 |____package.json
@@ -327,9 +328,9 @@ exports.templateDelate = async (ctx)=>{
 |____ docs # 文档目录
 | |____FUNDING.yml
 |____lib # 核心文件
-| |____response.js
-| |____request.js
-| |____context.js
+| |____response.js # reponse响应
+| |____request.js #request请求
+| |____context.js # 上下文
 | |____application.js # 主应用
 |____test #单元测试
  ```
