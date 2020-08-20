@@ -19,7 +19,7 @@ install:  # 安装依赖
 
 script:  # 需要执行的脚本
     - yarn build
-    - sh ./deploy.sh
+    - sh deploy.sh
 
 # addons:
 #   ssh_known_hosts: 122.51.11.29 # 添加 SSH 信任列表
