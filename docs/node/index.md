@@ -68,6 +68,10 @@ LTS是稳定版本，Current最新版本
 
 ## 1.2 Nodejs提供的原生API能力（上）
 
+#### node架构
+
+![](~@/node/node-framework.png)
+
 ### 1.2.1 了解Nodejs提供的数据类型
 
 #### 1. Nodejs数据类型-Buffer
