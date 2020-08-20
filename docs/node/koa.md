@@ -317,7 +317,9 @@ exports.templateDelate = async (ctx)=>{
 ```
 
 #### 目录结构
-下面结构是tree
+
+下面结构是tree生成，电脑没有的可以先下载它，有的执行`tree -L 2 -i` 生成2级树结构
+
  ```bash
 .
 |____package.json
@@ -326,7 +328,7 @@ exports.templateDelate = async (ctx)=>{
 | |____middleware.js
 | |____run
 |____ docs # 文档目录
-| |____FUNDING.yml
+| 
 |____lib # 核心文件
 | |____response.js # reponse响应
 | |____request.js #request请求
@@ -340,3 +342,76 @@ exports.templateDelate = async (ctx)=>{
 ![](~@/node/source-code.png)
 
 ### 2.2.3 构造一个可用运行的Server
+
+#### Application源码解析
+
+- 模块依赖
+  - 原生依赖 events.Emitter util stream http
+  - 第三方工具依赖
+    - koa-compose（处理洋葱模型）、http-errors（处理错误）、statuses（状态码）
+    - koa-convert（兼容koa1）、is-generator-function（兼容generator） 
+    - depd、only、debug、on-finished （编程工具）
+  - 内置模块依赖 request、response context
+
+- 核心库 Application初始化配置
+
+#### Koa-compose
+
+![](~@/node/koa-compose.png)
+
+- 基于Promise的流程控制方式，对异步流程同步化，解决链式耦合
+- 将输入数组中的函数依此调用
+- 提供一个数组函数公用的上下文ctx
+- 提供一个数组函数之间串联的next指针
+
+- 核心代码逻辑为：递归遍历数组
+
+#### 实现最小系统的koa
+
+koa.js
+
+```js
+/*
+    实现 :
+    1. const app=new Koa()
+    2. app.listen
+    3. app.use
+*/
+const http=require('http')
+class Koa {
+    constructor(){}
+    middleware (){};
+    listen (port,cb) {
+        const server=http.createServer((req,res)=>{
+            this.middleware(req,res)
+        })
+        server.listen(port,cb)
+    }
+    use(middleware){
+        this.middleware=middleware
+        return this
+    }
+}
+module.exports=Koa
+```
+app.js
+
+```js
+const Koa=require('./koa')
+const app=new Koa()
+app.use((req,res)=>{
+    res.writeHead(200)
+    res.end('hell new koa')
+})
+app.listen(2000,()=>{
+    console.log('server is run 2000');
+})
+```
+### 2.2.4 扩展资料
+
+[Koa2 原理解析和实现](https://juejin.im/post/5be3a0a65188256ccc192a87)
+
+[可能是目前最全的koa源码解析指南](https://developers.weixin.qq.com/community/develop/article/doc/0000e4c9290bc069f3380e7645b813)
+
+
+
