@@ -237,3 +237,105 @@ exports.templateDelate = async (ctx)=>{
 [Koa源码](https://github.com/koajs/koa)
 [Awesome](https://github.com/fineen/awesome-koa)
 [Koa2快速开发入门](https://juejin.im/post/5c6eb4ac6fb9a049d4426ab2)
+
+## 2.2 Koa 原理解析及手写源码
+
+### 2.2.1 手写开源库源码
+
+#### 方法论
+
+- 为什么要读源码？
+- 应该去读哪些源码？
+- 方法？工具？技巧？
+- 手写源码该注意什么？
+
+#### 为什么？
+
+- 知其然，也要知其所以然（面试官总是这么要求我们）
+- 代码是一个程序员心血结晶，阅读源码就是跟作者对话
+- “天下代码一大抄”，先临摹，”再想着自创“
+- 发现技术薄弱点及时修补沉淀
+- 剥离场景，获取代码组织灵感
+- 解决遇到的具体问题
+- 看源码只是一种方法、手段、而不是目的
+
+#### 看什么？
+
+- "一个中心，两个基本点"
+  - 以源码大本营Github为中心
+  - 坚持使用冯.诺依曼结构理念
+  - 坚持 “下去”
+- 优秀的代码值得反复读
+- Awesome列表
+
+#### 怎么弄？
+
+- 阅读源码方法
+
+  - 先用明白，再开始读源码
+  - 摸清作者的惯用手法
+  - 提纲契领，找到入口，绘制架构图
+  - 仔细阅读已经提供的文档
+
+- 使用支持引用跳转的编辑器
+
+- 注释核心代码逻辑，编写代码块进行验证
+
+- 源码阅读能力提升秘籍
+  - 阅读混淆后的代码
+
+### 2.2.2 koa源码概览
+
+#### 项目依赖
+
+```js
+  "dependencies": {
+    "accepts": "^1.3.5", // 网络请求类型管理
+    "cache-content-type": "^1.0.0", // 可缓存的CotentType管理库
+    "content-disposition": "~0.5.2",
+    "content-type": "^1.0.4",
+    "cookies": "~0.8.0",
+    "debug": "~3.1.0",
+    "delegates": "^1.0.0", // javascript委托库
+    "depd": "^2.0.0",
+    "destroy": "^1.0.4",
+    "encodeurl": "^1.0.2",
+    "escape-html": "^1.0.3",
+    "fresh": "~0.5.2",
+    "http-assert": "^1.3.0", // 网络请求断言库
+    "http-errors": "^1.6.3",
+    "is-generator-function": "^1.0.7",
+    "koa-compose": "^4.1.0", // 中间件组合器（洋葱模型实现的核心）
+    "koa-convert": "^1.2.0", // 1.x转换器
+    "on-finished": "^2.3.0",
+    "only": "~0.0.2", // 属性选择器
+    "parseurl": "^1.3.2",
+    "statuses": "^1.5.0", // 语义化HTTP响应码
+    "type-is": "^1.6.16",
+    "vary": "^1.1.2"
+  }
+```
+
+#### 目录结构
+ ```bash
+.
+|____package.json
+|____benchmarks
+| |____Makefile
+| |____middleware.js
+| |____run
+|____ docs
+| |____FUNDING.yml
+|____lib
+| |____response.js
+| |____request.js
+| |____context.js
+| |____application.js
+|____test 
+ ```
+
+#### 源码架构
+
+![](~@/node/source-code.png)
+
+### 2.2.3 构造一个可用运行的Server
