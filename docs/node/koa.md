@@ -414,5 +414,170 @@ app.listen(2000,()=>{
 
 [可能是目前最全的koa源码解析指南](https://developers.weixin.qq.com/community/develop/article/doc/0000e4c9290bc069f3380e7645b813)
 
+## 2.3 Koa 请求响应上下文原理解析
 
+### 2.3.1 理解委托模式
+
+#### 设计模式-委托
+
+- javascript 事件委托-事件冒泡给父元素
+
+- javascript 行为委托-原型继承实现原型链
+
+- delegates 外层暴露的对象将请求委托给内部的其他对象进行处理
+
+- Koa使用委托的目的：避免重复实例化req/res
+
+#### 手写delegate 依赖包
+
+- TJ Holowaychunk已经离开NOde社区（转写go去了）项目已不维护
+
+- delegate 实现中使用了部分过期的方式
+
+- 基于现有的ES标准可以写的更优雅
+
+- 控制属性的读写权限
+
+### ### 2.3.2 compose（动态代理模式）
+
+- 面向切面编程（AOP）
+
+- 动态代理（模式）植入目标代码
+
+- 洋葱模型-中间件模型
+
+在运行的时候动态的将代码植入类的指定方法、指定位置的编程思想就是面向切面编程
+
+### 2.3.3 构造请求响应体语法糖
+
+#### 请求响应体
+
+- Object.create()方法创建一个新对象，使用现有的对象来提供新创建的对象的__proto__
+
+- 使用getter/setter封装Node原生request/reponse
+
+- 实现jQuery示的属性使用
+
+- 使用accept处理HTTP请求协议
+
+#### 上下文语法糖
+
+- 单一context原则：每一个请求都有唯一一个context对象
+
+- 所有的关于请求和响应的东西都放在context里面，共享所有资源使context具有高内聚的性质，内部元素互相能访问到
+
+### 2.3.4 扩展资料
+
+[Koa源码阅读（二）上下文ctx](https://juejin.im/post/5c0a075bf265da610f638811)
+
+[Koa封装的ctx对象具体详解](https://zhuanlan.zhihu.com/p/112356268)
+
+[详解JavaScript十大设计模式](https://juejin.im/entry/58c280b1da2f600d8725b887)
+
+## 2.4 koa 常见的中间件1
+
+### 2.4.1 koa-router
+
+#### 路由控制是什么？
+
+- 通过路由判断服务器应该提供什么服务
+
+- koa-router提供的能力
+
+  - 处理HTTP动词
+  - 路由分层管理
+  - 支持动态参数
+  - 分割路由文件
+
+  #### koa-router怎么用？
+
+  - 基本使用：配置get/post请求
+  - 分模块分层配置路由
+  - 处理接口路径中的动态参数
+  - 结合fs模块实现路由文件的分割
+
+  #### 怎么做到的？
+
+   核心方法
+   - register()
+   - verb()
+   - routers()
+   - allowMethods()
+
+### 2.4.2 koa-bodyparser
+
+- 解析request.body内容，方便取用
+
+- Koa-bodyparser提供的能力
+
+  - 解析用户发过来的数据body部分
+  - 支持text/json/xml/form
+  - 支持body解析配置
+
+- app.use(bodyParser)
+
+#### 怎么做到的？
+
+获取二进制数据流->解压缩inflation->解码iconv-lite->字符串解码
+
+### 2.4.2 koa-session
+
+- 保存用户的登录状态
+
+- koa-session 基本流程
+
+ - 根据cookie或者外部存储初始化cookie。
+ - 调用next()执行后面的业务逻辑，其中可以读取和写入新的session内容。
+ - 调用commit()把更新后的session保存下来。
+
+### 2.4.3 扩展资料
+
+[浅析koa的洋葱模型实现](https://segmentfault.com/a/1190000013981513)
+
+[koa2学习笔记（二）使用koa-router](https://juejin.im/post/5cd11420f265da036d79d0f3)
+
+[Koa-bodyparser 源码](https://github.com/koajs/bodyparser)
+
+[玩转Koa-bodyparser 原理解析](https://juejin.im/post/5c3de636f265da6179750d2b)
+
+[Koa-session源码](https://github.com/koajs/session)
+
+## 2.5 koa 常见的中间件2
+
+### 2.5.1 koa-error
+
+更优雅的错误抛出方式
+
+- Koa内置的错误处理逻辑ctx.app.emit(error)
+- UnhandledPromiseRejecticonWarning处理
+- Koa-error支持将错误通过GUI形式返回
+
+### 2.5.2 koa-logger
+
+- app.use(logger())
+- 拦截请求/响应，输出带颜色的日志
+- log4js丰富日志输出
+  - 访问日志accesslog
+  - 系统级错误日志
+  - 应用级节点日志
+
+### 2.5.3 koa-proxy
+
+#### 代理请求
+
+- 开发中，代理后端服务，使用mock
+- 上线后，通过Node将请求转发到java服务
+- 代理请求解决跨域限制
+
+### 2.5.4 扩展资料
+
+[Koa-error 源码](https://github.com/koajs/error#readme)
+
+[koa2 中的错误处理以及中间件设计原理](https://www.52cik.com/2018/05/27/koa-error.html)
+
+[koa-logger源码](https://github.com/koajs/logger)
+
+[Node.js 之 log4js 完全讲解](https://juejin.im/post/57b962af7db2a200542a0fb3)
+
+[koa-proxy源码](https://github.com/popomore/koa-proxy)
 

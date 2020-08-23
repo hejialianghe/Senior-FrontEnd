@@ -104,7 +104,7 @@ module.exports = {
                 title: "工程化",
                 collapsable: false,
                 children: [
-                  ["engineering/",'脚本世界'],
+                  ["engineering/script",'脚本世界'],
                   ["engineering/",'规范先行'],
                   ["engineering/",'质量代码'],
                   ["engineering/",'工程设计'],
