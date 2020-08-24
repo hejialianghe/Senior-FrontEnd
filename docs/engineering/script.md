@@ -275,6 +275,7 @@ MAIL：指当前用户的邮件存放系统
 
 ```bash
 # 我们可以在控制台输出，例如
+# echo 相当于js的console.log
 echo $SHELL
 # 结果：/bin/bash
 ```
@@ -363,4 +364,114 @@ file1 -nt file2 # 检查file1是否比file2新
 file1 -ot file2 # 检查file1是否比file2旧
 ```
 
- 
+### 1.2.3 bash编程-循环语句 
+
+- for循环
+
+```bash
+for index in 1 2 3 4 5; do
+echo "index="$index
+done
+for((i=0;i<5;i++));do
+echo $i
+```
+- while循环
+
+```bash
+while (($i<=10))do
+echo $i
+done
+```
+
+### 1.2.4 bash编程-循环语句 
+
+ - 函数的定义
+
+```bash
+function custom()
+{
+    # 定义一个变量
+    local prefix="input is"
+    # $1是否为空
+    if [-z $1]; then
+       echo “no input”
+    else
+      echo “$prefix $1”
+    fi
+    return 0
+      
+}
+# 在函数体中，可以使用$n来获取第n个实参
+```
+
+- 函数的调用和返回值
+
+```bash
+custom # unknown 调用
+custom abc # input is abc 调用并传入abc
+echo  $? # 0 $?拿到上一次函数调用的结果
+```
+shell中运行的每一个命令都使用退出状态码（exit status）来告诉shell它完成了处理，退出状态码是一个0-255
+之间的整数值，在命令结束运行时由命令传给shell，可以在命令执行完毕后立即使用$?捕获。
+
+- 其他特殊变量
+
+```bahs
+ $# 传递到脚本或函数的参数个数
+ $* 以一个单字符串显示所有向脚本传递的参数
+ $$ 脚本运行的当前进程ID号
+ $! 后台运行的最后一个进程的ID号
+ $@ 与$*相同，但是使用时加引号，并在引号中返回每个参数
+ $- 显示shell使用的当前选项，与set命令功能相同
+ $? 显示最后命令的退出状态，0表示没有错误，其他任何值表明有错误
+```
+
+### 1.2.4 bash编程-重定向
+
+- 什么是重定向
+
+  - 重定向，全称I/O重定向，默认情况下，Bash程序从终端接受输入，并在终端打印输出（标准输入，标准输出）
+  - 如果你想改变输入的来源，或是输出的目的地，那么就需要使用“重定向”
+
+- 怎么用？只要记住四个符号
+
+```bash
+    # 将command命令执行的结果重定向到file中
+    command > file # 将输出重定向到file
+    # 将file个文件的内容作为command的输入内容
+    command < file # 将输入重定向到file
+     # 将file个文件的部分内容作为command的输入
+    command << file # 将输入重定向到file的部分内容
+    # 一般输出log文件
+    command >> file # 将输出以追加的方式重定向到file
+```
+
+案例：把ls输出到终端的信息输出到一个文件中
+
+```bash
+ls # 可以查看当前文件的文件信息
+ls > ls.log # 在当前文件夹下生成了一个ls.log文件，文件里的内容是ls输出的信息
+ls -al > ls.log # 把ls -al 输出的详细信息输入到ls.log文件中，这种做法会覆盖上一次文件里的内容，我们可以使用>>追加的方式
+ls >> ls.log # 会把ls输出的信息放到ls -al 输出信息的后面
+```
+### 1.2.4 bash编程-交互式程序
+
+- echo和read
+
+```bash
+echo “xxx” # 打印并换行
+echo -n “xxx” # 打印且不换行
+read var # 读取输入，存变量var
+read -n 1 var # 读取输入的一个字符，存入变量var
+```
+案例：可以在终端输入以下命令进行体验
+
+```bash
+echo -n "what ur first name？";\
+read firstname;\
+ echo -n "What's ur second name？";\
+read secondname;\
+echo "$firstname $secondname";
+
+# 询问你firstname 和 secondname，当你输入后，最后会打印你输出的内容
+```
