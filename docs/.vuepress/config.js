@@ -98,6 +98,7 @@ module.exports = {
                 children: [
                   ["node/",'Node.js基础'],
                   ["node/koa",'koa'],
+                  ["node/egg",'企业级框架egg'],
                 ]
               },
               {
@@ -108,7 +109,7 @@ module.exports = {
                   ["engineering/",'规范先行'],
                   ["engineering/",'质量代码'],
                   ["engineering/",'工程设计'],
-                  ["engineering/",'构建艺术'],
+                  ["engineering/ctg-art",'构建艺术'],
                   ["engineering/auto-deploy",'持续集成与部署'],
                   ["engineering/",'Git操作'],
                   ["engineering/",'效率工具']

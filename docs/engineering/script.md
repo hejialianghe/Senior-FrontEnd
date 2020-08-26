@@ -475,3 +475,11 @@ echo "$firstname $secondname";
 
 # 询问你firstname 和 secondname，当你输入后，最后会打印你输出的内容
 ```
+### 1.2.5 扩展学习资料
+这是一本全面而详细的介绍Linux操作系统的好书，适合对Linux操作系统有兴趣和需要熟悉Linux环境的同学。
+
+[《鸟哥的Linux私房菜（基础学习篇）》](http://cn.linux.vbird.org/)
+
+这是一本深入浅出的介绍Linux命令和Shell脚本编写的优秀技术书，目前豆瓣评分9.3分。如果你想深入和熟练的掌握Shell编程，希望你不要错过它。
+
+[《The Linux Command Line》](http://linuxcommand.org/tlcl.php  )
