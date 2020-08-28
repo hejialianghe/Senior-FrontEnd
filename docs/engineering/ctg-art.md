@@ -117,3 +117,153 @@ import { default as a } from './a'
 
 - Babel、webpack
 
+## 5.2 不得不提的babel：token-ast
+
+### 5.2.1 回顾AST
+
+#### 《代码规范》中的介绍
+
+AST是一种可遍历的、描述代码的树状结构，利用AST可以方便的分析代码的结构和内容。
+
+[AST Explore](https://astexplorer.net/)
+
+### 5.2.2 编译理论
+
+![](~@/engineering/cpn-process.png)
+
+#### Babel中的编译
+
+- Babel也是编译器
+
+  输入的是高版本的ES代码，输出的是符合我们要求的低版本的ES代码，例如：ES7->ES5
+
+- Babel的工作步骤
+
+根据Babel文档，其工作步骤其实主要分为三步
+
+1. 解析（Parsing）：解析代码，生成AST（抽象语法树）
+
+2. 变换（Transformation）：操作AST（抽象语法树），修改其内容
+
+3. 生成（Code Generation）：根据AST（抽象语法树）生成新的代码
+
+### 5.2.3 如何实现简单编译器
+
+#### 目标
+
+- LISP->C
+
+|   |  LISP  | C | 
+| :---: | :--------: | :------: | 
+|  2+2  | (add 2 2 ) |  add(2,2)  | 
+|  4-2  | (subtract 2 2 ) |  subtract(4,2)  | 
+
+#### parsing
+
+- Tokenizing
+
+![](~@/engineering/tokenizing.png)
+
+- Tokenizer函数
+
+![](~@/engineering/tokenizer.png)
+
+![](~@/engineering/tokenizer2.png)
+
+将代码转换成token
+
+- Parser函数
+
+![](~@/engineering/Parser.png)
+
+将token转换为AST
+
+#### transformation
+
+- Traverser函数
+
+深度优先地遍历AST树
+
+- TransFormer函数
+
+在遍历每一个节点时调用将旧AST转成一颗新树，就是转换为目标语言的树
+
+#### Code Generator
+
+- Code Generator
+
+深度优先地遍历新的AST树，将每个节点依次组合新代码
+
+- 最终的Compiler
+
+1. input -> tokenizer -> tokens
+2. Tokens -> parser -> ast
+3. ast -> transformer -> newAst
+4. newAst -> generator -> output
+
+```js
+    function compiler (input) {
+        let tokens= tokenizer(input)
+        let ast = parser(tokens)
+        let newAst=transformer(ast)
+        let output= codeGennerator(newAst)
+        return output
+    }
+```
+### 5.2.4 扩展资料
+
+[the-super-tiny-compiler项目](https://github.com/jamiebuilds/the-super-tiny-compiler)
+
+[国大学慕课：编译原理 哈尔滨工业大学：](http://www.icourse163.org/course/HIT-1002123007)
+
+
+## 5.3 不得不提的babel
+
+### 5.3.1 Babel的作用
+
+#### Babel是啥？
+
+ - Babel 是啥？
+
+  - Babel is javaScript compiler
+
+  - 主要将ECMAScript 2015+的代码，转换成让我们能够在更古老的浏览其和其他环境运行的、兼容性更好的、老版本javascript代码
+
+- Babel 能干嘛？
+ 
+ 作用1: 语法转换
+
+ ```js
+    [1,2,3].map((n)=>n+1)  => [1,2,3].map(function(n){
+                                    return n+1
+                                 })
+ ```
+
+ 作用2: Polyfill
+
+  ```js
+    Array.from(new Set([1,2,3]))
+    [1,[2,3],[4,[5]]].flat(2)
+    Promise.resolve(32).then(x=>console.log(x))
+ ```
+ 让 老环境支持新的api
+
+  作用2: 源码修改
+
+  去除Flow/TypeScript代码中的类型标识
+
+  ```js
+    function square （n:number):number {
+        return n+n
+    }
+    // ------transformation------
+    function square （n) {
+        return n+n
+    }
+ ```
+
+### 5.3.2 Syntax & Feature
+
+#### Syntax
+
+- Syntax 
