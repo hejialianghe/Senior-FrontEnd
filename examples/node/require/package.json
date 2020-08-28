@@ -1,0 +1,18 @@
+{
+  "name": "require",
+  "version": "1.0.0",
+  "description": "",
+  "main": "_require.js",
+  "scripts": {
+    "dev": "nodemon ./main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fs": "^0.0.1-security",
+    "path": "^0.12.7",
+    "vm": "^0.1.0"
+  }
+}
