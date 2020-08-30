@@ -27,7 +27,6 @@ Module._resolveFilename=function (id){
  if(fs.existsSync(adsPath)){
     return adsPath
 }
-
 //  添加后缀
     const extenisons=Object.keys(Module.extensions)
     for (let item of extenisons){

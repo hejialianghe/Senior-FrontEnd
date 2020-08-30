@@ -217,7 +217,7 @@ AST是一种可遍历的、描述代码的树状结构，利用AST可以方便�
 [国大学慕课：编译原理 哈尔滨工业大学：](http://www.icourse163.org/course/HIT-1002123007)
 
 
-## 5.3 不得不提的babel
+## 5.3 不得不提的babel(1)
 
 ### 5.3.1 Babel的作用
 
@@ -267,3 +267,301 @@ AST是一种可遍历的、描述代码的树状结构，利用AST可以方便�
 #### Syntax
 
 - Syntax 
+
+语言级的某一种概念的写法，不可被语言中的其他概念实现
+
+举个例子
+
+```js
+// 1. 箭头函数
+(a,b,c)=>a+b+c
+// 2. Class类
+ class A {}
+// 3. ES模块
+import * as ext from ‘fs-ext’
+```
+
+#### feature
+
+- Feature 就是指API
+
+实例方法、静态方法、全局对象等
+
+举个例子
+
+```js
+// 1. promise
+new Promise().then()
+//2. Object.keys
+Object.keys({a:1})
+// 3. [].inculdes
+[1,2,3].includes(2)
+```
+
+### 5.3.3 puugin / preset / env
+
+### plugin
+
+- 插件
+
+babel本身不会对代码做任何操作，所有功能都靠插件实现
+
+- 有哪些插件？
+
+1. @bable/plugin-transform-arrow-functions
+
+2. @babel/plugin-transform-destructuring
+
+3. @bable/plugin-transform-classes
+
+4. ......
+
+### preset
+
+- preset是什么？
+
+A set of plugins，一组插件的集合
+
+- 官方preset
+
+1. @babel/preset-env
+
+2. @babel/preset-flow
+
+3. @babel/preset-react
+
+4. @babel/preset-typescript
+
+```js
+module.exports=function (){
+    return {
+        plugins:[
+            "pluginA",
+            "pluginB",
+            "pluginC"
+        ]
+    }
+}
+```
+
+### env
+
+- nev的出现
+
+@bable/preset-env是一种更加智能的preset，让我们指需要根据我们的目标环境，快速配置babel
+
+- env的配置例子
+
+```js
+{
+    "target":">0,25%,not dead"
+}
+
+{
+    "target":{"chrome":"58","ie":"11"}
+}
+```
+
+### 5.3.4 扩展资料
+
+[browserlist项目地址](https://github.com/browserslist/browserslist)
+
+[compat-table项目地址](https://github.com/kangax/compat-table)
+
+## 5.4 不得不提的babel(2)
+
+### 5.4.1 Babel的使用方式
+
+- 直接require
+
+```js
+const bable=require("@babel/core")
+babel.transform(code,options,function(){
+    result // =>{code,map,ast}
+})
+```
+
+- babel-cli
+
+```js
+babel src --out-dir lib --ignore "src/**/*.spec.js","src/**/* .test.js"
+
+babel -node --inspect --presets @babel/preset-env -- script.js --inspect
+```
+
+- Webpack / Rollup
+
+```js
+    module:{
+        rules:[
+            test:/\.m?js$/,
+            exclude:/(node_modules | bower_components)/,
+            use:{
+                loader:'babel-loader',
+                options:{
+                    presets:['@bable/preset-env']
+                }
+            }
+        ]
+    }
+```
+
+### 5.4.2 Babel 的配置 
+
+#### 配置的位置
+
+- 项目根目录的.babelrc.json
+
+对整个项目生效
+
+- 工程根目录的babel.config.json
+
+对整个工程生效（可跨项目）
+
+- package.json的babel字段
+
+相当于.babel.json
+
+#### plugin
+
+- plugin的使用
+
+```js
+module.exports={
+    // "@babel/preset-env" ,下面配置的是简写，如果工程配置中找不到包，可能是被简写了
+    presets:["@babel/env"],
+    // same as "@babel/plugins-transform-arrow-functions"
+    plugins:["@babel/transform-arrow-function"]
+}
+```
+- plugin
+
+
+```js
+// 以下三种配置方式等价
+module.exports={
+  “plugins”:[
+      "pluginA":,
+      ["pluginA"],
+      ["pluginA",{}] // 如果plugin配置成数组，第一项是插件名称，第二项是配置
+  ]
+}
+```
+利用以下方式，我们可以将配置传入插件
+
+```js
+module.exports={
+  “plugins”:[
+      [
+          "transform-async-to-module-method",
+          {
+              "module":"bluebird",
+              "method":"coroutine"
+          }
+      ]
+  ]
+}
+```
+
+- plugin的顺序
+
+1. Plugins在preset之前执行
+2. Plugin之间从前往后依次执行
+
+babel为什么这么设计呢？
+
+因为preset配置的是比较成熟的语法，plugin主要配置一些更新特性，plugin在preset之前执行是保证这些新特性是最先被转换的，保证preset只关心比较稳定的语法
+
+#### preset
+
+- preset的使用
+
+```js
+{
+    "preset":[
+        ["@bable/preset-env",{
+            "loose":true,
+            "modules":false
+        }]
+    ]
+}
+```
+为什么preset也需要配置呢？
+
+因为preset本质就是一组plugin的集合,plugins可以配置，当然preset也可以配置，甚至preset可以依赖另一个preset
+
+- preset的本质
+
+```js
+    module.exports=()=>({
+        presets:[
+            "@babel/preset-env"
+        ],
+        plugins:[
+            [
+                "@babel/plugin-proposal-class-properties",
+                {loose:true}
+            ],
+            "@babel/plugin-proposal-object-rest-spread"
+        ]
+    })
+```
+- preset的顺序
+
+1. preset在plugin之后执行
+2. preset之间从后往前依次执行
+
+```js   
+// 执行顺序 c->b->a，这个设计babel文档中说是历史原因造成的
+{
+    "preset":[
+        "a","b","c"
+    ]
+}
+```
+
+#### preset-env
+
+- preset-env的配置
+
+preset-env是最常用的preset，大部分情况下你只需用这一个preset就可以了
+
+1. 主要就是useBuiltins和target两个配置
+2. useBuiltins用来配置polyfill
+3. target用来告诉preset-env选择哪个插件
+
+```js   
+{
+    "presets":[
+        [
+            "@babel/preset-env",
+            {
+                "useBuiltIns":"entry",
+                "target":{
+                    "esmodules":true,
+                    "chrome":"58",
+                    "ie":"11",
+                    "node":"current"
+                }
+            }
+        ]
+    ]
+}
+```
+- targets的配置
+
+这个配置项是我们支持的平台是什么
+
+```js   
+{
+    "targets" :{"chrome":"58","ie":"11"}
+}
+// or
+{
+    "targets" : "> .5%  and not last 2 versions"
+}
+```
+
+1. 可以是描述浏览器版本的对象，也可以是字符串（browserlist）
+2. browserlist完整语法
+3. 也可以将browserlist写在.browserslistrc中
