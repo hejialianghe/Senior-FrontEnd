@@ -21,7 +21,7 @@ script:  # 需要执行的脚本
     - yarn build
     - ls
     - chmod 777 deploy.sh 
-    - sh ./deploy.sh
+    - sh ~/.ssh/deploy.sh
 
 addons:
   ssh_known_hosts: 122.51.11.29 # 添加 SSH 信任列表
