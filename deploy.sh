@@ -1,4 +1,4 @@
-#!usr/bin/env sh
+#!usr/bin/env bash
 
 #当发生错误中止脚本
 
