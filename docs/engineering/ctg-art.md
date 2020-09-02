@@ -217,7 +217,7 @@ AST是一种可遍历的、描述代码的树状结构，利用AST可以方便�
 [国大学慕课：编译原理 哈尔滨工业大学：](http://www.icourse163.org/course/HIT-1002123007)
 
 
-## 5.3 不得不提的babel(1)
+## 5.3 不得不提的babel:基本概念
 
 ### 5.3.1 Babel的作用
 
@@ -368,7 +368,7 @@ module.exports=function (){
 
 [compat-table项目地址](https://github.com/kangax/compat-table)
 
-## 5.4 不得不提的babel(2)
+## 5.4 不得不提的babel：使用
 
 ### 5.4.1 Babel的使用方式
 
@@ -434,7 +434,7 @@ module.exports={
     plugins:["@babel/transform-arrow-function"]
 }
 ```
-- plugin
+- plugin的几种配置
 
 
 ```js
@@ -565,3 +565,370 @@ preset-env是最常用的preset，大部分情况下你只需用这一个preset�
 1. 可以是描述浏览器版本的对象，也可以是字符串（browserlist）
 2. browserlist完整语法
 3. 也可以将browserlist写在.browserslistrc中
+
+- usebuiltins的配置
+
+三种取值：“usage”、“entry”、“false”，默认是false
+
+用于自动注入polyfill代码
+
+1. false：什么也不做/不自动注入polyfill
+
+2. entry:根据环境配置自动注入polyfill
+
+3. usage:根据实际使用自动注入polyfill
+
+### 5.4.3 polyfill
+
+#### Babel的Polyfiill
+
+- Babel 7.4之前
+
+统一使用@babel/polyfill
+
+- babel 7.4之后
+
+新的形式更有利于babel做进一步的转换
+
+```js
+import "core-js/stable";
+import "regenerator-runtime/runtime"
+```
+core-js用于polyfill大部分的ES新feature
+
+regenerator-runtime/runtime用于转换generator函数
+
+由于polyfill会用于运行时，所以要以`dependencies`方式安装
+
+#### Polyfill的使用
+
+- 直接引入？
+
+官方不建议直接引入，因为太大了，建议将preset-env的useBuiltins和corejs搭配使用。
+
+- useBuiltIns:“entry”
+
+在target配置为chrome71的条件下使用：
+
+```js
+import 'core-js/stable'
+
+// ------------------------
+
+import "core-js/modules/es.array.unscopables.flat";
+import "core-js/modules/es.array.unscopables.flat-map";
+import "core-js/modules/es.object.form-entries";
+import "core-js/modules/web.immediate"
+```
+- useBuiltins:false
+
+Babel什么都不做，完全由你自己决定如何polyfill
+
+- useBuiltins: "usage"
+
+ 根据使用情况自动加入poilfill
+
+```js
+// a.js
+var set =new Set([1,2,3])
+
+// 转换后
+import 'core-js/module/es.array.iterator';
+import 'core-js/modules/es.object.to-string';
+import 'core-js/modules/es.set';
+var set = net Set([1,2,3])
+```
+ <font color="red">**似乎完美了吗？**</font>
+
+ ```js
+ export class Animal {
+     makeSound(){
+         console.log('hi')
+     }
+ }
+
+//  ----------------------------
+
+"use strict"
+require("core-js/modules/es6.object.define-property")
+function _classCallCheck(instance,constructor){//....}
+function _defineProperties(target,props){//....}
+function _createClass(Constructor,protoProps,staticProps){//....}
+ ```
+ Polyfill函数被内联的写进文件里，如果工程中大量使用class语法，必然会出现大量的重复的polyfill
+
+ <font color="red">**解决方法**</font>
+
+ yarn add -D @babel/plugins-transform-runtime
+
+yarn add @babel/runtime 
+
+ ```js
+ var _classCallCheck2=_interopRequireDefault(
+     require('@babel/runtime/helpers/classCallCheck')
+ )
+  var _classCallClass2=_interopRequireDefault(
+     require('@babel/runtime/helpers/createClass')
+ )
+ ```
+ 
+ 让所有polyfill函数从@babel/runtime引入
+
+  <font color="red">**带来的好处**</font>
+
+  1. 减小包的体积
+  2. 不会影响到全局环境
+
+ <font color="red">**最终配置**</font>
+
+ ```js
+ module.exports = {
+  presets: [
+    ['@babel/preset-env', {
+      useBuiltIns: 'usage'
+      }]
+  ],
+  plugins: [
+    "@babel/plugin-proposal-class-properties"
+    ['@babel/plugin-transform-runtime'],
+}
+ ```
+
+## 5.5 不得不提的babel：插件开发
+
+### 5.5.1 Babel的插件的本质
+
+#### 插件长什么样？
+
+```js
+export default function (){
+    return {
+        visitor:{
+            Indentifier(path){
+                const name=path.node.name;
+                path.node.name=name
+                 .split("")
+                 .reverse()
+                 .join("")
+            }
+        }
+    }
+}
+```
+#### 从代码到AST
+
+```js
+function square () {
+    return n*n
+}
+```
+Babel和ESlint一样，使用EStree规范生成AST结构，可以使用[AST Explore](https://astexplorer.net/)查看
+
+#### 节点（Node）
+
+- AST 每一层都拥有相同的结构，我们称之为节点（Node）
+- 一个AST可以由单一的节点或成百上千个节点构成
+- 它们组合在一起可以描述用于静态分析的程序语法
+
+```js
+{
+    type:"FunctionDeclaration",
+    id:{.....},
+    params:[......]
+    body:{.....}
+}
+
+{
+    type:"FunctionDeclaration",
+    name:...
+}
+
+{
+    type:"FunctionDeclaration",
+    operator:......,
+    left:{......},
+    right:{...}
+}
+```
+
+#### 遍历
+
+babel编译经过3个步骤，解析->变换->生成；其中解析和生成我们都不用关注，我们只用关注变换，先要转换AST，我们
+需要对其进行递归的树形遍历
+
+```js
+
+    {
+      "type": "FunctionDeclaration",
+      "start": 0,
+      "end": 37,
+      "id": {
+        "type": "Identifier",
+        "start": 9,
+        "end": 15,
+        "name": "square"
+      },
+      "expression": false,
+      "generator": false,
+      "async": false,
+      "params": [],
+      "body": {
+        "type": "BlockStatement",
+        "start": 19,
+        "end": 37,
+        "body": [
+          {
+            "type": "ReturnStatement",
+            "start": 25,
+            "end": 35,
+            "argument": {
+              "type": "BinaryExpression",
+              "start": 32,
+              "end": 35,
+              "left": {
+                "type": "Identifier",
+                "start": 32,
+                "end": 33,
+                "name": "n"
+              },
+              "operator": "*",
+              "right": {
+                "type": "Identifier",
+                "start": 34,
+                "end": 35,
+                "name": "n"
+              }
+            }
+          }
+        ]
+      }
+    }
+  
+```
+1. 从FunctionDeclaration 开始遍历
+
+2. id节点，它是一个identifier，没有任何子节点属性
+
+3. params数组，访问其中的任何一项，都是identifier
+
+4. body -> BlockStatement -> body
+
+5. ReturnStatement -> argument -> BinaryExpression
+
+6. ......
+
+#### 访问者模式
+
+- 遍历AST的过程，其实就是不断访问各个节点的过程
+
+- Babel的插件，就是顺理成章地使用了访问者模式
+
+```js
+const MyVisitor ={
+    Indentifier:{
+        enter(){
+           console.log("Entered")
+        },
+        exit(){
+            console.log("EXited")
+        }
+    }
+}
+```
+ 访问者的每个方法都能获取2个参数，第一个参数是`path`,
+
+ - path
+
+ path是我们对节点的引用
+
+ ```js
+    {
+        type:"FunctionDeclaration",
+        id:{
+            type:"Identifier",
+            name:"square"
+        }
+        ......
+    }
+    // path拿到父节点
+    {
+        "parent":{
+            "type":"FunctionDeclaration",
+            "id":{}
+            .....
+        },
+        "node":{
+            "type":"Identifier",
+            "name":"square"
+        }
+    }
+ ```
+ 1. path方法可以帮助我们访问父节点，帮助我们取得上下文信息。
+ 2. path方法上面有很多工具方法，帮助我们方便的操作AST。
+
+- State
+
+插件的“状态，比如：
+当前plugin的信息、plugin传入的配置参数，甚至处理过程中的自定义状态
+
+```js
+{
+    plugins:[
+        ["my-plugin",{
+            "options":true,
+            "options":false
+        }]
+    ]
+}
+// babel中通过state拿到配置参数
+{
+    visitor:{
+        FunctionDeclartion(path,state){
+            console.log(state.opts)
+            // {option1:true,option2:false}
+        }
+    }
+}
+```
+
+- 完整面貌
+
+```js
+export default function (babel) {
+    // babel的一些工具方法
+    const {type:t,template}=babel
+    return {
+        name:"a-demo-plugin",
+        visitor:{
+            Indentifier(path,state){},
+            ASTNodeTypeHere(path,state){}
+        }
+    }
+}
+```
+一个babel对象为入参，以包含插件名和visitor的对象为返回值的函数
+
+### 5.5.2 Babel的插件开发工具
+
+| 工具  |  作用  | 
+| :---: | :----: |
+|  @babel/parser  | 将源代码解析称AST | 
+|  @babel/generator  | 将AST生成js代码  | 
+|  @babel/code-frame  | 生成错误信息 | 
+|  @babel/helpers   | 提供一些内置的帮助函数 | 
+|  @babel/template |  为parser提供模版引擎| 
+|  @babel/types  | 主要用于处理节点类型相关的问题（判断、创建） | 
+|  @babel/traverse | 工具类，用来遍历AST树 | 
+
+### 5.5.3 Babel的插件实战
+
+#### 实现一个Optional Chaining
+
+```js
+foo?.bar 
+// --------------- 把上面的转换成下面的
+foo==null?void 0: foo.bar
+```
+想要转换，就先对比2段代码的AST结构，利用[astexplorer](https://astexplorer.net/)工具分别拿到json格式的AST，拿到2段转换后的json后，在利用[diffchecker](https://www.diffchecker.com/diff)网站对比一下前后变换。
+
+![](~@/engineering/diffast.png)
