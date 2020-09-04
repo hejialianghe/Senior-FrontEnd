@@ -932,3 +932,306 @@ foo==null?void 0: foo.bar
 想要转换，就先对比2段代码的AST结构，利用[astexplorer](https://astexplorer.net/)工具分别拿到json格式的AST，拿到2段转换后的json后，在利用[diffchecker](https://www.diffchecker.com/diff)网站对比一下前后变换。
 
 ![](~@/engineering/diffast.png)
+
+## 5.6 深入webpack：设计思想
+
+### 5.6.1 Tapable
+
+#### Tapable是啥？
+
+Tapable是一个插件框架，也是Webpack的底层依赖，webpack几乎所有的功能都有插件提供，webpack本身创建了许多hook，各个插件注册在
+
+自己感兴趣的hook上，有webpack在相应的时机去调用它们，tapable正是提供了这样的hook体系。
+
+```js
+const {
+    SyncHook, // 同步钩子
+    SyncBailHook, // 同步熔断钩子
+    SyncWaterfallHook, // 同步流水钩子
+    SyncLoopHook,      // 同步循环钩子
+    AsyncParalleHook, // 异步并发钩子
+    AsyncParallelBaillHook,  // 异步并发熔断钩子
+    AsyncSeriesHook,  // 异步串行钩子
+    AsyncSeriesBailHook, // 异步串行熔断钩子
+    AsyncSeriesWaterfallHook // 异步串行流水钩子
+} = require('tapable')
+```
+
+#### Tapable的使用
+
+```js
+const { SyncHook } = require('tapable')
+// 创建实例
+const syncHoook=new SyncHook(["name","age"])
+
+// 注册事件
+syncHook.tap("1",(name,age)=>{console.log("1",name,age)})
+syncHook.tap("2",(name,age)=>{console.log("1",name,age)})
+syncHook.tap("3",(name,age)=>{console.log("1",name,age)})
+
+syncHook.call("Harry Potter",18)
+
+// output:
+// 1 Harry Potter 18
+// 2 Harry Potter 18
+// 3 Harry Potter 18
+```
+
+### 5.6.2 Webpack工作流程
+
+1. 初始化配置
+
+初始化既包括配置的初始化，也包括`tapable`插件体系的初始化，主要就是实例`Compiler`这个对象
+
+```js
+class Compiler extends Tapable {
+    constructor (context) {
+        super()
+        // 实例一系列tapable hook
+        this.hooks={
+            shouldEmit: new SyncBailHook(["compilation"]),
+            done:new AsyncSeriesHook(['stats']),
+            beforeRun: new AsyncSeriesHook(["compiler"]),
+            run: new AsyncSeriesHook(['compiler']),
+            emit: new AsyncSeriesHook(["compilation"]),
+            afterEmit: new AsyncSeriesHook(["compilation"])
+        }
+    }
+}
+```
+
+2. 准备工作（初始化Plugins等）
+
+初始化`plugin`的过程就是依次调用`plugin`apply的过程
+
+```js
+    class SourceMapDevToolPlugin {
+        // 在我们实例化的`Compiler`对象上注册每个钩子的回调函数
+        apply(compiler){
+            compiler
+              .hooks
+              .compilation
+              .tap("SourceMapDevToolPlugin",compilation=>{
+                  compilation
+                   .hooks
+                   .afterOptimizeChunkAssets
+                   .tap(xxx,()=>{context,chunks})
+              })
+        }
+    }
+```
+
+3. resolve源文件，构建module
+
+4. 生成thunk
+
+5. 构建资源
+
+6. 最终文件生成
+
+事实上从第三步开始，都有plugin注册hook回调函数的方式在参与
+
+
+### 5.6.3 Webpack的主要概念
+
+- Entry
+  - Entry是webpack开始分析依赖的入口
+  - Webpack从Entry开始，遍历整个项目的依赖
+
+```js
+module.exports={
+    entry:'./path/to/my/entry/files.js'
+}
+
+module.exports={
+    entry:{
+        app:'./src/app.js',
+        adminApp:'./src/adminApp.js'
+    }
+```
+enrty 可以有一个，也可以有多个
+
+- Output
+
+Output用来指示Webpack将打包后的bundle文件放在什么位置
+
+```js
+    const path=require('path');
+    module.exports={
+        entry:'./path/to/my/entry/files.js',
+        output:{
+            path:path.resolve(__dirname,dist),
+            fileName:'my-fist-webpack-bundle.js'
+        }
+    }
+```
+
+- Loader
+
+ - Loader能够让Webpack处理非JS/JSON的文件
+
+ - 处理：将一切格式转为JS模块，以便Webpack分析依赖关系和方便我们在浏览器中加载
+
+ ```js
+    const path=require('path');
+    module.exports={
+        entry:'./path/to/my/entry/files.js',
+        output:{
+            path:path.resolve(__dirname,dist),
+            fileName:'my-fist-webpack-bundle.js'
+        },
+        module:{
+            reules:[
+                {
+                    test:'/\.txt$/',use:'raw-loader'
+                }
+            ]
+        }
+    }
+```
+
+- Plugin
+
+插件负责提供更高级的构建、打包功能
+
+```js
+ const HtmlWebpackPlugin=require('Html-webpack-plugin')
+ const path=require('path');
+    module.exports={
+        entry:'./path/to/my/entry/files.js',
+        output:{
+            path:path.resolve(__dirname,dist),
+            fileName:'my-fist-webpack-bundle.js'
+        },
+        module:{
+            reules:[
+                {
+                    test:'/\.txt$/',use:'raw-loader'
+                }
+            ]
+        },
+        Plugin:[
+            // HtmlWebpackPlugin 为应用生成一个html文件，并且自动注入所有生成的js bundle，这是loader所做不到的
+            new HtmlWebpackPlugin({template:'./src/index.html'})
+        ]
+    }  
+```
+
+- Mode （webpack4以后）
+
+指明当前的构建任务所处的环境，让webpack针对特定环境启动一些优化项
+
+```js
+module.exports={
+    mode:'production' // 'node' | 'development' 'production'
+}
+```
+
+## 5.7 深入webpack：高级使用
+
+### 5.7.1 基本配置
+
+#### entry
+
+- 单入口
+
+```js
+    module.exports={
+        entry:'./src/index.js',
+    }
+```
+
+- 多入口
+
+```js
+    // 要为每个入口命名
+    module.exports={
+        home:'./home.js',
+        about:'./about.js',
+        contact:'./contact.js',
+    }
+```
+
+#### output
+
+```js
+module.exports={
+    output:{
+   // 输出bundle文件名，hash是wepack使用散列算法生成一段字符串，这样每次打包的文件名都不样
+    // 这样浏览器即使缓存，每次也能加载最新代码
+        filename:'[name].[hash].bundle.js'，
+        // 输出的 chunk文件名，一般是非entry打包出的文件
+        chunkFilename：'[id].js'
+    }
+}
+```
+
+#### 资源的加载
+
+我们可以使用loader来加载非js的资源
+
+```js
+    // css/rest.css
+    body {
+        margin:0px;
+    }
+    // app.js
+    import './css/reset.css'
+```
+对于加载非js的资源我们都应该使用`loader`，所有要加载css的资源我们可以选择`style-loader`、`css-loader`
+
+css-loader使你可以在别的css中可以使用`@import`的语法引用别的css
+
+style-loader把js代码中`import`导入的样式文件代码，以一种特殊的方式打包到jsbundle的结果中，然后在js的运行时，将样式自动插入
+
+页面的style标签中。
+
+```js
+  module.exports={
+      entry:path.resolve(__dirname,'src/index.js'),
+      output:{
+          filename:path.resolve(__dirname,'dist/'
+      }
+      mode:"develoment",
+      plugins:[....],
+      module:{
+          reles:[
+              {
+                  test:/\.css$/,
+                  use:['style-loader','css-loader']
+              }
+          ]
+      }
+  }
+```
+需要注意的是，loader的执行顺序是反的，从数组的最后往前执行，如果使用使用`sass`，需要配置最后面；这样等sass-loader执行完后的结果
+
+在交给css-loader，要不然依赖倒置就会出现错误。
+```js
+  module.exports={
+      entry:path.resolve(__dirname,'src/index.js'),
+      output:{
+          filename:path.resolve(__dirname,'dist/'
+      }
+      mode:"develoment",
+      plugins:[....],
+      module:{
+          reles:[
+              {
+                  test:/\.css$/,
+                  use:[{
+                      loader:'style-loader',
+                  },
+                  {
+                      loader:'css-loader',
+                  },
+                  {
+                      loader:'sass-loader',
+                      options:{sourceMap:true}
+                  }],
+                  exclude:'/node_modules/'
+              }
+          ]
+      }
+  }
+```
