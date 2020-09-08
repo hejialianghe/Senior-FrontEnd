@@ -315,7 +315,6 @@ babel本身不会对代码做任何操作，所有功能都靠插件实现
 3. @bable/plugin-transform-classes
 
 4. ......
-
 ### preset
 
 - preset是什么？
@@ -1234,4 +1233,251 @@ style-loader把js代码中`import`导入的样式文件代码，以一种特殊�
           ]
       }
   }
+```
+#### 资源的处理
+
+MiniCssExtractPlugin把css抽离出单独的文件
+
+```js
+// loader
+{
+    test: /\.scss$/,
+    MiniCssExtractPlugin.loader,
+    'css-loader',
+    'sass-loader'
+}
+
+// plugin
+// 抽取css代码
+new MiniCssExtractPlugin({
+    filename:'[name].css?v=[contenthash]'
+})
+```
+#### HTML的处理
+
+- HtmlWebpackPlugin
+
+任何js应用都需要由HTML去承载，我们使用HtmlWebpackPlugin去处理项目中的HTML文件
+
+```js
+module.exports={
+    plugins:[
+        new HtmlWebpackPlugin({
+            // 输出的文件名
+            filename:'index.html'
+            // 模块文件的路径
+            template：path.resolve(__dirname,'src/index.html'),
+            // 配置生成页面的标题
+            title:'webpack-主页'
+        })
+    ]
+}
+```
+
+#### 静态资源处理
+
+- 开发中的静态资源
+
+图片、字体、音视频等
+
+```js
+{
+    test: /\.(png | jpe?g | gif | svg)$/,
+    use:[{
+        loader:'url-loader',
+        options:{
+            // 小于8192字节的图片打包成base64图片
+            limit:8192,
+            name:'images/[name].[hash:8].[ext]',
+            publicPath:''
+        }
+    }]
+}
+
+{
+    test:/\.(woff | woff2 | svg | eot | ttf)$/
+    use:[
+        loader:'file-loader',
+        options :{
+            limit:8192,
+            name:'font/[name].[ext]?[hash:8]'
+        }
+    ]
+}
+```
+
+#### js处理
+
+- babel-loader
+
+不另行指定配置的话，会使用项目的.babelrc.json配置
+
+```js
+module:{
+    reles:[
+        {
+            test: /\.(js | jsx)$/,
+            use: 'babel-loader',
+            include:path.resolve(__dirname,'src')
+        }
+    ]
+}
+```
+### 5.7.2 高级使用
+
+#### mode
+
+```js
+module.exports={
+    mode:'development' // none  | production | development
+}
+```
+Mode 用来表示当前的webpack运行环境，本质是在不同的环境下，开启一些内置的优化项
+
+
+#### devServer
+
+- 开发调试
+
+想要在代码发生变化后自动编译代码，有三种方式：
+
+1. webpack watch mode
+
+2. webpack-dev-server
+
+3. webpack-dev-middleware
+
+```js
+module.exports={
+    devServer:{
+        contentBase:__dirname+'dist',
+        compress:true,
+        port:9000
+    }
+}
+```
+
+#### HMR(模块热替换)
+
+```js
+    module.exports={
+        devServer:{
+            contentBase:__dirname+'dist',
+            compress:true,
+            port:9000,
+            // 开启HMR
+            hot:true
+        }
+    }
+```
+用于在无刷新的情况下，根据文件变动刷新页面的局部状态
+
+#### 代码分离
+
+- 为什么要代码分离？
+
+为了将代码分成多个bundle，并灵活定制加载策略（按需加载、并行加载），从而大大提升应用的加载速度。
+
+- 如何代码分离？
+
+1. 入口起起点：使用entry配置手动地分离代码
+
+2. 防止重复：使用SplitChunkPlugin去重和分离chunk
+
+3. 动态导入：通过在代码中使用动态加载模块的语法来分离代码
+
+- 多入口构建
+
+```js
+module.exports={
+    mode:'development',
+    entry:{
+        index:'./src/index.js',
+        another:'./src/another-module.js'
+    },
+    output:{
+        path:path.resolve(__dirname,'dist'),
+        filename:'[name].bundle.js'
+    }
+}
+```
+最终结果：
+
+index.bundle.js
+another.bundle.js
+
+问题：
+
+1. 资源可能被重复引入
+2. 不够灵活
+
+- splitChunks
+
+```js
+module.exports={
+    mode:'development',
+    entry:{
+        index:'./src/index.js',
+        another:'./src/another-module.js'
+    },
+    output:{
+        path:path.resolve(__dirname,'dist'),
+        filename:'[name].bundle.js'
+    },
+    // 在webpack4 中将splitChunks统一到了optimization中
+   optimization :{
+    //    查询相关用法，不是插询optimization，而是查询SplitChunksPlugin这个插件
+       splitChunks:{
+           chunks:'all'
+       }
+   }
+
+}
+```
+- 动态导入
+
+1. import()
+
+es module提供语言级的方法
+
+2. reuire.ensure
+
+在没有import方法之前，webpack提供的方法
+
+```js
+// 动态导入是异步的
+import(/*webpackChunkName:loaash*/,'lodash').then(({default:_})=>{
+    
+})
+.catch(err=>{
+
+})
+```
+## 5.8 深入webpack：Loader和Plugin详解
+
+### 5.8.1 loader的编写
+
+- Webpack Loader的基本结构
+
+```js
+// 同步的Loader
+module.exports=input => input + input
+// 异步的Loader
+module.exports=function(){
+    const callback=this.async()
+    callback(null,input+input)
+}
+```
+- loader-utils
+
+loader-utils是编写webpack loader的官方工具库
+
+```js
+    const loaderUtils=require('loader-utils')
+    module.exports=function (source) {
+        // 获取配置
+        const options = loaderUtils.getOptions(this)
+        const result=source.replace('word',options.name)
+        return result
+    }
 ```

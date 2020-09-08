@@ -1152,6 +1152,68 @@ async function readFilesByAsync() {
     console.log(str2.toString());
 }
 ```
+## 3.7 手写promise
+
+### 3.6.1 先实现整体结构
+
+```js
+// 我们用es5的自执行函数定义模块，如果用AMD规范的需要编译，用自执行函数方便我们一会调用测试
+(function (window) {
+  function Promise () {
+
+  }
+  window.Promise=Promise
+})(window)
+
+```
+整体结构实现
+```js
+(function(window){ 
+ // executor执行器，就是我们new Promise((resolve,reject)=>) 传过来的函数，它是同步执行的
+function Promise(executor){
+
+ }
+ /**
+  * then方法指定了成功的和失败的回调函数
+  * 返回一个新的promise对象
+  */
+ Promise.prototype.then=function(onResolve,onRejected){
+
+ }
+ /**
+  * 传入失败回调
+  * 返回一个新的Promise
+  */
+ Promise.prototype.catch=function(OnRejected){
+
+ }
+ /**
+  * 返回一个指定结果成功的promise
+  */
+ Promise.resolve=function(value){
+
+ }
+ /**
+  * 返回一个指定reason失败的promise
+  */
+ Promise.reject=function(reason){
+     
+}
+/**
+ * 所有成功才成功，有一个失败就失败
+ */
+Promise.all=function(promises){
+     
+}
+/**
+ * 第一个成功就成功，如果不成功就失败
+ */
+Promise.race=function(promises){
+     
+}
+window.Promise=Promise
+})(window)
+```
 ##  总结
 
 这章我们学习了异步编程的解决方法
