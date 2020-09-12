@@ -1154,7 +1154,9 @@ async function readFilesByAsync() {
 ```
 ## 3.7 手写promise
 
-### 3.6.1 先实现整体结构
+### 3.7.1 先实现整体结构
+
+实现一个模块
 
 ```js
 // 我们用es5的自执行函数定义模块，如果用AMD规范的需要编译，用自执行函数方便我们一会调用测试
@@ -1166,7 +1168,8 @@ async function readFilesByAsync() {
 })(window)
 
 ```
-整体结构实现
+基本结构
+
 ```js
 (function(window){ 
  // executor执行器，就是我们new Promise((resolve,reject)=>) 传过来的函数，它是同步执行的
@@ -1214,6 +1217,109 @@ Promise.race=function(promises){
 window.Promise=Promise
 })(window)
 ```
+
+### 3.7.2 实现promise内部的resolve和reject
+
+当我们`new promise((resolve,reject)=>{})`时会传入一个回调函数，我们这里叫executor(执行器)，promise拿到这个方法以后，
+调用这个executor方法并传入resolve和reject方法，让用户控制promise是成功还是失败；调用resolve是成功，调用reject是失败。
+
+```js{16,35}
+(function(window){ 
+// 常量定义3promise的三个状态
+    const PENDING = 'pending'
+    const FULFILLED = 'fulfilled'
+    const REJECTED = 'rejected'
+// executor执行器，就是我们new Promise((resolve,reject)=>) 传过来的函数，它是同步执行的
+function Promise(executor){
+// 存一下this，因为代码中调用resolve时，在全局下调用的，此时resolve里面this是window
+// 关于this指向问题，就是谁调用就指向谁，当然也可以用箭头函数处理这个问题
+    const self=this 
+    self.status=PENDING
+    self.state=undefined //存传的值
+    self.callbackQueues=[] // 存回调队列
+
+  // 让promise成功的函数
+  function resolve(value){ 
+    if(self.status!==PENDING) return
+        self.status=FULFILLED
+        self.state=value
+    /*
+      这里会让人感到疑惑？下面是干什么的？
+      onResolved是then方法的第一个参数，onRejected是第二个参数
+      其实promise用了发布订阅的设计模式，promise把then方法的OnResolved和OnRejected方法存到一个数组里
+      不懂没关系，可以看下面的我分析的代码执行步骤
+    */
+     if(self.callbackQueues.length>0){
+        self.callbackQueues.map(item=>{
+           setTimeout(()=>{
+                item.onResolved(value)
+           })
+        })
+      }
+    }
+// 让promsie失败的函数
+  function reject (reason) {
+  // 如果不是pending状态，就没必要往下了，因为promise的状态一旦改变就无法在更改
+    if(self.status!==PENDING) return 
+        self.status=REJECTED
+        self.state=reason
+
+     if(self.callbackQueues.length>0){
+        self.callbackQueues.map(item=>{
+           setTimeout(()=>{
+                item.onRejected(value)
+           })
+        })
+      }
+    }
+// 捕获executor函数里意外错误，如果错误改变状态
+   try {
+    executor(resolve,reject)
+   }catch(err){
+       reject(err)
+   }
+ }
+ /**
+  * then方法指定了成功的和失败的回调函数
+  * 返回一个新的promise对象
+  */
+ Promise.prototype.then=function(onResolved,onRejected){
+     const seft=this
+     seft.callbackQueues.push({
+        onResolved,
+        onRejected
+     })
+ }
+ window.Promise=Promise
+})(window)
+```
+#### 分析一下代码执行步骤
+
+```html
+    <script src="./Promise.js"></script>
+    <script>
+        new Promise((resolve,reject)=>{
+          setTimeout(()=>{
+            resolve(1)
+          })
+        }).then(res=>{
+            console.log(res);
+        })
+    </script>
+```
+1. `new Promise()` 会传入一个回调函数到构造函数Promise中，然后执行Promise里的代码。
+2. 开始就是 `const self=this ` 的执行，这些不是重点，重点是执行`executor(resolve,reject)`,并传入resolve和reject函数。
+3. 开始执行`executor`函数，函数里执行了`setTimeout`，我们知道`setTimeout`是异步执行的，接下来会执行`then`方法。
+3. 执行then方法并传入了`onResolved`函数，then方法里把传入的`onResolved`push到了`callbackQueues`数组里。
+4. 同步的代码执行完了，开始执行异步任务了，显然是指行setTimeout里resovle方法。
+5. 在resolve方法里开始判断不是`pending`状态就退出，然后就把状态改成`fulfilled`,把传过来的值存到`state`里；然后执行`callbackQueues`
+里的函数，callbackQueues里存的then方法传回调函数，调用里面的回调把`state`值传进去。
+
+上面代码只是简单的实现了`then`方法，接下来我们具体实现
+
+### 3.7.3 实现then方法
+
+
 ##  总结
 
 这章我们学习了异步编程的解决方法
