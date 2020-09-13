@@ -1156,7 +1156,7 @@ async function readFilesByAsync() {
 
 ### 3.7.1 先实现整体结构
 
-实现一个模块
+定义一个模块
 
 ```js
 // 我们用es5的自执行函数定义模块，如果用AMD规范的需要编译，用自执行函数方便我们一会调用测试
@@ -1321,7 +1321,7 @@ function Promise(executor){
 
 ### 3.7.3 实现Promise原型上的then方法
 
- <font color="red">**看到这么多代码不要慌张，我会拆分详细讲解，then方法是Promise的重点，其他方法都then方法有关系，**</font>
+ <font color="red">**看到这么多代码不要慌张，我会拆分详细讲解，then方法是Promise的重点，其他方法都then方法有关系**</font>
 
 
  我们要先明确then方法实现了什么？
