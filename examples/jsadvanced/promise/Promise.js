@@ -31,7 +31,7 @@ function Promise(executor){
      if(self.callbackQueues.length>0){
         self.callbackQueues.map(item=>{
            setTimeout(()=>{
-                item.onRejected(value)
+                item.onRejected(reason)
            })
         })
       }
@@ -46,14 +46,15 @@ function Promise(executor){
 
  /**
   * then方法指定了成功的和失败的回调函数
-  * 返回一个新的promise对象
-  * 根据状态存onResolved和onResolved或调用onResolved和onRejected
+  * 返回一个新的promise对象，它实现了链式调用
   * 返回的promise的结果由onResolved和onRejected决定
   */
  Promise.prototype.then=function(onResolved,onRejected){
+   
     onResolved=typeof onResolved==='function' ? onResolved : value=>value
-    onRejected=typeof onRejected==='function'?onRejected : ()=> {throw reason}
-     const seft=this
+    onRejected=typeof onRejected==='function'? onRejected : reason=>  {throw reason}
+    const seft=this
+
     return new Promise((resolve,reject)=>{
         function handle (callback){
             try {
@@ -72,13 +73,14 @@ function Promise(executor){
                 reject(err)
             }
         }
-        if(seft.status===PENDING){
+
+        if(seft.status===PENDING){ // 当是Promise状态为pending时候，将onResolved和onRejeactd存到数组中callbackQueues
             seft.callbackQueues.push({
                 onResolved(value){
-                    onResolved(value)
+                   handle(onResolved)
                 },
                 onRejected(reason) {
-                    onRejected(reason)
+                    handle(onRejected)
                 }
              })
          }else if(seft.status===FULFILLED){
@@ -124,15 +126,48 @@ function Promise(executor){
 }
 /**
  * 所有成功才成功，有一个失败就失败
+ * 返回一个的Promise，这个promise的结果由传过来的数组决定，一个失败就是失败
  */
 Promise.all=function(promises){
+return new Promise((resolve,reject)=>{
+    let values=[]
+    promises.map(item=>{
+        if(item instanceof Promise) {
+            item.then(
+                (res)=>{
+                    values.push(res) 
+                }
+                ,reject)
+        }else {
+           setTimeout(()=>{
+            values.push(item)
+           })
+        }
+    })
+    setTimeout(() => {
+        if(values.length===promises.length){
+            resolve(values)
+        }   
+    });
+})
      
 }
 /**
- * 第一个成功就成功，如果不成功就失败
+ * 第一个成功就成功，如果不成功就失败(就是最先拿到谁的值，就成功)
+ * 返回一个Promsie
  */
 Promise.race=function(promises){
-     
+    return new Promise((resolve,reject)=>{
+        promises.map(item=>{
+            if(item instanceof Promise) {
+                item.then(
+                    resolve
+                    ,reject)
+            }else {
+                resolve(item)
+            }
+        })
+    })  
 }
 window.Promise=Promise
 })(window)

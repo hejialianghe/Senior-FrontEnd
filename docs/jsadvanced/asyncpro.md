@@ -738,9 +738,9 @@ promise的then方法接受两个参数
 | :---: | :--------: |
 | Promise.resolve(param) | 等同于 new Promise(function (resolve.,reject){resolve(param)})  |
 | Promise.reject(reason) | 等同于 new Promise(function (resolve.,reject){reject(reason)}) |
-| Promise.all([p1,...,pn])| 输入一组promise返回一个新的promise，全部promise都是fulfilled结果才是fulfilled状态 |
+| Promise.all([p1,...,pn])| 输入一组promise返回一个新的promise，全部promise都是fulfilled结果才是fulfilled状态；如果有一个失败，结果promise就是失败 |
 | Promise.allSettled([p1,...,pn])| 输入一组promise返回一个新的promise，所有的promise状态改变后，结果promise变成fulfilled |
-| Promise.race([p1,...,pn])| 输入一组promise返回一个新的promise，结果promise的状态跟随第一个变化的promsie状态 |
+| Promise.race([p1,...,pn])| 输入一组promise返回一个新的promise，结果promise的状态跟随第一个变化的promsie状态，最先返回promise是成功的，结果promise就是成功，否则就是失败|
 
 ####  🚀 Promise的实例方法
 
@@ -748,7 +748,7 @@ promise的then方法接受两个参数
 | :---: | :--------: |
 | promise.then（onFulfilled，onRejected） | promise状态改变之后的回调，返回新的promise对想 |
 | Promise.catch(reason) | 同promise.then(null,onRejected),promise状态为rejected回调 |
-| Promise.finally(function（reason）{ // test })| 不管promise的状态如何都会执行 |
+| Promise.finally(function（reason）{  })| 不管promise的状态如何都会执行 |
 
  then和catch都会返回一个新的promise，链式调用的时候catch会冒泡到最后一层
 
@@ -1152,7 +1152,7 @@ async function readFilesByAsync() {
     console.log(str2.toString());
 }
 ```
-## 3.7 手写promise
+## 3.7 手写Promise
 
 ### 3.7.1 先实现整体结构
 
@@ -1177,15 +1177,15 @@ function Promise(executor){
 
  }
  /**
-  * then方法指定了成功的和失败的回调函数
-  * 返回一个新的promise对象
+  * then方法指定了成功的和失败的回调函数,如果指定的不是函数，会忽略该值
+  * 返回一个新的promise对象，该promsie的结果onResolved和onRejected决定，状态由上个Promise决定
   */
- Promise.prototype.then=function(onResolve,onRejected){
+ Promise.prototype.then=function(onResolved,onRejected){
 
  }
  /**
   * 传入失败回调
-  * 返回一个新的Promise
+  * 返回一个新的Promise,由于已经捕获错误了，会返回一个成功的Promise
   */
  Promise.prototype.catch=function(OnRejected){
 
@@ -1203,13 +1203,15 @@ function Promise(executor){
      
 }
 /**
- * 所有成功才成功，有一个失败就失败
+ * 返回一个新Promsie
+ * 所有的promise成功才成功，有一个失败就失败
  */
 Promise.all=function(promises){
      
 }
 /**
- * 第一个成功就成功，如果不成功就失败
+ * 返回一个新Promsie
+ * 传入的数组中第一个返回的Promise成功就成功，如果不成功就失败(第一个promise不是你传入的第一个，比如请求接口，最新拿到结果的是第一个)
  */
 Promise.race=function(promises){
      
@@ -1218,7 +1220,7 @@ window.Promise=Promise
 })(window)
 ```
 
-### 3.7.2 实现promise内部的resolve和reject
+### 3.7.2 实现Promise内部的resolve和reject
 
 当我们`new promise((resolve,reject)=>{})`时会传入一个回调函数，我们这里叫executor(执行器)，promise拿到这个方法以后，
 调用这个executor方法并传入resolve和reject方法，让用户控制promise是成功还是失败；调用resolve是成功，调用reject是失败。
@@ -1317,8 +1319,359 @@ function Promise(executor){
 
 上面代码只是简单的实现了`then`方法，接下来我们具体实现
 
-### 3.7.3 实现then方法
+### 3.7.3 实现Promise原型上的then方法
 
+ <font color="red">**看到这么多代码不要慌张，我会拆分详细讲解，then方法是Promise的重点，其他方法都then方法有关系，**</font>
+
+
+ 我们要先明确then方法实现了什么？
+
+ 1. 返回一个新的Promsie
+ 2. 新的promise的值由上一个Promsie的onResolved和onRejected的结果决定
+
+ ```js
+  Promise.prototype.then=function(onResolved,onRejected){
+    const self= this 
+    /*
+     我们为什么把判断写到promise里面？
+
+     因为我们需要根据上一个Promsie的状态去改变当前这个返回的promise的状态
+     上一个promsie的状态可以根据seft.status拿到，我们要改变返回的这个promise的状态，
+     就是调用resolve或reject，我们只有写在promise里面才到调用这两个函数
+    */
+    return new Promise((resolve,reject)=>{
+      // 我们调用then方法的时候 ，promise可能是以下三种状
+
+      // 如果是pending状态，那么说明Promsie内部的resolve还没执行，因为如果执行了，resolve函数会改变状态的
+      // 由于resolve函数还未执行，我们也拿不到传过来的值，先把回调函数放到callbackQueues数组中
+      if(seft.status===PENDING){ 
+          seft.callbackQueues.push({
+                onResolved,
+                onRejected
+          })
+
+      }else if(seft.status===FULFILLED){
+        // 用self.state 拿到当前promsie state的值，把值传递给使用者传入的第一个回调函数
+        onResolved(self.state)
+        
+      else {
+         // 用self.state 拿到当前promsie state的值，把值传递给使用者传入的第二个回调函数
+         onRejected(self.state)
+        }
+    })
+
+  }
+
+ ```
+
+上面我们实现了，返回一个promsie，并调用了传递过来的onResolved和onRejected函数，接下来我们改变这个返回promise的状态
+
+```js
+ Promise.prototype.then=function(onResolved,onRejected){
+    const self= this 
+    return new Promise((resolve,reject)=>{
+      if(seft.status===PENDING){ 
+          seft.callbackQueues.push({
+                onResolved,
+                onRejected
+          })
+
+     // 当前Promise fulfilled状态时
+      }else if(seft.status===FULFILLED){
+        /*
+          const p = new Promise((resolve,reject)=>{resolve(1)})
+          p.then((res)=>{
+            return 2
+             or 
+            return new Promise((resolve,reject)=>{resolve(2)})
+          })
+        */
+        // 我们调用onResolved拿到函数的返回值，这个返回值，也有可能是一个promise
+        const result= onResolved(self.state)
+        if(result instance Promise){
+          result.then(res=>{ // 调用then方法拿到值
+            resolve(res) // 改变返回的这个promise状态为fulfilled，并传入了值
+          })
+        } else {
+            resolve(result) // 改变返回的这个promise状态为fulfilled，并传入了值
+        }
+       
+      // 当前Promise 为rejected状态时，下面的实现方法跟上面基本一样
+      // 为什么我们下面也调用resolve，因为onRejected这个函数中已经捕获了错误
+      // 一旦有onRejected函数捕获了错误，错误就不再往下传递，让下一个promise成功！
+      else {
+          const result= onRejected(self.state)
+        if(result instance Promise){
+          result.then(res=>{ // 调用then方法拿到值
+            resolve(res) // 改变返回的这个promise状态为fulfilled，并传入了值
+            })
+          } else {
+            resolve(result) // 改变返回的这个promise状态为fulfilled，并传入了值
+          }
+        }
+    })
+
+  }
+```
+
+把相同的代码封装成一个函数handle,我们知道promsie的then的回调函数是异步的，所以setTimeout模拟then方法的异步问题
+
+```js
+Promise.prototype.then=function(onResolved,onRejected){
+  
+    const self= this 
+    return new Promise((resolve,reject)=>{
+      // 把相同的代码封装起来,并用try catch捕获错误
+      /*
+        像这种情况，使用者如果抛出错误，直接让下个promise也就是当前返回的promise状态为失败
+       then(res=>{
+         throw '我抛出错误'
+       })
+      */
+    function handle (callback){
+        try {
+           const result= callback(self.state)
+            if(result instance Promise){
+              result.then(res=>{ 
+                resolve(res) 
+              })
+            } else {
+                resolve(result) 
+          }
+         }catch(reason){
+          reject(reason)
+        } 
+      }
+     // 当前Promise pending状态时
+      if(seft.status===PENDING){ 
+          seft.callbackQueues.push({
+                onResolved,
+                onRejected
+          })
+
+     // 当前Promise fulfilled状态时
+      }else if(seft.status===FULFILLED){
+         setTimeout(()=>{
+            handle(onResolved)
+         })
+      // 当前Promise 为rejected状态时
+      else {
+        setTimeout(()=>{
+           handle(onRejected)
+          })
+        }
+    })
+  }
+```
+then方法已经实现的差不多了，但是promise为pending状态时，我们没有去改变返回那个promise的状态，改变状态需要调用resolve或reject
+然而我们并没有调用
+
+```js
+Promise.prototype.then=function(onResolved,onRejected){
+  // 如果传入的不是函数，就用默认函数，并把上一个promse的值往下传递
+  const onResolved=typeof onResolved ==='fucntion' ? onResolved :(value)=>value
+  // 如果传入的不是函数，就给默认函数，并抛出错误，让返回的这个promsie为失败状态
+  const onResolved=typeof onRejected ==='fucntion' ? onRejected :(reason)=>{throw reason}
+
+    const self= this 
+    return new Promise((resolve,reject)=>{
+
+    function handle (callback){
+        /*省略*/
+      }
+     // 当前Promise pending状态时
+      if(seft.status===PENDING){ 
+          seft.callbackQueues.push({
+                onResolved()=>{
+                  handle(onResolved)
+                },
+                onRejected()=>{
+                 handle(onRejected)
+              }
+          })
+     
+      }else if(seft.status===FULFILLED){// 当前Promise fulfilled状态时
+        /*省略*/
+     
+      else {  // 当前Promise 为rejected状态时
+         /*省略*/
+        }
+    })
+  }
+```
+
+then完整代码
+
+```js
+ /**
+  * then方法指定了成功的和失败的回调函数
+  * 返回一个新的promise对象，它实现了链式调用
+  * 返回的promise的结果由onResolved和onRejected决定
+  */
+Promise.prototype.then = function (onResolved, onRejected) {
+  onResolved = typeof onResolved === 'function' ? onResolved : value => value
+  onRejected = typeof onRejected === 'function' ? onRejected : reason => { throw reason }
+  const seft = this
+
+  return new Promise((resolve, reject) => {
+    function handle (callback) {
+      try {
+        const result = callback(seft.state)
+        if (result instanceof Promise) {
+          result.then(
+            (res) => {
+              resolve(res)
+            },
+            err => {
+              reject(err)
+            }
+          )
+        } else {
+          resolve(result)
+        }
+      } catch (err) {
+        reject(err)
+      }
+    }
+    // 当是Promise状态为pending时候，将onResolved和onRejeactd存到数组中callbackQueues
+    if (seft.status === PENDING) {
+      seft.callbackQueues.push({
+        onResolved (value) {
+          handle(onResolved)
+        },
+        onRejected (reason) {
+          handle(onRejected)
+        }
+      })
+    } else if (seft.status === FULFILLED) {
+      setTimeout(() => {
+        handle(onResolved)
+      })
+    } else {
+      setTimeout(() => {
+        handle(onRejected)
+      })
+    }
+  })
+}
+```
+
+### 3.7.4 实现promsie原型的catch方法
+
+```js
+ /**
+  * 传入失败回调
+  * 返回一个新的Promise
+  */
+ // 第一个参数不传，then里面会有默认参数，传入OnRejected回调函数
+ // then 方法里会调用OnRejected并传入拒绝的理由
+ Promise.prototype.catch=function(OnRejected){
+    return this.then(undefined,OnRejected)
+ }
+```
+
+### 3.7.5 Promise.resolve
+
+```js
+ /**
+  * Promise函数对象的resove方法
+  * 返回一个指定结果成功的promise
+  */
+ // 这个简单 让返回的promise成功就行
+ Promise.resolve=function(value){
+    return new Promise((resolve,reject)=>{
+        if(value instanceof Promise){
+            value.then(resolve,reject)
+        }else {
+            resolve(value)
+        }
+     })
+ }
+```
+
+### 3.7.6 Promise.reject
+
+```js
+ /**
+  *  Promise函数对象的reject方法
+  * 返回一个指定reason失败的promise
+  */
+  // 这个简单 让返回的promise失败就行
+ Promise.reject=function(reason){
+     return new Promise((resove,reject)=>{
+        reject(reason)
+     })
+}
+```
+
+### 3.7.7 Promise.all
+```js
+/**
+ * 所有成功才成功，有一个失败就失败
+ * 返回一个的Promise，这个promise的结果由传过来的数组决定，一个失败就是失败
+ */
+// 这个也不难，循环传入的数组，把成功的promise的返回的值放到values中
+// 只有当values和promises相同时，说明全部成功，这时候返回一个成功的数组，有一个失败就失败
+Promise.all = function (promises) {
+  return new Promise((resolve, reject) => {
+    let values = []
+    promises.map(item => {
+      if (item instanceof Promise) {
+        item.then(
+          (res) => {
+            values.push(res)
+          }
+          , reject)
+      } else {
+        // 为了正确的放入values，所以也让其异步
+        setTimeout(() => {
+          values.push(item)
+        })
+      }
+    })
+    // 这里用setTiemeout是因上面的then方法是异步的，让下面的代码也异步，才能拿到最终的values数组
+    setTimeout(() => {
+      if (values.length === promises.length) {
+        resolve(values)
+      }
+    })
+  })
+}
+```
+
+### 3.7.8 Promise.race
+
+```js
+/**
+ * 第一个成功就成功，如果不成功就失败(就是最先拿到谁的值，就成功)
+ * 返回一个Promsie
+ */
+//  这个简单，只要发现一个promsie成功了，就让返回的promsie成功
+Promise.race=function(promises){
+    return new Promise((resolve,reject)=>{
+        promises.map(item=>{
+            if(item instanceof Promise) {
+                item.then(
+                    resolve
+                    ,reject)
+            }else {
+                resolve(item)
+            }
+        })
+    })  
+}
+```
+### 3.7.9 总结
+
+我们要实现promsie应该先看A+规范，上一章有中文的翻版，当然也可以去网上看英文版，那我总结一下重点：
+
+1. promise用了发布订阅的设计模式。
+
+2. 重点在then方法，它实现了返回一个新的promise，这个promsie的状态由上一个promsie的状态所决定。
+
+3. 调用resolve和reject去改变promise的状态
+
+[完整代码](https://github.com/hejialianghe/Senior-FrontEnd/tree/master/examples/jsadvanced/promise)
 
 ##  总结
 

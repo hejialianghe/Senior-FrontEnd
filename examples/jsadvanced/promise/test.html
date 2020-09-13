@@ -6,47 +6,23 @@
     <title>Document</title>
 </head>
 <body>
-    <!-- <script src="./Promise.js"></script> -->
+    <script src="./Promise.js"></script>
     <script>
-        new Promise((resolve,reject)=>{
-          setTimeout(()=>{
-            reject(1)
-          })
+    
+   const p1=new Promise((resolve,reject)=>{
+    reject(1)
+   }).then(res=>{})
+   .then(err=>{
+ 
+    console.log(222,err);
+  
+   })
+   .catch(err=>{
+    console.log(333,err);
+   }).catch(res=>{
+       console.log(777,res);
+   })
 
-        })
-        .then(res=>{
-            console.log('resolve1',res);
-        
-        },err=>{
-            console.log(7777,err)
-          return 999
-        })
-        .then(res=>{
-            console.log('resolve',res);
-        },err=>{
-            console.log('reject2',err);
-            return 999
-        }).catch(err=>{
-            console.log(888,err)
-        })
-   
-   
-   
-        // const p= new Promise((resolve,reject)=>{
-        //     resolve(1)
-        // }).then(res=>{
-        //     console.log('第1个Promise',res);
-        //     return 2
-        // },(err)=>{
-        //     return 3
-        // }
-        // ).then(res=>{
-        //     console.log('第二个Promise',res);
-        // },
-        // (err)=>{
-        //     console.log('err',err);
-        // }
-        // )
 
     </script>
 </body>
