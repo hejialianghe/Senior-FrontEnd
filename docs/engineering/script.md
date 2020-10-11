@@ -483,3 +483,250 @@ echo "$firstname $secondname";
 这是一本深入浅出的介绍Linux命令和Shell脚本编写的优秀技术书，目前豆瓣评分9.3分。如果你想深入和熟练的掌握Shell编程，希望你不要错过它。
 
 [《The Linux Command Line》](http://linuxcommand.org/tlcl.php  )
+
+## 1.3 浅谈Node CLI
+
+#### 从process.argv说起
+
+`process`是node的进程模块，process有个argv属性来获取node进程获取命令行参数
+
+代码
+
+```js
+process.argv.forEach((val,index)=>{
+  console.log(`${index}:${val}`)
+})
+```
+执行
+
+```js
+node process-argv.js one two three
+```
+结果
+
+```js
+0:/usr/local/bin/node
+1:/Users/hejialiang/Desktop/work/个人代码/vue/Senior-FrontEnd/examples/engineering/2.3/process-argv.js
+2:one
+3:two
+```
+
+process.argv 属性返回一个数组，其中包含当启动Node.js进程时传入的命令行参数。
+
+第一个元素是process.execPath,第二个元素将是正在执行javascript文件的路径，其余元素将是任何其他命令行参数。
+
+
+### 1.3.1 commander（更方便的cli参数处理，作者tj）
+
+1. 链式调用
+
+2. 更好的参数处理
+
+3. autohelp
+
+```js
+#!/usr/bin/env node
+const program=require('commander')
+program
+     .name('better-clone')// cli 的名字
+     .version('0.0.1') // 版本
+     .option('-v,--verbose','verposity that can be increased') // -v 简写 --verbose全称 后面是描述
+
+// 给program添加子命令，可以用command这个方法
+program
+   .command('clone <source> [destination]') // clone 是子命令，source是必填参数，destination 是选填参数
+   .option('-d,--depths <level>','git clone depths') 
+   .description('cloe a repository into a newly created directory')
+   .action((source,destination,cmdObj)=>{ // cmdObj存放所有option的键值对
+        console.log(`start cloning from ${source} to ${destination} with depth ${cmdObj.depths}`);
+   })
+
+program.parse(process.argv) // 从process.argv中取得命令行参数
+
+// 命令行运行：node ./commander.js clone ./src ./to --depths=2
+// 输出：start cloning from ./src to ./to with depth 2
+```
+
+### 1.3.2  cli交互-inquirer.js（更友好的输入）
+
+- 灵活的CLI交互方式
+
+input、number、confirm、list、rawlist、expand、checkbox、password、Editor......
+
+- 磨平平台差异 
+
+兼容Windows/OSX/Linux上的主流终端，不用关心平台底层的实现细节
+
+```js
+const inquirer = require('inquirer')
+inquirer
+  .prompt([
+    /* Pass your questions in here */
+    { type: 'input', name: 'username', message: "What's ur name?" },
+    { 
+        type: 'checkbox', 
+        name: 'gender', 
+        message: "What's ur gender?", 
+        choices: [ 'male', 'female' ]
+    },
+    { 
+        type: 'number', 
+        name: 'age', 
+        message: 'How old are u?',
+        validate: input => Number.isNaN(Number(input)) 
+            ? 'Number Required!' : true 
+        },
+    { 
+        type: 'password', 
+        name: 'secret', 
+        message: 'Tell me a secret.', 
+        mask: 'x' 
+    }
+  ])
+  .then(answers => {
+    console.log(`Answers are:\n ${JSON.stringify(answers)}`)
+  })
+  .catch(error => {
+    if (error.isTtyError) {
+      // Prompt couldn't be rendered in the current environment
+    } else {
+      // Something else when wrong
+    }
+  })
+// 运行  node inquirer.js 
+// 提供输入、选择
+// 能拿到命令中用户输入的和选择的参数
+```
+### 1.3.3 cli交互（chalk）-更友好的输出
+
+- 非常简单的用法
+
+```js
+const chalk=require('chalk')
+const log=console.log
+const chalk=require('chalk')
+const log=console.log
+
+log(chalk.blue('\nhello')+'world'+chalk.red('!\n'))
+
+log(chalk.blue.bgRed.bold('Hello world!\n'))
+
+log(chalk.blue('Hello','word','Foo','bar','biz','baz\n'))
+
+log(chalk.red('Hello',chalk.underline.bgBlue('word')+'!\n'))
+```
+chalk为什么能输出颜色？ANSI Escape Code
+
+### 1.3.4 调用其他程序(shell.js 、execa)
+
+- CLI程序的复用
+
+不用再重复发明git/npm/yarn 等
+
+- 异步的进行某些操作，尤其是CPU Bound操作
+
+让网络请求、后台的密集计算等影响前台CLI程序与用户的使用
+
+- Node通过child_process模块赋予了我们创造子进程的能力
+
+cp.exec 、 cp.spawn
+
+#### shell.js（调用其他程序）
+
+```js
+const shell = require('shelljs');
+if(!shell.which('git')){
+  shell.echo('Sorry, this script requires git')
+  shell.exit(1)
+}
+shell.rm('-rf','out/Release')
+
+shell.ls('*.js').forEach(function(file)=>{
+  shell.sed('-i','BUILD_VSRSION','v0.1.2',file)
+})
+shell.cd('..')
+
+if(shell.exec('git commit -am "Auto-commit"').code !==0){
+  shell.echo('Error: Git commit failes')
+  shell.exit(1)
+}
+```
+- 对bash命令提供了跨平台的封装
+- 可以同步的获得命令结果
+
+#### execa （调用其他程序）
+
+```js
+const execa =require('execa');
+(async ()=>{
+  const {stdout}=await execa()
+  console.log(stdout)
+})()
+```
+
+```js
+const execa =require('execa');
+execa('echo',['unicorns']).stdout.pipe(process.stdout)
+```
+- 结果promise化
+- 跨平台支持Shebang
+- 获取进程结束信号
+- 优雅退出
+- 更好的windows支持
+
+### 1.3.5 拆解CLI设计-以脚手架为例
+
+- 需求描述
+
+设计一个脚手架CLI，根据命令选择不同的模版，按指定的参数在指定的路径生成一个样板工程
+
+- 拆解需求
+
+1. 参数的输入，结果的输出
+  commanderjs、inquirer、chalk
+
+2. 模版在哪里维护
+   git 仓库维护模版
+
+3. 如何让获取模版
+   git clone，使用execa或shelljs调用
+
+4. 如何根据模版
+
+  模版引擎，例如handlebars
+
+### 1.3.5 脚手架似乎是有套路的
+
+如果想快速开发脚手架，那就用脚手架的框架Plop、yeoman-generator；脚手架一系列封装。
+
+### 1.3.6 革命性的脚手架-Schemetics
+
+- 配合schematics-utilities 可以做到语法级别的样板代码生成
+
+- 可以引入虚拟文件系统，可以保证写入原子性
+
+- 支持多个Schematics之间的组合和管道
+
+- 文档还不完善
+
+### 扩展阅读 
+
+- ink
+
+用React开发CLI应用
+
+. 专注于CLI的视图层
+. 利用React的平台无关性（更换renderer）
+
+- oclif
+
+从工程角度封装CLI开发的复杂性
+
+1. 提供Plugin机制，便于扩展
+2. 提供预定义的生命周期
+3. 更紧凑的工程结构
+
+
+
+
+

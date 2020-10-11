@@ -52,11 +52,8 @@ module.exports = {
                 title: "计算机网络",
                 collapsable: false,
                 children: [
-                  ["computerNetwork/",'网络协议'],
-                  ["computerNetwork/",'网络请求'],
-                  ["computerNetwork/",'网络安全'],
-                  ["computerNetwork/",'模块加载'],
-                  ["computerNetwork/",'路由']
+                  ["computerNetwork/protocal",'网络协议'],
+                  ["computerNetwork/security",'网络安全']
                 ]
               },
               {
