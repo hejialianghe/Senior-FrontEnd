@@ -405,7 +405,7 @@ vue初始化
 ```javascript
 function Vue(options){
     // 只允许用户用new操作符，如果直接调用就抛出警告
-    if(this instanceof Vue){
+    if(!(this instanceof Vue)){
         console.warn('Vue is a constructor and should be called with the `new` keyword')
     }
     // 初始化配置项
