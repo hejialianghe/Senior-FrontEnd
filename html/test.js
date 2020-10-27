@@ -1,26 +1,18 @@
-
-setTimeout(() => {
-
-    console.log('timer1')
-   
-    Promise.resolve().then(function() {
-   
-      console.log('promise1')
-   
-    })
-   
-   }, 0)
-   
-   process.nextTick(() => {
-   
-    console.log('nextTick')
-   
-    process.nextTick(() => {
-   
-      console.log('nextTick')
-   
-    })
-   
-   })
-   
-   console.log('timer2')
+new Promise((r)=>{
+    r()
+}).then(()=>{
+    console.log(1);
+}).then(()=>{
+    console.log(2);
+}).then(()=>{
+    console.log(3);
+})
+new Promise((r)=>{
+    r()
+}).then(()=>{
+    console.log(4);
+}).then(()=>{
+    console.log(5);
+}).then(()=>{
+    console.log(6);
+})

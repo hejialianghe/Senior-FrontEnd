@@ -149,6 +149,13 @@ moveChild:function (child,afterNode,toIndex,lastIndex){
 
 [[译] Virtual Dom 和 Diff 算法](https://juejin.im/post/5c504f736fb9a049ef26fcd3)
 
+## 5.2 React Reconciler（react协调的过程）
+
+### 5.2.1  React Reconclier(15版本) 
+
+
+
+
 ## 5.3 new componentLifecyle（新生命周期）
 
 ### 5.3.1 React组件新生命周期详解

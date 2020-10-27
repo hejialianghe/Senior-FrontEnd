@@ -42,6 +42,4 @@ select *from user where user_name=';update user set money=99999 where id=10025'
 
 ### 3.1.5  HTTPS 中间人攻击
 
-    黑客在电脑上安装伪造的证书，拦截客户端的请求
-
-
+黑客在电脑上安装伪造的证书，拦截客户端的请求
