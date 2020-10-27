@@ -1024,7 +1024,7 @@ pipe函数compose类似，只不过从左往右执行
 
   - 持续每次对越来越少的元素重复上面的步骤，直到没有任何一对数字需要比较。
 
-  ####  🚀 菜鸟教程给出生动的展示图：[点击我](https://www.runoob.com/w3cnote/insertion-sort.html)
+  ####  🚀 菜鸟教程给出生动的展示图：[点击我](https://www.runoob.com/w3cnote/bubble-sort.html)
 
   ####  🚀 案例： 给数组`[2,4,3,5,1,5]`进行排序
    ``` javascript
@@ -1033,12 +1033,14 @@ pipe函数compose类似，只不过从左往右执行
      function bubbleSort1(src) {
       let arr=[...src] //做浅拷贝，避免影响原数组
       let flag=true
+      let current
       for (let i=0; j<arr.length-1;i++){ 
         //为什么arr.length-1-j？因为每次遍历完后最大值肯定在最右边，数组的后面的那段其实已经是排序好，无需在排序
           for(let j=0;j<arr.length-1-i;j++){
               if(arr[j]>arr[j+1]){
-                  flag=false
-                  [arr[j],arr[j+1]]=[arr[j+1],arr[j]]
+                current=arr[j]
+                arr[j]=arr[j+1]
+                arr[j+1]=current
               }     
           }
         // 用flag判断，如果第一次循环，前面的参数没有大于后面的参数，说明数列无需排序，跳出循环
@@ -1084,23 +1086,18 @@ pipe函数compose类似，只不过从左往右执行
         let arr=[...src]
         let current
         let preIndex
-        for (let i =1; i<arr.length;i++){
-            current=arr[i]
-            preIndex=i-1
-            while (preIndex>=0 && current<arr[preIndex]){
-                arr[preIndex+1]=arr[preIndex]
-                preIndex--
-            }
-          /*
-            不在进入while循环体了说明：
-              1.说明preIndex<0了，比较到顶端了,不用在比较了
-              2.current<arr[preIndex]说明current已经大于比较值了，可以插入到比较值后面了
-          */
-            arr[preIndex+1]=current
-        }
+        for(let i=0;i<arr.length;i++){
+          let current =arr[i+1]
+          let preIndex=i
+          while(preIndex>=0 && (current<arr[preIndex])){
+              arr[preIndex+1]= arr[preIndex]
+              arr[preIndex]=current
+              preIndex--
+          }
+      }
         return arr
     }
-   console.log(bubbleSort2(arr)) // [ 1, 2, 3, 4, 5, 5 ]
+   console.log(insertionSort(arr)) // [ 1, 2, 3, 4, 5, 5 ]
   ```
   总结：现在可以用sort排序，可以看v8的源码去了解它[点击我](https://github.com/v8/v8/blob/master/third_party/v8/builtins/array-sort.tq)
   
@@ -1144,7 +1141,6 @@ pipe函数compose类似，只不过从左往右执行
                 if(!cache[key]){
                     cache[key]=func.apply(this,args)
                 }
-                console.log('cache',cache)
                 return cache[key]  
             }
         }
