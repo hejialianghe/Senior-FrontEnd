@@ -1679,3 +1679,4 @@ Promise.race=function(promises){
 
 回调->发布订阅->promise->Generator->async/await
 
+ 
