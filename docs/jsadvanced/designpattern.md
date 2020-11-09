@@ -1973,31 +1973,35 @@ getpage('pageone');
 ```javascript
 //前进后退
 function moveDiv(){
-    this.stateList=[];
-    this.nowState=0;
+    this.stateList=[]; // 缓存之前的状态
+    this.nowState=0; // 状态指针，指向当前状态在哪个
 }
+/**
+  * @param {string} type 往哪个方向移动
+  * @param {Number} num  移动多远
+  */
 moveDiv.prototype.move=function(type,num){
-    moveDiv(type,num);
+    changeDiv(type,num); //假设移动位置的函数
     this.stateList.push({
      type:type,
      num:num
-    });
-    this.nowState=this.stateList.length-1;
+    }); // 添加状态
+    this.nowState=this.stateList.length-1; // 设置当前指针
 }
-moveDiv.prototype.go=function(){
+moveDiv.prototype.go=function(){ //前进
   var _state;
-  if(this.nowState<this.stateList.length-1){
+  if(this.nowState<this.stateList.length-1){ //当前指针小于数组最后一位，说明能前进
       this.nowState++;
       _state=this.stateList[this.nowState];
-      moveDiv(_state.type,_state.num);
+      changeDiv(_state.type,_state.num);
   } 
 }
-moveDiv.prototype.back=function(){
+moveDiv.prototype.back=function(){ //后退
     var _state;
     if(this.nowState>=0){
         this.nowState--;
         _state=this.stateList[this.nowState];
-        moveDiv(_state.type,_state.num);
+        changeDiv(_state.type,_state.num);
     }
 }
 ```
