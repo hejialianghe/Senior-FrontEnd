@@ -104,7 +104,7 @@ module.exports = {
                 children: [
                   ["engineering/script",'脚本世界'],
                   ["engineering/",'规范先行'],
-                  ["engineering/",'质量代码'],
+                  ["engineering/quality-code",'质量代码'],
                   ["engineering/",'工程设计'],
                   ["engineering/ctg-art",'构建艺术'],
                   ["engineering/auto-deploy",'持续集成与部署'],
