@@ -1465,7 +1465,7 @@ module.exports=input => input + input
 // 异步的Loader
 module.exports=function(){
     const callback=this.async()
-    callback(null,input+input)
+    callback(null,input+input) //返回值用callback传递出去
 }
 ```
 - loader-utils
@@ -1481,3 +1481,55 @@ loader-utils是编写webpack loader的官方工具库
         return result
     }
 ```
+
+- loader中的 “洋葱模型”
+
+style-loader->css-loader->postcss-loader
+
+在loader执行的时候webpack从左到右依次调用`pitch`方法，然后在从右到左调用loader本身(execute的过程)。
+
+```js
+const loaderUtils =  require("loader-utils")
+module.exports= function (input) {
+    const { text } = loaderUtils.getOptions(this)
+    return input + input
+}
+/*
+ remainingReg 是loader链中排在当前这个loader后面所有的loader以及资源文件组成的一个链接，这个链接我们可以理解为一个路径
+ 在所有的loader处理完毕后，我们可以在webpack中使用一个特殊的require函数，去require这个路径，从而得到当前loader后所有的loader的处理结果。
+
+ precedingReq 是loader链中排在当前这个loader前面所有的loader以及资源文件所组成的链接
+
+ input 是一个对象，各个loader把共享的数据挂载这个对象上，如果pitch返回一个值；那么webpack就会跳过余下的loader pitch和execute的过程，
+ 也就是说pitch返回阻断了后续loader的执行
+
+*/
+module.exports.pitch=function (remainingReg,precedingReq,input) {
+    console.log(`
+        remainingReg request :${remainingReg}
+        precedingReq request :${precedingReq}
+        Input: ${JSON.stringify(input,null,2)}
+    `)
+    return "pitched"
+}
+```
+
+- 调试loader
+
+```js
+    const fs =require('fs')
+    const path = require("path")
+    const { runLoaders }= require('loader-runner')
+    runLoaders(
+        {
+            resource : "./demo.txt",
+            loaders:[path.resolve(__dirname,"./loaders/demo-loader")],
+            readResource: fs.readFile.bind(fs)
+        },
+        (err,result)=> (err? console.error(err):console.log(result))
+    )
+```
+
+### 扩展学习
+
+[loader-utils项目地址：](https://www.npmjs.com/package/loader-utils)
