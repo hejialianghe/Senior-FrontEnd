@@ -19,7 +19,7 @@ process.on('uncaughtException') // 没有catch的Promise错误
 ```
 - 利用框架、三方库本身能力
 
-- Vue.config.errHandler
+- Vue.config.errorHandler
 - React.ErrorBoundary
 
 ### 3.6.2 Sentry监控
