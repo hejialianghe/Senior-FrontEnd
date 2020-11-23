@@ -1519,7 +1519,8 @@ module.exports.pitch=function (remainingReg,precedingReq,input) {
 ```js
     const fs =require('fs')
     const path = require("path")
-    const { runLoaders }= require('loader-runner')
+    const { runLoaders }= require('loader-runner') //可以创建一个简单loader调试环境
+    
     runLoaders(
         {
             resource : "./demo.txt",
@@ -1529,6 +1530,50 @@ module.exports.pitch=function (remainingReg,precedingReq,input) {
         (err,result)=> (err? console.error(err):console.log(result))
     )
 ```
+
+### 5.8.1 plugin的编写
+
+loader有`loader-runner`作为调试工具，webpack的plugin因为需要的上下文信息太多了，所以没有一个模拟的环境，如果我们要开发`plugin`需要
+配置webpack，在真实的环境中开发。
+
+1. 搭建开发环境
+
+```js
+const path = require("path");
+const DemoPlugin = require("./plugins/demo-plugin.js")
+const PATHS={
+    lib:path.join(__dirname,"app","shake.js"),
+    build:path.join(__dirname,"build")
+}
+module.exports={
+    entry : {
+        lib:PATHS.lib
+    },
+    output:{
+        path:PATHS.build,
+        filename:"[name].js"
+    },
+    plugins:[new DemoPlugin()]
+}
+```
+2. Compiler 和 Compilation
+
+webpack plugin的本质就是由`apply`方法的类，通过`apply`的方法的类我们可以在运行时取得`compiler`和`Compilation`这2个实例；
+Compiler是编译器的实例（即Webpack），Compilation是每一次编译的过程。
+
+```js
+module.exports=class DemoPlugin {
+    constructor(){
+        this.options=options
+    }
+    apply(compiler){
+        compiler.plugin("emit",(compilation,cb)=>{
+            cb()
+        })
+    }
+}
+```
+
 
 ### 扩展学习
 

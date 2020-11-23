@@ -10,13 +10,14 @@
 // 浏览器
 
 window.onerror //全局异常捕获
-window.addEventListener('error') // js错误、资源加载错误
+window.addEventListener('error') // js错误、静态资源加载错误
 window.addEventListener('unhandledrejection') //没有catch的Promise错误
 
 // node端
 process.on('uncaughtException') // 全局异常捕获
 process.on('uncaughtException') // 没有catch的Promise错误
 ```
+
 - 利用框架、三方库本身能力
 
 - Vue.config.errorHandler
