@@ -1573,7 +1573,47 @@ module.exports=class DemoPlugin {
     }
 }
 ```
+#### 案例实战
 
+编写一个WebpackPlugin，统计Webpack打包结果中各个文件的大小，并以JSON形式输出统计结果
+
+```js 
+const webpackRources = require('webpack-sources')
+class WebpackSizePlugin {
+  constructor (options) {
+    this.options = options
+    this.PLUGIN_NAME = 'WebpackSizePlugin'
+  }
+  apply (complier) {
+    const outputOptions = complier.options.output // 拿到output配置，拿到文件最终的输出路径是什么
+    complier.hooks.emit.tap(
+      this.PLUGIN_NAME, // 插件的名称
+      compilation => { // 在这个函数中可以读取和操作本次编译的结果
+        const assets = compilation.assets // 所有的编译结果都可以通过compilation.assets拿到
+        const buildSize = {}
+        const files = Object.keys(assets)
+        let total = 0
+        for (let file of files) {
+          const size = assets[file].size()// 拿到字符数
+          buildSize[file] = size
+          total += size
+        }
+        console.log('Build Size', buildSize)
+        console.log('Total Size', total)
+        buildSize.total = total
+        // 想要webpack生成一个文件，只需这个文件以键值对的形式加入到assets对象中，那么在打包执行完毕之后，webpack会自动帮我们生成
+        assets[
+          outputOptions.publicPath + '/' + (this.options ? this.options.fileName : 'build-size.json')
+        ] = new webpackRources.RawSource(JSON.stringify(buildSize, null, 4))
+      }
+    )
+  }
+}
+```
+webpack配置
+```js
+   plugins: [new WebpackSizePlugin({ fileName: 'size.json' })]
+```
 
 ### 扩展学习
 
