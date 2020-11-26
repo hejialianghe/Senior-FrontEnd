@@ -1575,7 +1575,8 @@ module.exports=class DemoPlugin {
 ```
 #### 案例实战
 
-编写一个WebpackPlugin，统计Webpack打包结果中各个文件的大小，并以JSON形式输出统计结果
+编写一个WebpackPlugin，统计Webpack打包结果中各个文件的大小，并以JSON形式输出统计结果。
+
 
 ```js 
 const webpackRources = require('webpack-sources')
@@ -1586,6 +1587,7 @@ class WebpackSizePlugin {
   }
   apply (complier) {
     const outputOptions = complier.options.output // 拿到output配置，拿到文件最终的输出路径是什么
+    // 我们插件的目的是统计出打包出来文件的大小，所以我们需要注册到打包结果后的hooks上，由于要输出json，所以要在输出硬盘之前   
     complier.hooks.emit.tap(
       this.PLUGIN_NAME, // 插件的名称
       compilation => { // 在这个函数中可以读取和操作本次编译的结果
@@ -1605,11 +1607,15 @@ class WebpackSizePlugin {
         assets[
           outputOptions.publicPath + '/' + (this.options ? this.options.fileName : 'build-size.json')
         ] = new webpackRources.RawSource(JSON.stringify(buildSize, null, 4))
+        // assets对象中文件的内容，也就是说assets对象中每一项的值它是一个RawSource对象，而不是一个普通的字符串，上面要输出rawsource对象
       }
     )
   }
 }
 ```
+
+编写pugins我们可以进入[webpack网站](https://www.webpackjs.com/api/compiler-hooks/#emit)查看相关开发api和hooks
+
 webpack配置
 ```js
    plugins: [new WebpackSizePlugin({ fileName: 'size.json' })]
