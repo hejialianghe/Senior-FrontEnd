@@ -287,3 +287,282 @@ Map Local可以替换任意charles能抓包到的文件，甚至可以将api请�
     lt --host http://sub.mydomain.com:1234  --port 8000
 ```
 
+## 8.6 随机数据生成（mock）
+
+### 特点
+
+- “生成随机数据，拦截Ajax请求“
+
+- 业务代码物侵入
+
+- 数据类型丰富
+
+- 用法简单，可扩展性强
+
+### 8.5.1 Mock.js 的安装及基本语法
+
+```js
+// 安装
+npm install mockjs
+
+// 基本用法
+const Mock = require('mockjs')
+const data = Mock.mock({
+  // 属性list 的值是一个数组，其中含有 1 到 10个元素，数组里的对象数量是随机的
+  'list|1-10':[{
+    // 属性id 是一个子增函数，起始值为1，每次增1
+    'id|+1':1
+  }]
+})
+// 输出结果
+console.log(JSON.stringify(data,null,4))
+```
+🚀 mockjs的语法
+
+```js
+// name 是属性名，rule是规则 ，value是属性值；属性名和规则之间是用|分割的
+'name|rule':  value
+ name: value
+
+1. 'name|min-max': value
+2. 'name|count': value
+3. 'name|min-max.dmin-dmax': value
+4. 'name|min-max.dcount': value
+5. 'name|count.dmin-dmax': value
+6. 'name|count.dcount':  value
+7. 'name|+step': value
+```
+- 属性值决定了规则的初始值和类型
+- 生成规则的含义需要依赖属性值的类型才能确定
+
+1. 属性值是字符串
+
+- 将value字符串重复min-max次
+```js
+// 1. 'name|min-max': value  生成的数量是随机的
+{'repeater|1-5': 'hi!'} -> { repeater: 'hi!hi!hi!'}
+```
+- 将value字符串重复count次
+```js
+// 2. 'name|count': value
+{'repeater|2': 'hi!'} -> {repeater: 'hi!hi!'}
+```
+2. 属性值是数字
+
+- 随机生成min-max 范围内的一个数字
+```js
+ // 1. 'name|min-max': value
+ // 现在value是数字，属性值决定了初始值，1和50也可以换成其他数字；不影响结果
+ {'age|1-30': 1} -> { age: 22 }
+ {'age|1-30': 50} -> { age:15 }
+```
+- 随机生成一个小数，整数部分值在min-max范围内，小数部分位数在dmin-dmax之间
+```js
+// 'name|min-max.dmin-dmax':vlaue
+{ 'price|1-30.2-3': 1} -> { price: 20.28}
+{ 'price|1-30.2-3': 1} -> { price: 4.827}
+```
+
+3. 属性值是布尔值
+
+- 随机生成一个布尔值，其中value和!value的比例为min-max
+  -  value 概率 = min / (min+max)
+  -  !value 概率 = max / (min + max)
+
+```js
+  // 'name|min-max':vlaue
+  { 'active|1-1': true } -> { active: true }
+  { 'active|1-1': true } -> { active: true }
+```
+4. 属性值是对象
+
+- 从value中随机min-max个属性
+```js
+  // 'name|min-max': vaule
+  { 'user|1-2': { name: 'jack', age: 2 }} -> { user: { age:2}}
+  { 'use|1-2': { name: 'jack', age: 2 }} -> { user: { name: 'jack', age:2 }}
+```
+- 从value中随机取count个属性
+```js
+// 从value中随机取count个属性
+// ‘name|count’: value
+{ 'user|1': { name: 'jack', age: 2}} -> { user: { age:2 }}
+```
+
+4. 属性值是数组
+
+- 从value列表中随机获取1个元素
+```js
+{ 'fruit|1': ['apple','banana']} -> { fruit: 'banana' }
+```
+- 将value列表内的值重复min-max次
+```js
+{ 'list|1-2': ['a']} -> { list: ['a']}
+{ 'list|1-2': ['a']} -> { list: ['a','a']}
+```
+
+5. 属性值是其它类型
+
+- 生成值为function执行结果
+
+```js
+// function
+{ age: ()=> 1 } -> { age:1 }
+```
+- 随机生成符合正则表达式的字符串
+```js
+// reExp
+{ age: /1[0-9]/ } -> { age: '19' }
+```
+
+### 8.5.2 Mock.js的常用方法
+
+1. Mock.mock()
+
+- Mock.mock(rurl?,rtype?,template|function(options))
+  - rurl： 要拦截的请求url，支持正则
+  - rtype：要拦截的请求类型，如POST、GET、DELETE等
+  - template：数据模版，支持对象、字符串
+  - function(options): 生成相应数据的方法，options：{ url,type,body }
+
+🚀 使用mock()方法拦截请求
+
+```js
+//  在入口文件中引入mockjs，对 ‘api/activity‘进行拦截
+import Mock from 'mockjs';
+
+if(process.env.NODE_ENV !== 'production')
+    Mock.mock(/api\/activity/,{
+      code: 200,
+      data: {
+        'isLegal|2-1':false
+      } 
+    })
+  }
+```
+2. Mock.Random
+
+- 工具类
+```js
+const { Random }  =  Mock;
+Random.email()
+// => "n.abc.@miller.io"
+Random.image()
+// => http://dummyimage.com/336x330
+```
+🚀 Mock.Random 支持的方法
+
+| type  |  Method  | 
+| :---: | :--------: | 
+|  Basic  | boolean、natural、integer、float、character、string、range、date、time、datetime、now|
+| Image| image、dateImage |
+| Color | color | 
+| Text | paragraph、sentence、word、title、cparagraph | 
+| Name | first、last、name、cfirst、clast、cname | 
+| Web | url、domain、email、ip、tld | 
+| Address | area、region | 
+| Helper | capitalize、upper、lower、pick、shuffle | 
+| Miscellaneous| guid、id | 
+
+🚀 Mock.Random 与模版语法
+
+```js
+const Mock =  require('mockjs');
+
+const { Random } = Mock
+const user = Mock.mock({
+  code: '200',
+  'list|10': [{
+    name: `${Random.first()} ${Random.last()}`,
+    avatar: Random.image()
+  }]
+})
+
+console.log(users)
+
+{
+  code: 200,
+  list: [
+    { name:'Sarah Leris', avatar: 'http://dummyimage.com/300x600'},
+    { name:'Sarah Leris', avatar: 'http://dummyimage.com/300x600'}
+    .....
+  ]
+}
+// 10个相同的对象
+```
+🚀 Mock.js 的占位符
+
+- 占位符
+ - 使用最广泛
+ - @占位符
+ - @占位符（参数、[,参数]）
+ - 只是在属性值字符串中占个位置，并不出现在最终的属性值中
+ - 实际采用Random中的方法计算
+
+ ```js
+const Mock =  require('mockjs');
+
+const { Random } = Mock
+const user = Mock.mock({
+  code: '200',
+  'list|10': [{
+    name: `${Random.first()} ${Random.last()}`,
+    avatar: Random.image()
+  }]
+})
+
+console.log(users)
+
+{
+  code: 200,
+  list: [
+    { name:'Carol Brown', avatar: 'http://dummyimage.com/3335x220'},
+    { name:'Angela Lopez', avatar: 'http://dummyimage.com/378x600'}
+    .....
+  ]
+}
+// 10个相同的对象
+```
+## 8.6 RestFul API 快速模拟
+
+### 8.6.1 复杂的接口mock场景
+
+#### RESTful API
+
+- REpresentational State Transfer 表现层
+- 资源是由URI来指定：/songs(代表歌曲)  /playlist/12（代表第12个playlist）
+- 对资源的操作包括增删改查：POST、DELETE、PUT和GET方法
+- 是一套API设计理论，约束规范、增强可读性、便于开发
+
+#### RESTful 规范
+
+```bash
+GET http://abc.com/api/playlists # 获取歌单列表
+GET http://abc.com/api/playlist/12345 # 获取id为123456的歌单
+POST http://abc.com/api/playlists # 添加一个歌单
+DELETE http://music.163.com/api/palylist/55 # 删除id为 55 的歌单
+PUT http://music.163.com/api/palylist/123456 # 删除id为 123456 的歌单
+
+GET ： 返回资源对象
+POST ：返回新生成的资源对象
+PUT ：返回完整的资源对象
+DELETE：返回一个空文档
+
+{
+  "code": 200,
+  "message": "success",
+  "data": {
+    playlist: {....}
+  }
+}
+
+HTTP 状态码：
+2xx： 请求成功
+3xx：重定向
+4xx：客户端错误
+5xx：服务端错误
+```
+- 如何mock对同一个资源的增删改查
+- 在前端运行、可以存储数据的server
+- JSON-Server ：零开发，快速模拟RESTful API
+
