@@ -566,3 +566,126 @@ HTTP 状态码：
 - 在前端运行、可以存储数据的server
 - JSON-Server ：零开发，快速模拟RESTful API
 
+### 8.6.2 JSON-server 的安装和用法
+
+```js
+// install
+npm install -g json-server
+
+// db.json
+{
+    "songs":[
+      { "id": 1, "name": "Baby"}
+    ],
+    "comments": [
+      { "id": 1, "content": "nice" }
+    ]
+  }
+
+// start server
+json-server --watch db.json
+```
+运行成功输出的日志
+
+```js
+  \{^_^}/ hi!
+
+  Loading ./db.json
+  Done
+
+  Resources
+  http://localhost:3000/songs
+  http://localhost:3000/comments
+
+  Home
+  http://localhost:3000
+
+  Type s + enter at any time to create a snapshot of the database
+  Watching...
+
+GET /songs 200 8.036 ms - 43
+GET /songs 304 3.381 ms - -
+```
+GET http://localhost:3000/songs/1 会返回 { "id":1,"name":"Baby"} 根据songs/1路由1进行筛选
+
+POST、PUT、PATCH、DELETE 操作会改变db.json文件的内容
+
+🚀 Routes 规则-过滤
+
+```js
+{
+  "songs": [
+    { "name": "吻别", "artist": "张学友" },
+    { "name": "燃烧我的卡路里 ", "artist": "火箭少女 101" },
+    { "name": "麻雀", "artist": "李荣浩" }
+  ],
+  "comments": [
+      { "id": 1, "content": "nice" }
+    ]
+}
+GET /songs?artist=张学友
+GET /songs?artist=张学友&arttist=李荣浩
+GET /comments?author.id=1
+```
+🚀 Routes 规则-翻页与排序
+
+```js
+// 以_开头的是json-server的保留字
+// 分页
+GET /songs?_page=2
+GET /songs?_page=1&_limit=15
+
+// 排序
+GET /songs?_sort=id&_order=asc
+
+// 多字段排序
+GET /songs/_sort=id,name&_order=desc,asc
+```
+🚀 Routes 规则-查询
+
+```js
+// operators:
+// _gte _lte _ne 大约小于等于
+GET /users?age_gte=10&age_lte=20 
+GET /users?age_ne=18
+
+// _like 支持正则
+GET /songs?name_like=爱
+
+// q 全局搜索
+GET /songs?q=喜欢
+```
+🚀 自定义 routes
+
+- 更贴近后端接口
+
+```js
+// routes.json
+// 左边是实际访问的路径，右边是资源的路径
+{
+  "/api/*": "/$1",
+  "/:resource/:id/show": "/:resource/:id", 
+  "/posts/:category": "/posts?category=:cagegory",
+  "/articles\\?id=:id": "/posts/:id"
+}
+
+// 添加启动参数：json-server db.json --routes routes.json
+/api/posts // -> /posts
+/api/posts/1  // -> /posts/1
+/posts/1/show //  -> /posts/1
+/posts/javascript // -> posts?category=javascript
+/articles?id=1 // -> /posts/1
+```
+🚀 添加 middleware
+
+- 统一定制个性化请求
+
+```js
+// my-middleware.json
+module.exports= (req, res ,next) => {
+  res.header('X-token',"xxxxx")
+  next()
+}
+// 启动
+json-server db.json --middlewares ./my-middleware.js
+```
