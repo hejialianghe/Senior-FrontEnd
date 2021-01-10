@@ -834,7 +834,7 @@ const MyVisitor ={
     }
 }
 ```
- 访问者的每个方法都能获取2个参数，第一个参数是`path`,
+ 访问者的每个方法都能获取2个参数，`path`和`state`
 
  - path
 
@@ -928,9 +928,47 @@ foo?.bar
 // --------------- 把上面的转换成下面的
 foo==null?void 0: foo.bar
 ```
-想要转换，就先对比2段代码的AST结构，利用[astexplorer](https://astexplorer.net/)工具分别拿到json格式的AST，拿到2段转换后的json后，在利用[diffchecker](https://www.diffchecker.com/diff)网站对比一下前后变换。
+开发babel插件，首先对比2段代码的AST结构，利用[astexplorer](https://astexplorer.net/)工具分别拿到json格式的AST，拿到2段转换后的json后，在利用[diffchecker](https://www.diffchecker.com/diff)网站对比一下前后变换。
 
 ![](~@/engineering/diffast.png)
+
+行数变化可以忽略，可以直接从结构上看见从哪里开始变化,可以看出是从`OptionaMembeExpression`变化成了`ConditionalExpression`;所以我们可以把
+`OptionaMembeExpression`结构替换成`ConditionalExpression`。
+
+```js
+// foo?.bar
+// foo==null?void 0: foo.bar
+const template = require('@babel/template').default
+module.exports=function OptionlChainingPlugin(babel){
+    return {
+        name: 'optional-chaining-plugin',
+        visitor: {
+            // 通过刚刚的对比，我们知道就是替换OptionaMembeExpression这个表达式
+            OptionaMembeExpression(path,state){
+                path.repalceWith(
+                 // 用 @babel/types这个包构造ConditionalExpression节点，但是这个包已经挂载到了bable上了，所以可以直接载babel访问
+                 // conditionalExpression具体参数可以访问babel官网查看，t.conditionalExpression(test, consequent, alternate)
+                 // 可以从对比图中看出，第一个参数test类型是BinaryExpression，是一个二元判断，也需要我们用babel.types构造
+                  babel.types.conditionalExpression(
+                  // 从babel文档中查看BinaryExpression所需要的的参数t.binaryExpression(operator, left, right)
+                  // operator就是 ==   left(左值)就是foo  right(右值)就是null
+                      babel.types.BinaryExpression(
+                          '==',
+                         babel.types.identifier(path.node.object.name),
+                         babel.types.nulLiteral()
+                    ),
+                    template.expression('void 0'),
+                    babel.types.memberExpression(
+                        babel.types.identifier(path.node.object.name)
+                        babel.types.identifier(path.node.property.name)
+                    )
+                  )
+                )
+            }
+        }
+    }
+}
+```
 
 ## 5.6 深入webpack：设计思想
 
