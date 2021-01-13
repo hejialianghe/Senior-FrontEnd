@@ -945,6 +945,9 @@ module.exports=function OptionlChainingPlugin(babel){
         visitor: {
             // 通过刚刚的对比，我们知道就是替换OptionaMembeExpression这个表达式
             OptionaMembeExpression(path,state){
+                 // path.replaceWith() 替换为新的节点
+                 // path.remove() // 删除当前节点
+                 // path.skip() //跳过子节点`
                 path.repalceWith(
                  // 用 @babel/types这个包构造ConditionalExpression节点，但是这个包已经挂载到了bable上了，所以可以直接载babel访问
                  // conditionalExpression具体参数可以访问babel官网查看，t.conditionalExpression(test, consequent, alternate)
@@ -957,10 +960,10 @@ module.exports=function OptionlChainingPlugin(babel){
                          babel.types.identifier(path.node.object.name),
                          babel.types.nulLiteral()
                     ),
-                    template.expression('void 0'),
+                    template.expression('void 0'), //将字符串转换称号ast
                     babel.types.memberExpression(
-                        babel.types.identifier(path.node.object.name)
-                        babel.types.identifier(path.node.property.name)
+                        babel.types.identifier(path.node.object.name) // 对象名称
+                        babel.types.identifier(path.node.property.name) // 属性名称
                     )
                   )
                 )
