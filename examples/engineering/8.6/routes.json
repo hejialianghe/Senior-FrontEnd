@@ -1,0 +1,4 @@
+{
+    "/api/music/*": "/$1",
+    "/playlists\\?limit=:limit&offset=:offset": "/playlists?_start=:offset&_limit=:limit"
+}

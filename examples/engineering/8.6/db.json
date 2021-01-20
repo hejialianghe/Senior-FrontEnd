@@ -1,8 +1,0 @@
-{
-    "songs":[
-      { "id": 1, "name": "Baby"}
-    ],
-    "comments": [
-      { "id": 1, "content": "nice" }
-    ]
-  }
