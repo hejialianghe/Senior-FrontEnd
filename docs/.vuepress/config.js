@@ -103,7 +103,7 @@ module.exports = {
                 collapsable: false,
                 children: [
                   ["engineering/script",'脚本世界'],
-                  ["engineering/",'规范先行'],
+                  ["engineering/coding-standards",'规范先行'],
                   ["engineering/quality-code",'质量代码'],
                   ["engineering/",'工程设计'],
                   ["engineering/ctg-art",'构建艺术'],

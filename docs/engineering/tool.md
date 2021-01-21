@@ -523,9 +523,9 @@ console.log(users)
 }
 // 10个相同的对象
 ```
-## 8.6 RestFul API 快速模拟
+## 8.7 RestFul API 快速模拟
 
-### 8.6.1 复杂的接口mock场景
+### 8.7.1 复杂的接口mock场景
 
 #### RESTful API
 
@@ -566,7 +566,7 @@ HTTP 状态码：
 - 在前端运行、可以存储数据的server
 - JSON-Server ：零开发，快速模拟RESTful API
 
-### 8.6.2 JSON-server 的安装和用法
+### 8.7.2 JSON-server 的安装和用法
 
 ```js
 // install
@@ -689,7 +689,7 @@ module.exports= (req, res ,next) => {
 // 启动
 json-server db.json --middlewares ./my-middleware.js
 ```
-### 8.6.3 生成随机数据 
+### 8.7.3 生成随机数据 
 
 当数据量过大时候，我们不能手写庞大数据量的db.json,json-server也支持js对象。
 
@@ -710,7 +710,7 @@ module.exports= () => {
 // 启动
 json-server index.js --middlewares ./my-middleware.js
 ```
-### 8.6.4 JSON-Server的基本使用
+### 8.7.4 JSON-Server的基本使用
 
 搭配Mock.js 生成随机数据接口
 
