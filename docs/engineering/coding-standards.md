@@ -262,14 +262,14 @@ module.exports= {
                 const objetName = node.object.name,
                       propertyName= node.property.name;
                 if(objectName === "arguments" &&
-                  !node.computed &&
+                  !node.computed && // 必须是静态的属性访问方式a.b而不是a[b]
                   propertyName &&
                   propertyName.match(/^calle[er]$/u)
                 ){
                     context.report({ // context eslint全局上下文，report输出错误日志
-                        node,
-                        messageId: "unexpexted",
-                        data : { prop : propertyName}
+                        node, // 出错的节点
+                        messageId: "unexpexted", // 报错的提示信息
+                        data : { prop : propertyName} // prop 和meta中的message结合渲染出正确的提示信息
                     })
                 }
             }
@@ -277,7 +277,122 @@ module.exports= {
     }
 }
 ```
+🚀 案例：检查class是否包含constructor构造方法
 
+利用这个网站[astexplorer](https://astexplorer.net/)比较有constructor和没有constructor的变化，然后劫持`ClassDeclaration`
+看里面的节点是否有`MethodDefinition`和kind是不是`constructor`
+
+```js
+// no-constructor.js
+module.exports ={
+    meta: {
+        docs: {
+            description:  "required class constructor",
+            category: "Best Practices",
+            recommended: true
+        },
+        fixable: null,
+        schema: []
+    },
+    create: function(context){
+        return {
+            ClassDeclaration(node){
+                const body = node.body.body;
+                const result = body.some(
+                    element => element.type === 'MethodDefinition' && element.kind === 'constructor'
+                )
+                if(!result){
+                    context.report({
+                        node,
+                        message: 'no constuctor found'
+                    })
+                }
+            }
+        }
+    }
+}
+```
+- meta部分
+- create部分-在什么时机价差？-ClassDeclaration
+- create部分-怎么检查？-遍历AST
+- 怎么知道AST的结构呢？[astexplorer](https://astexplorer.net/)
+
+完整代码可以查看项目根目录<font style="color:red">/examples/engineering/2.1/coding-standards</font>
+
+### 2.1.4 Stylelint 介绍
+
+Stylelint是目前生态最丰富的样式代码检查方案，主要有如下特点：
+
+- 社区活跃
+- 插件化，功能强大
+- 不仅支持css，还支持scss、sass和less等预处理器
+- 已在Facebook、GitHub和WordPress等大厂得到广泛应用
+
+### 2.1.4  建立代码规范- Prettier
+
+- prettier是啥？
+
+一个流行的代码格式化的工具
+
+- 为什么需要Prettier
+1. Prettier称自己最大的作用是：可以让大家停止对“代码格式”的无意义的辩论。
+2. Prettier在一众工程化工具中非常特殊，它毫不掩饰地称自己是“有主见的”，且严格控制配置项的数量，它对默认格式的选择，完全遵循`让可读性最高`这一标准
+3. Prettier认为，在代码格式化方面牺牲一些灵活性，可以让开发者带来更多的收益，不得承认Prettier是对的。
+
+#### Prettier VS Linters
+
+Prettier认为lint规则分为两类
+
+1. 格式优化类：max-len、no-mixed-spaces-and-tabs、keyword-spacing、comma-style
+2. 代码质量类：no-unused-vars、no-extra-bind、no-implicit-globals、prefer-promise-reject-errors
+
+prettier只关注第一类，且不会以报错的形式告知格式问题，而是在允许开发者按自己的方式编写代码，但是会在 特定时机（save、commit）将代码格式化
+为可读性最好的形式
+
+🚀 Prettier的配置
+
+```json
+// .prettierrc 
+{
+    "parser": "babylon", //使用parser
+    "printWidth": 80, // 换行字符串阀值
+    "tabWidth": 2,   // 缩进空格数
+    "useTabs": false, // 使用空格缩进
+    "semi": true // 句末加分号
+    //......
+}
+```
+🚀 Prettier使用
+
+在很多方式去触发Prettier的格式化行为：Cli、Watch Changes、git hook 与linter集成
+
+- Watch Changes
+```js
+// package.json
+{
+    "script": {
+        "prettier-watch": "onchange '**/*.js --prettier --write {{changed}}"
+    }
+}
+```
+#### 与ESlint集成
+
+```js
+yarn add --dev eslint-config-prettier eslint-plugin-prettier
+```
+eslint-config-prettier : 禁止eslin中与prettier相冲突的规则，当eslint与prettier相冲突时，eslint的规则不会报错。
+eslint-plugin-prettier：让eslint以prettier的规则去检查代码，格式化的代码全部听prettier。
+```json
+// .eslintrc.json
+{
+    "extends": ["prettier"],
+    "plugins": ["prettier"],
+    "rules": {
+        "prettier/prettier": "error"
+    }
+}
+
+```
 
 
 
