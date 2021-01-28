@@ -395,7 +395,7 @@ eslint-plugin-prettier：让eslint以prettier的规则去检查代码，格式�
 ```
 ## 2.2 版本规范和Changelog
 
-### 2.2 npm包的版本
+### 2.2.1 npm包的版本
 
 #### Semantic Versioning
 
@@ -450,8 +450,86 @@ x 案例：1.2.x  // 大于等于1.2.0 小于1.3.0
 ^ 案例：^0.2.3 // 大于0.2.3 小于0.3.0
 ^ 案例：^0.0.3 // 大于0.0.3 小于0.0.4
 ```
+#### 为什么我们要遵循Semantic Versioning ？
 
+- 为了让我们的版本语义和npm社区统一，可以让我们的npm包可以正确的被用户使用
+- 享受社区生态带来的遍历，让我们可以利用社区现有的方案，更灵活的管理依赖的版本
 
+### 2.2.2 changelog
+
+- 什么是changelog？
+
+Changelog是以时间为倒序的列表，记录所有版本的重大变化
+
+- 为什么要有Changelog？
+
+为什么让我提供库和框架的用户了解每个版本发生了哪些变化，提供多于版本号的信息
+
+### 2.2.2 自动化的npm包版本控制和Changelog
+
+- release-it
+  - 根据git commit自动生成版本号
+  - 自动生成Changelog
+  - 丰富的hooks用来定制发版逻辑
+  - 提供插件机制，高度可扩展
+
+release-it 配置文件
+```json
+{
+    "hooks": {
+        "after:bump": "auto-changelog -p"
+    },
+    "git": {
+        "changelog": "auto-changelog --stdout --commit-limit false",
+        "requireCleanWorkingDir": false,
+        "requireUpstream": true,
+        "requireCommits": false,
+        "addUntrackeFiles": false,
+        "commit": true,
+        "commitMessage": "version release ${version}",
+        "commitArgs": "",
+        "tag": true,
+        "tagName": "${version}",
+        "tagAnnotation": "Release ${version}",
+        "taArgs":"",
+        "push":true,
+        "pushArgs": "--follow-tags",
+        "pushRepo": "origin"
+    },
+    "npm": {
+        "publish": true,
+        "publishPath": ".",
+        "access": null,
+        "otp": null
+    },
+    "plugins": {
+        "@release-it/conventional-changlog": {
+            "preset": "angular",
+            "infile": "CHANGELOG.md"
+        }
+    }
+}
+```
+package.json
+
+```json
+{
+ "script" : {
+     "release": "release-it",
+     "release:alpha": "release-it --preRelease=alpha",
+     "release:beta": "release-it --preRelease=beta"
+ }
+}
+
+```
+案例：
+
+```bash
+git add .
+git commit -m"feat: update xxx"
+yarn release
+# 一路回车
+```
 
 
 
