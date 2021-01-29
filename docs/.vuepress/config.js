@@ -108,7 +108,7 @@ module.exports = {
                   ["engineering/",'工程设计'],
                   ["engineering/ctg-art",'构建艺术'],
                   ["engineering/auto-deploy",'持续集成与部署'],
-                  ["engineering/",'Git操作'],
+                  ["engineering/git",'Git操作'],
                   ["engineering/tool",'效率工具']
                 ]
               },
