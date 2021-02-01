@@ -105,7 +105,7 @@ module.exports = {
                   ["engineering/script",'脚本世界'],
                   ["engineering/coding-standards",'规范先行'],
                   ["engineering/quality-code",'质量代码'],
-                  ["engineering/",'工程设计'],
+                  ["engineering/design",'工程设计'],
                   ["engineering/ctg-art",'构建艺术'],
                   ["engineering/auto-deploy",'持续集成与部署'],
                   ["engineering/git",'Git操作'],

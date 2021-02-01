@@ -161,6 +161,10 @@ Git 钩子（hooks）是在Git仓库中特定事件（certain points）触发后
 ```
 ```json
 {
+"gitHooks": {
+    "pre-commit": "lint-staged"
+  },
+{
   "lint-staged": {
     "*.js": "eslint --cache --fix",
     "*.{js,css,md}": "prettier --write"
