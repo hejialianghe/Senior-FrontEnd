@@ -171,3 +171,9 @@ Git 钩子（hooks）是在Git仓库中特定事件（certain points）触发后
   }
 }
 ```
+### 7.2.3 Git Hooks 拓展学习资料
+
+自定义Git - Git 钩子：https://git-scm.com/book/zh/v2/自定义-Git-Git-钩子
+
+Husky：https://github.com/typicode/husky  
+

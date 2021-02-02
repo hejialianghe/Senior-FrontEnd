@@ -530,7 +530,17 @@ git commit -m"feat: update xxx"
 yarn release
 # 一路回车
 ```
+###  扩展学习资料
 
+.npmrc-npm的配置文件
+
+由于国内网络问题，部分常用的二进制依赖下载速度较慢，为了加速二进制依赖下载，我们可以利用.npmrc配置国内的镜像源：
+
+ELECTRON_MIRROR = "https://npm.taobao.org/mirrors/electron/"       electron
+
+PHANTOMJS_CDNURL = "https://npm.taobao.org/mirrors/phantomjs/"    phantomjs
+
+SASS_BINARY_SITE = "https://npm.taobao.org/mirrors/node-sass/"     node-sass
 
 
 
