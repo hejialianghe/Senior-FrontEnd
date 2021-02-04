@@ -1,0 +1,26 @@
+{
+  "name": "pac-2",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "hejialiang <984714129@qq.com>",
+  "homepage": "https://github.com/hejialianghe/Senior-FrontEnd#readme",
+  "license": "ISC",
+  "main": "lib/pac-2.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hejialianghe/Senior-FrontEnd.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/hejialianghe/Senior-FrontEnd/issues"
+  }
+}
