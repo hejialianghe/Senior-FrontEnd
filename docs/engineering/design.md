@@ -102,7 +102,7 @@ root
   - 会产生大量的重复结构
   - 难以垂直拆分
 
-### 4.1.1 如何选择工程范式
+### 4.1.2 如何选择工程范式
  
 - 单一功能的项目
   - 库、三方包：fs-extra、axios等
@@ -159,7 +159,7 @@ root
  - multi-repo：把每个项目都分别用git托管
  - mono-repo：统一用一个git仓库管理所有的项目
 
-🚀  multi-repo
+### 4.2.1  multi-repo
 
 ```js
 // multi-repo
@@ -188,7 +188,7 @@ root
    1. 难以对所有项目统一进行操作（git checkout / npm publish / npm run build）
    2. 难以追踪依赖关系（a->b->c）
 
-🚀 mono-repo
+### 4.2.2  mono-repo
 
 ```js
 // multi-repo
@@ -223,4 +223,93 @@ root
   2. 失去部分的灵活性（workflow必须统一）
   3. 强依赖于mono-repo的管理工具
 
- 
+### 4.2.3  multi-repo的管理
+
+ - git submodule
+
+ ```bash
+ # 初始化git submodules仓库
+ git submodule init
+ # 添加一个submodule
+ git submodule add https://github.com
+# 更新所有的submodule
+git submodule update
+# 查submodule status
+git  submodule status
+# foreach 用于在每个submodule中执行命令
+git submodule foreach "git checkout -b featureA"
+ ```
+ - git提供的一种管理子仓库的方案
+ - 可以批量管理多个git repo
+ - 本质上是一个父repo维护了一份各个子repo的清单
+ - 坑还是不少的：git Submodule的坑
+ - 替代方案：git  subtree
+
+### 4.2.4 mono-repo的管理-lerna
+
+- 为js生态下的mono-repo管理提供一站式的解决方案
+- babel/create-react-app/jest/react-router/umi/nestjs
+
+解决方案：
+
+mono-repo下的依赖管理、版本管理、开发提效、工作流
+
+#### 目录结构
+
+- 整体作为一个Git仓库，也是个npm包（私有）
+- lerna.json是整个mmono-repo的配置文件
+- 每个真正的项目，平铺在packages/中
+- 整个项目可以统一管理所有依赖（也可以分别管理）
+```js
+// lerna
+├── .git 
+├── lerna.json
+├── package.json                                        
+├── packages                 
+    ├── project-a
+    |    ├── README.md
+    |    ├── __tests__
+    |    ├── lib
+    |    └── package.json
+    ├── project-b
+    |    ├── README.md
+    |    ├── __tests__
+    |    ├── lib
+    |    └── package.json
+    ├── project-c
+        ├── README.md
+        ├── __tests__
+        ├── lib
+        └── package.json
+```
+🚀 用lerna管理项目实战
+
+```bash
+npm i lerna -g
+lerna init
+```
+初始化的目录结构
+
+```json
+- packages
+  - lerna.json
+  - package.json
+```
+```bash
+# 创建项目1
+lerna create pac-1
+# 创建项目3
+lerna create pac-2
+# 创建项目3
+lerna create pac-3
+```
+
+### 扩展资料
+
+[Git submodule的坑](https://blog.devtang.com/2013/05/08/git-submodule-issues/)
+
+[git subtree](https://github.com/apenwarr/git-subtree/)
+
+[npm v7 Series - Introduction](https://blog.npmjs.org/post/617484925547986944/npm-v7-series-introduction)
+
+[NX](https://nx.dev/)
