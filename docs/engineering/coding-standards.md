@@ -52,7 +52,7 @@ eslint -h
   - 构建工具集成
     Webpack/Rollup/Gulp/Grunt  在构建过程中进行代码检查
 
-🚀 ESLint 的配置
+:tomato: ESLint 的配置
    - 配置文件格式
      javascript，JSON或者YAML，也可以在package.json中的eslintConfig字段
    - ESLint配置的主要内容
@@ -277,7 +277,7 @@ module.exports= {
     }
 }
 ```
-🚀 案例：检查class是否包含constructor构造方法
+:tomato: 案例：检查class是否包含constructor构造方法
 
 利用这个网站[astexplorer](https://astexplorer.net/)比较有constructor和没有constructor的变化，然后劫持`ClassDeclaration`
 看里面的节点是否有`MethodDefinition`和kind是不是`constructor`
@@ -349,7 +349,7 @@ Prettier认为lint规则分为两类
 prettier只关注第一类，且不会以报错的形式告知格式问题，而是在允许开发者按自己的方式编写代码，但是会在 特定时机（save、commit）将代码格式化
 为可读性最好的形式
 
-🚀 Prettier的配置
+:tomato: Prettier的配置
 
 ```json
 // .prettierrc 
@@ -362,7 +362,7 @@ prettier只关注第一类，且不会以报错的形式告知格式问题，而
     //......
 }
 ```
-🚀 Prettier使用
+:tomato: Prettier使用
 
 在很多方式去触发Prettier的格式化行为：Cli、Watch Changes、git hook 与linter集成
 

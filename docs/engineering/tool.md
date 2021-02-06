@@ -148,19 +148,19 @@ charles不能直接抓包https，所以我们还需要进行以下操作
   - 安卓：直接安装即可
   - IOS：1.在设置-通用-描述文件与设置管理中安装证书，2.然后开启 设置-通用-关于本机-针对根证书启用完全信任
 
-🚀 HTTPS 协议
+:tomato: HTTPS 协议
 
 - https = http + sll（secure  sockets layer）
 
 发送一个HTTPS请求的过程简单来说客户端是向服务端索取一个公钥放在客户端，公钥的载体就是数字证书；客户端通过公钥加密，服务端通过私钥解密。
 
-🚀 charles 代理HTTPS请求的机制
+:tomato: charles 代理HTTPS请求的机制
 
 charles做客户端和服务端的中介，代理了https请求；charles会动态为每个服务器生成由charles根证书签发的数字证书；当请求产生时客户端收到的不是
 服务端的原始证书而是charles签发的证书，原始证书是保存在charles上的；客户端与服务端的通信是由charles公钥加密的，而charles与原始服务器的通信是
 由服务端的原始证书加密的，charles通过自己的私钥解密，所以我们能通过charles看见未加密的数据。
 
-🚀  可能出现的问题
+:tomato:  可能出现的问题
 
 1. 开启后电脑浏览器无法打开网页
 
@@ -185,7 +185,7 @@ charles做客户端和服务端的中介，代理了https请求；charles会动�
 
 ### 8.4.4 Map请求重定向
 
-🚀 Map Local / Map Remote
+:tomato: Map Local / Map Remote
 
 - 生产环境代码打包压缩后不利于debug
 - 调试时不方便频繁发布
@@ -193,13 +193,13 @@ charles做客户端和服务端的中介，代理了https请求；charles会动�
 - `Map Remote`：将某请求重定向至另一个请求
 - 将生成环境的代码替换成本地的代码
 
-🚀 Map Remote
+:tomato: Map Remote
 
 ![](~@/engineering/mapremote.png)
 
 尝试改动代码，查看页面变化
 
-🚀 Map Local
+:tomato: Map Local
 
 ![](~@/engineering/maplocal.png)
 
@@ -210,13 +210,13 @@ Map Local可以替换任意charles能抓包到的文件，甚至可以将api请�
 
 ### 8.4.5 Rewrite 修改请求内容
 
-🚀 Rewrite功能
+:tomato: Rewrite功能
 
 - 可作用于：request & reponses
 - 可修改：header、host、path、url、params、body等
 - 采用新增、替换的形式
 
-🚀 案例
+:tomato: 案例
 
 向生产环境页面注入vConsole脚本
 
@@ -317,7 +317,7 @@ const data = Mock.mock({
 // 输出结果
 console.log(JSON.stringify(data,null,4))
 ```
-🚀 mockjs的语法
+:tomato: mockjs的语法
 
 ```js
 // name 是属性名，rule是规则 ，value是属性值；属性名和规则之间是用|分割的
@@ -425,7 +425,7 @@ console.log(JSON.stringify(data,null,4))
   - template：数据模版，支持对象、字符串
   - function(options): 生成相应数据的方法，options：{ url,type,body }
 
-🚀 使用mock()方法拦截请求
+:tomato: 使用mock()方法拦截请求
 
 ```js
 //  在入口文件中引入mockjs，对 ‘api/activity‘进行拦截
@@ -450,7 +450,7 @@ Random.email()
 Random.image()
 // => http://dummyimage.com/336x330
 ```
-🚀 Mock.Random 支持的方法
+:tomato: Mock.Random 支持的方法
 
 | type  |  Method  | 
 | :---: | :--------: | 
@@ -464,7 +464,7 @@ Random.image()
 | Helper | capitalize、upper、lower、pick、shuffle | 
 | Miscellaneous| guid、id | 
 
-🚀 Mock.Random 与模版语法
+:tomato: Mock.Random 与模版语法
 
 ```js
 const Mock =  require('mockjs');
@@ -490,7 +490,7 @@ console.log(users)
 }
 // 10个相同的对象
 ```
-🚀 Mock.js 的占位符
+:tomato: Mock.js 的占位符
 
 - 占位符
  - 使用最广泛
@@ -610,7 +610,7 @@ GET http://localhost:3000/songs/1 会返回 { "id":1,"name":"Baby"} 根据songs/
 
 POST、PUT、PATCH、DELETE 操作会改变db.json文件的内容
 
-🚀 Routes 规则-过滤
+:tomato: Routes 规则-过滤
 
 ```js
 {
@@ -627,7 +627,7 @@ GET /songs?artist=张学友
 GET /songs?artist=张学友&arttist=李荣浩
 GET /comments?author.id=1
 ```
-🚀 Routes 规则-翻页与排序
+:tomato: Routes 规则-翻页与排序
 
 ```js
 // 以_开头的是json-server的保留字
@@ -641,7 +641,7 @@ GET /songs?_sort=id&_order=asc
 // 多字段排序
 GET /songs/_sort=id,name&_order=desc,asc
 ```
-🚀 Routes 规则-查询
+:tomato: Routes 规则-查询
 
 ```js
 // operators:
@@ -655,7 +655,7 @@ GET /songs?name_like=爱
 // q 全局搜索
 GET /songs?q=喜欢
 ```
-🚀 自定义 routes
+:tomato: 自定义 routes
 
 - 更贴近后端接口
 
@@ -676,7 +676,7 @@ GET /songs?q=喜欢
 /posts/javascript // -> posts?category=javascript
 /articles?id=1 // -> /posts/1
 ```
-🚀 添加 middleware
+:tomato: 添加 middleware
 
 - 统一定制个性化请求
 
@@ -714,7 +714,7 @@ json-server index.js --middlewares ./my-middleware.js
 
 搭配Mock.js 生成随机数据接口
 
-🚀 查询歌单列表
+:tomato: 查询歌单列表
 
 新建文件index.js
 ```js
@@ -744,7 +744,7 @@ module.exports= ()=> {
 
 访问 `http://localhost:3000/api/music/playlists`可以获得100条数据
 
-🚀 查询分页的歌单
+:tomato: 查询分页的歌单
 
 修改routes.json
 
@@ -759,18 +759,18 @@ module.exports= ()=> {
 
 访问 `http://localhost:3000/api/music/playlists?limit=10&offset=20`从20开始返回10条数据
 
-🚀 新增一个歌单
+:tomato: 新增一个歌单
 
 ```js
 // 用curl模拟一下请求 参数{"name":"夜曲","cover":"xxxx"}
 curl localhost:3000/api/music/playlists -X POST -d '{"name":"夜曲","cover":"xxxx"}' -H 'Content-Type: application/json'
 ```
-🚀 修改一个歌单
+:tomato: 修改一个歌单
 
 ```js
 curl localhost:3000/api/music/playlists/101 -X PUT -d '{"id":101,"name":"月半小夜曲","cover":"xxxx"}' -H 'Content-Type: application/json'
 ```
-🚀 删除一个歌单
+:tomato: 删除一个歌单
 
 ```js
 curl localhost:3000/api/music/playlists/101 -X DELETE  -H 'Content-Type: application/json'

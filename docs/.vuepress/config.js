@@ -36,7 +36,6 @@ module.exports = {
         {
           title: '联系作者',
           src:"/weixin.jpeg",
-          url: 'https://item.jd.com/12755624.html'
         }
       ],
       nav:[

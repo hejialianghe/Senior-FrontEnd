@@ -33,7 +33,7 @@
 
 ## 3.1 理解异步
 ### 3.1.1 同步与异步
-####  🚀 先看2段代码
+####  :tomato: 先看2段代码
 ```javascript
 //代码1
 const test = () => {
@@ -66,11 +66,11 @@ console.log(3);
 <font color="red">**异步**</font>：是指不进入主线程，而是进入`任务队列`的任务,只有`任务队列`通知主线程，某个
 任务可以执行了，该任务才会进入主线程执行
 
-####  🚀 单线程的js怎么实现异步？
+####  :tomato: 单线程的js怎么实现异步？
 
 如果按照js是单线程的，上面的代码2应该是123才符合单线程的表现；现在为什么是132呢，那异步怎么实现的呢？
 
-####  🚀 学习异步之前先了解一下什么是进程？什么是线程？
+####  :tomato: 学习异步之前先了解一下什么是进程？什么是线程？
  ![](~@/asyncpro/proandthr.png)
 打个比方：假如cpu是一个工厂，进程就是一个车间；线程就是工人，一个进程有多个线程，它们之间资源共享，也就内存空间共享。
 
@@ -82,17 +82,17 @@ top (table of processes) 动态实时查看进程
 
 kill 9 进程pid 杀死进程
 
-####  🚀 回答单线程的js怎么实现异步？
+####  :tomato: 回答单线程的js怎么实现异步？
 
  通过浏览器的内核多线程实现异步
 
 ### 3.1.2 javaScript单线程
 
-####  🚀 浏览器是一个多进程的架构
+####  :tomato: 浏览器是一个多进程的架构
 我们打开一个浏览器就会启动以下进程，我们所要关心的是渲染进程，渲染进程是浏览器的核心进程
 ![](~@/asyncpro/singlethread.png)
 
-####  🚀 渲染进程下的多线程
+####  :tomato: 渲染进程下的多线程
 ![](~@/asyncpro/multithreading.png)
 <font color="red">**GUI线程**</font>：负责渲染页面，解析html、css；构建DOM树和渲染树
 
@@ -105,7 +105,7 @@ kill 9 进程pid 杀死进程
 
 <font color="red">**异步HTTP请求线程**</font>：用与处理ajax请求的，当请求完成时如果有回调函数就通知事件触发线程往任务队列中添加任务
 
-####  🚀 异步场景
+####  :tomato: 异步场景
 
 1. 定时器
 2. 网络请求
@@ -113,13 +113,13 @@ kill 9 进程pid 杀死进程
 4. ES6 Promise
 ### 3.1.3 定时器
 
-####  🚀 定时器的执行过程
+####  :tomato: 定时器的执行过程
 
  代码在执行栈中执行，然后1=>2=>3=>4
 
 ![](~@/asyncpro/asynctask.png)
 
-####  🚀 定时器示例
+####  :tomato: 定时器示例
 
 ![](~@/asyncpro/asynctaskele.png)
 
@@ -130,7 +130,7 @@ kill 9 进程pid 杀死进程
 4. 栈中已经空了，去检查任务队列，此时还为到2秒钟，任务队列中还没有任务；这是一个循环检查的过程，等到2秒钟后
 事件触发线程往任务队列中添加了定时器的事件，这时候再去检查的时候已经有了定时器的异步任务，我们取出这个任务放到执行栈中执行，这时候打印出了2
 
-####  🚀 定时器会带来的问题
+####  :tomato: 定时器会带来的问题
  1. 定时任务可能不能按时执行
  ```javascript
   const test = () => {
@@ -153,7 +153,7 @@ test();
 
  2. 定时器嵌套5次之后最小间隔不能低于4ms
 
- ####  🚀 定时器的应用场景
+ ####  :tomato: 定时器的应用场景
  1. 防抖节流
  2. 到计时
  3. 动画 （有丢帧问题）
@@ -161,11 +161,11 @@ test();
 ## 3.2 Event Loop机制
 以前js是在浏览器环境中运行，由于chrome对v8做了开源；所以js有机会在服务端运行；浏览器和node都是js的运行环境，它们相当于是一个宿主，宿主能提供一个能力能帮助js实现Event Loop
 
-####  🚀 js单线程问题
+####  :tomato: js单线程问题
 
   所有任务都在一个线程上完成，一旦遇到大量任务或遇到一个耗时的任务，网页就可能出现假死，也无法响应用户的行为
 
-####  🚀 Event Loop是什么
+####  :tomato: Event Loop是什么
 
 Event Loop是一个程序结构，用于等待和发送信息的事件。
 简单说就是在程序中设置2个线程，一个负责程序本身的运行，称为“主线程”；另一个负责主线程和其他进程（主要是各种I/O操作）的通信
@@ -175,12 +175,12 @@ js就是采用了这种机制，来解决单线程带来的问题。
 
  ### 3.2.1 浏览器的Event Loop
 
-  ####  🚀 异步实现
+  ####  :tomato: 异步实现
 
   1. 宏观：浏览器多线程（从宏观来看是多线程实现了异步）
   2. 微观：Event Loop，事件循环（Event Loop翻译是事件循环，是实现异步的一种机制）
 
-  ####  🚀 先看一个例子
+  ####  :tomato: 先看一个例子
  ```javascript
 
     console.log(1)
@@ -196,7 +196,7 @@ js就是采用了这种机制，来解决单线程带来的问题。
  ![](~@/asyncpro/eventlooptest1.png)
   1和4是同步任务肯定是最先执行，现在要看异步任务，现在要看的是`promise`的回调为什么在定时器前面执行，那为什么`promise`后放入，为什么先执行呢？那是因为Event Loop的机制是有微任务的说法的；现在往下看。
 
-   ####  🚀 宏任务（普通任务）和微任务
+   ####  :tomato: 宏任务（普通任务）和微任务
 
    ![](~@/asyncpro/taskandmicrotask.png)
    <font color="red">**宏任务（task）**</font>：
@@ -218,7 +218,7 @@ js就是采用了这种机制，来解决单线程带来的问题。
    4. Promise.then catch finally
    5. process.nextTick
    
-  ####  🚀 Event Loop的运行过程
+  ####  :tomato: Event Loop的运行过程
 
   ![](~@/asyncpro/eventloopfn.png)
    线程都有自己的数据存储空间，上图可以看见`堆`和`栈`，堆的空间比较大，所以存储一些对象；栈的空间比较小，
@@ -235,7 +235,7 @@ js就是采用了这种机制，来解决单线程带来的问题。
    执行宏任务，执行宏任务的时候就要检查当前有没有微任务，如果又微任务就去执行完所有微任务，然后
    再去执行后续的宏任务
 
-####  🚀 代码示例1
+####  :tomato: 代码示例1
 
 ![](~@/asyncpro/eventlooptest2.png)
 
@@ -252,7 +252,7 @@ js就是采用了这种机制，来解决单线程带来的问题。
 4. 任务需要多次事件循环才能执行完，微任务是一次性执行完的
 5. 主程序和和settimeout都是宏任务，一个promise是微任务，第一个宏任务（主程序）执行完，执行全部的微任务（一个promise），再执行下一个宏任务（settimeout）
 
-####  🚀 代码示例2
+####  :tomato: 代码示例2
 
  ```javascript
 
@@ -286,7 +286,7 @@ js就是采用了这种机制，来解决单线程带来的问题。
     */
 
  ```
-####  🚀 代码示例3
+####  :tomato: 代码示例3
 
  ```javascript
     async function async1() {
@@ -332,7 +332,7 @@ js就是采用了这种机制，来解决单线程带来的问题。
 3. 在检查任务队列，执行了宏任务setTimeout的回调，打印了setTimeout
 
 ### 3.2.2 node.js的Event Loop
-####  🚀 node.js架构
+####  :tomato: node.js架构
 
 ![](~@/asyncpro/nodeframework.png)
 <font color="red">**有3层组成**</font>
@@ -342,7 +342,7 @@ js就是采用了这种机制，来解决单线程带来的问题。
 的基础，是node底层的io引擎，是c语言编写的事件驱动的库；负责node api的执行，它会将不通的任务分配给不同的线程，从而形成了Event Loop事件
 循环；它以异步的方式将任务的执行结果返回给v8引擎；那我们说node是非阻塞io单线程，实现这个非阻塞的原因就在与libuv，node.js的Event Loop都是这个库实现的。
 
-####  🚀 node.js的Event Loop
+####  :tomato: node.js的Event Loop
 
 ![](~@/asyncpro/nodeeventloop.png)
 <font color="red">**执行的几个阶段**</font>
@@ -359,13 +359,13 @@ js就是采用了这种机制，来解决单线程带来的问题。
 fifo队列将会被执行，当队列callback执行完或者执行的callbacks数量超过该阶段的上限时，event loop会转入下一个阶段。
 </font>
 
-####  🚀 poll阶段
+####  :tomato: poll阶段
 
 ![](~@/asyncpro/poll.png)
 1. 先判断poll队列是否空或受到限制，否的话执行poll队列的callback；循环执行，直到空为止；是的话执行下一步
 2. 等待callback加入poll阶段，在poll阶段空闲的时候，检查timer是否到时间
 
-####  🚀 案例1
+####  :tomato: 案例1
 
  ```javascript
 
@@ -394,7 +394,7 @@ someAsyncOperation(() => {
  延迟了200毫秒
  2. 执行完poll队列，现在是空闲状态，检查有没有到时间的定时器；然后有setTimeout，就执行了setTimeout的回调
 
-####  🚀 案例2
+####  :tomato: 案例2
 
 ```javascript
 
@@ -414,7 +414,7 @@ fs.readFile(__filename, _ => {
  ```
  可以根据`poll阶段`的图来看，check阶段比timer阶段先执行，执行到读取文件的回调时，先看是否设置了setImmediate的回调，如果有就进去check阶段，在等待callbakc加入poll队列空闲的时候才会检测是否有timer；所以`setImmediate`比`setTimeout`先执行
 
- ####  🚀 process.nextTick()
+ ####  :tomato: process.nextTick()
 
  `process`进程的意思，process.nextTick()是一个异步的node API，但不属于event loop的阶段，它的作用是当调用这个方法的时候，event loop会先停下来，先执行这个方法的回调
 
@@ -444,11 +444,11 @@ fs.readFile(__filename, _ => {
 
 ### 3.3.1 理解发布/订阅
 
-####  🚀 异步编程的几种方式
+####  :tomato: 异步编程的几种方式
 
 ![](~@/asyncpro/asyncpro.png)
 
-####  🚀 回调的形式实现请求
+####  :tomato: 回调的形式实现请求
 
 ```javascript
 function ajax(url, callback) {
@@ -464,7 +464,7 @@ ajax("./test1.json", function(data) {
     });
 });
  ```
-####  🚀 发布订阅的形式
+####  :tomato: 发布订阅的形式
  ```javascript
 // 发布订阅应用
 function ajax(url, callback) {
@@ -494,11 +494,11 @@ pbb.subscribe("test2Success", function(data) {
  1. 我们通过 `pbb.publish`这个方法发布`test1Success`这个事件
  2. 然后去订阅这个事件
 
- ####  🚀 发布和订阅图例
+ ####  :tomato: 发布和订阅图例
  ![](~@/asyncpro/publisher.png)
 
 ### 3.3.2 实现事件发布/订阅
-####  🚀 发布和订阅类的实现
+####  :tomato: 发布和订阅类的实现
  ```javascript
 class PubSub {
     constructor() {
@@ -530,7 +530,7 @@ class PubSub {
     }
 }
 ```
-####  🚀 发布和订阅的优缺点
+####  :tomato: 发布和订阅的优缺点
 优点
 - 松耦合
 - 灵活（多次去订阅一个事件）
@@ -548,14 +548,14 @@ class PubSub {
  因为es6的promise是按照A+规范来写的，如果我们想要理解promise源码，需要先看A+规范
 
 ### 3.4.1 promise A+规范
-####  🚀 术语
+####  :tomato: 术语
 - promise 一个有then方法的对象或函数，其行为符合本规范
 - thenable 一个定义了then方法的对象或函数
 - value（值） 任何javaScript的合法值（包括 undefined,thenable或promise）
 - exception（异常） throw语句抛出的值
 - reason（拒绝原因） 表示promise被拒绝原因的值
 
-####  🚀 promise的状态
+####  :tomato: promise的状态
 ![](~@/asyncpro/promisestatus.png)
 
 pending：等待,可以转换成fulfilled或rejected状态
@@ -566,7 +566,7 @@ rejected：拒绝，拥有一个不可变的据因
 
 一个promise的状态被改变了，就不能在改变了
 
-####  🚀 promise的then方法
+####  :tomato: promise的then方法
 
 一个promise必须提供一个then方法以访问最终值value和reason
 
@@ -633,7 +633,7 @@ promise的then方法接受两个参数
 
   3. onFullfilled或者onRejected，return x（onFullfilled或者onRejected有一个返回值，这个返回值是x，这个时候规范定义了一个解析过程）
 
-  ####  🚀 promise解析过程
+  ####  :tomato: promise解析过程
   - 抽象模型resolve(promise,x)
   - 如果promise和x指向相同的值
     如果他们指向相同的值，就形成了循环引用；所以就return resolve(promise,new TypeError('cant be the same'))
@@ -701,7 +701,7 @@ promise的then方法接受两个参数
     }
   }
  ```
-  ####  🚀 案例
+  ####  :tomato: 案例
   ```javascript
   const promise = Promise.
     resolve(1).
@@ -721,7 +721,7 @@ promise的then方法接受两个参数
 
 
 ### 3.4.2 ES6 Promise API
-####  🚀 Promise构造函数
+####  :tomato: Promise构造函数
  ```javascript
   new Promise( function(resolve,reject){
     // resolve(value)
@@ -732,7 +732,7 @@ promise的then方法接受两个参数
   resolve函数将promise的状态从pending变成resolved（fulfilled）
   reject函数将promise状态从pending变成rejected
  ```
-####  🚀 Promise的静态方法
+####  :tomato: Promise的静态方法
 
 | 方法  |  说明  |
 | :---: | :--------: |
@@ -742,7 +742,7 @@ promise的then方法接受两个参数
 | Promise.allSettled([p1,...,pn])| 输入一组promise返回一个新的promise，所有的promise状态改变后，结果promise变成fulfilled |
 | Promise.race([p1,...,pn])| 输入一组promise返回一个新的promise，结果promise的状态跟随第一个变化的promsie状态，最先返回promise是成功的，结果promise就是成功，否则就是失败|
 
-####  🚀 Promise的实例方法
+####  :tomato: Promise的实例方法
 
 | 方法  |  说明  |
 | :---: | :--------: |
@@ -806,7 +806,7 @@ Generator函数可以直接生成迭代器，也是es6异步编程的解决方�
 
  生成器对象原型上有3个方法：1.next(param); 2.return(param) 3.throw(param)
 
-####  🚀 先看2个概念：迭代器vs生成器
+####  :tomato: 先看2个概念：迭代器vs生成器
  - 迭代器
    - 有next方法，执行返回结果对象
  结果对象包含：1.value  2.done
@@ -833,7 +833,7 @@ console.log(iterator.next()) // { done: false, value: 2 }
 console.log(iterator.next()) // { done: false, value: 3 }
 console.log(iterator.next()) // { done: true, value: undefined }
  ```
- ####  🚀 迭代协议
+ ####  :tomato: 迭代协议
  1. 可迭代协议
   - [Symblo.iterator]属性
   - 内置可迭代对象
@@ -843,7 +843,7 @@ console.log(iterator.next()) // { done: true, value: undefined }
     - done
     - value
 
- ####  🚀  yield关键字
+ ####  :tomato:  yield关键字
   - 只能出现在Generator函数
   - 用来暂停和恢复生成器函数
   - next执行
@@ -877,7 +877,7 @@ console.log(iterator.next()) // { done: true, value: undefined }
 
   4. 第四次执行next，前一次执行完next后，看着代码已经执行完了，然而相当于后面还有return undefined
 
-####  🚀  yield* 生成器函数/可迭代对象
+####  :tomato:  yield* 生成器函数/可迭代对象
   - 委托其他可迭代对象
   - 作用：复用生成器
 
@@ -899,7 +899,7 @@ g2.next() {value:2,done:false}
 g2.next() {value:200,done:false}
 g2.next() {value:undefined,done:ture}
  ```
- ####  🚀  return(param)
+ ####  :tomato:  return(param)
  - 给定param值终结遍历器，param可缺省
 
   案例3
@@ -914,7 +914,7 @@ g2.next() {value:undefined,done:ture}
    iterator.return(); {value:undefined,done:false}
    iterator.next();{value:undefined,done:false}
  ```
- ####  🚀 thorow(param)
+ ####  :tomato: thorow(param)
  - 让生成器对象内部抛出错误
    案例4
  ```javascript
@@ -934,12 +934,12 @@ g2.next() {value:undefined,done:ture}
   iterator.throw(new Error('error')) // {value:9,done:false}  遇到yield才会暂停
   iterator.next() //{value:undefined,done:true}
  ```
- ####  🚀 协程
+ ####  :tomato: 协程
  - 一个线程存在多个协层，但同时只能执行一个
  - Genrator函数的协层在ES6的实现
  - Yield挂器x协程（交给其他协程），next唤醒x协程
 
- ####  🚀 Generator函数的应用
+ ####  :tomato: Generator函数的应用
   回调函数的写法
    ```javascript
     function readFilesByCallback() {
@@ -1029,7 +1029,7 @@ generator函数的写法
  ```
 ## 3.6 深入理解async/await
 ### 3.6.1  async函数
-####  🚀 async
+####  :tomato: async
 - 一个语法糖 是异步操作更简单
 - 返回值 返回值是一个promise对象
   - return的值是promise resolved时候的value
@@ -1058,7 +1058,7 @@ generator函数的写法
 ```
 可以看出async函数的返回值是一个promise
 
-####  🚀 await
+####  :tomato: await
  - 只能出现在async函数内部或最外层
  - 等待一个promise对象的值
  - await的promise的状态为rejected，后续执行中断
@@ -1118,7 +1118,7 @@ await为等待promise的状态是rejected的情况
    await 100
  }
 ```
-####  🚀 async函数实现原理
+####  :tomato: async函数实现原理
 
 实现原理：Generator+自动执行器
 
@@ -1126,7 +1126,7 @@ async函数是Generator和Promise的语法糖
 
 ### 3.6.2 应用
 
-####  🚀 用async函数方案读取文件
+####  :tomato: 用async函数方案读取文件
 ```javascript
 async function readFilesByAsync() {
     const fs = require("fs");

@@ -83,7 +83,7 @@ LTS是稳定版本，Current最新版本
 
 ![](~@/node/buffer.png)
 
-🚀 创建buffer
+:tomato: 创建buffer
 
 - Buffer.from(buffer | array | string) 使用堆外内存新增Buffer
 - Buffer.from(arrayBuffer) 浅拷贝arrayBuffer，共享内存
@@ -93,7 +93,7 @@ LTS是稳定版本，Current最新版本
 
 - 流式数据会自动创建Buffer，手动创建Buffer需谨慎
  
-🚀 创建Buffer-坑
+:tomato: 创建Buffer-坑
 
 - 预分配一个内部的大小为Buffer.poolSize(8k)的Buffer实例，作为快速分配的内存池
 - 如果allocUnsafe/from(array)的size小于4k，则从预分配的池子中分配
@@ -101,7 +101,7 @@ LTS是稳定版本，Current最新版本
 - 绕开V8回收机制，使用专用回收机制，提高性能和内存使用效率
 - 但这种玩法会导致未初始化的数据块投入使用，造成数据泄露风险
 
-🚀  使用Buffer
+:tomato:  使用Buffer
 
 - 转换格式
   - 字符串：编码Buffer.from(string),解码buf.toString()
@@ -132,14 +132,14 @@ EventEmitter的核心就是事件触发的Emitter，事件监听的on功能进�
 
 #### 4. Nodejs数据类型-Error
 
-🚀 错误类型
+:tomato: 错误类型
 
   - 标准的javascript错误，比如：SyntaxError/ReferenceError
   - 底层操作触发的系统错误，比如：文件读写
   - 用户自定义错误
   - 异常逻辑触发的AssertionError，通常来自assert模块
 
-🚀 错误冒泡和捕获
+:tomato: 错误冒泡和捕获
    
    - 所有通过Node.j或javaScript运行时抛出的异常都是Error实例
    - 大多数的异步方法接受一个callback函数，该函数会接受一个Error对象传入作为第一个参数
@@ -183,15 +183,15 @@ EventEmitter的核心就是事件触发的Emitter，事件监听的on功能进�
 
 本是内置模块开发时的公共工具集，现在开放给开发者使用
 
-🚀 风格转换
+:tomato: 风格转换
 
   - promisify<=>callbackify、TextEncoder<=>TextDecoder
 
-🚀 调试工具
+:tomato: 调试工具
 
  - debuglog、inspect、format、getSystemErrorName
 
-🚀 类型判断
+:tomato: 类型判断
 
  - types.isDate(value)
 
@@ -199,15 +199,15 @@ EventEmitter的核心就是事件触发的Emitter，事件监听的on功能进�
 
  内置断言库，需要配合测试框架使用，主动抛出AssertionError错误
 
- 🚀 断言真假
+ :tomato: 断言真假
 
  - assert(value,msg),match(string,reg)
 
- 🚀 断言等价
+ :tomato: 断言等价
 
  - strictEqual/deepStrictEqual以及相反操作equal/deepEqual弃用
 
- 🚀 断言成功失败
+ :tomato: 断言成功失败
 
  - fail/throws doesNotThrow/ifError/rejects
 
@@ -763,7 +763,7 @@ REST很用利用了HTTP本身的一些特性，如HTTTP动词、HTTP状态码、
  - REST只是规范并不强制，最合适团队的才是最好的
  - 找个实践REST较好的框架胜过自己造轮子
 
-🚀 开始实战
+:tomato: 开始实战
 
 1. 项目结构
 
@@ -954,7 +954,7 @@ module.exports=router
 
 ```
 
-🚀 安装mongodb
+:tomato: 安装mongodb
 
  <font color="red">**window下安装mongodb**</font>
 
