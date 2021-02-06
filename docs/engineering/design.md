@@ -333,6 +333,66 @@ lerna add pac-2 packages/pac-3
 ```
 如果我们给项目添加外部依赖，可能需要给每个项目node_moudles都添加，同一个依赖会安装很多次，这显然不合理，为了解决这个问题，leran可以把依赖添加到项目根目录；`lerna clean`去清除每个项目中node_modules相同的依赖;用 `lerna bootstrap --hoist`重新安装依赖，
 
+3. 发版
+
+需要注意是的 lerna.json 配置为"version": "independent"时可以为每个包独立发不同的版本，如果"version":'0.0.0'是发同样的版本
+```bash
+leran publish
+```
+4. 其它
+
+可以用`lerna -h`查看全部指令
+
+```bash
+lerna  exec [cmd] [args...] # 执行每一个package.json你想指行的命令
+lerna run <script> # 执行package.josn 中script配置的命令
+lerna diff [pkgName] # 对比 文件变化
+lerna changed # 查看文件变化
+```
+#### lerna.json 配置
+
+```json
+{
+  "version":"0.0.0",
+  "npmClient":"npm",
+  "npmClientArgs":[
+    "--pure-lockfile"
+  ],
+  "command": {
+    "publish": {
+      "ignoreChanges": ["ignored-file","*.md"],
+      "message": "chore(replease):publish",
+      "registry": "https://npm.pkg.github.com"
+    },
+    "bootstrap": {
+      "ignore": "component-*",
+      "npmClientArgs": ["--no-package-lock"]
+    }
+  },
+  "packages": ["packages/*"]
+}
+```
+- 其实只有几个主要字段：version、npm*、command、packages
+- command配置-json schema查看
+   - 配置lerna子命令的默认项目
+
+- version: 决定fixed mode / independent mode
+- packages：项目路径
+- npm*：解耦包管理工具
+
+::: tip 一些注意项
+- mono-repo 不可嵌套
+- mono-repo 的主仓库必须是私有的（private：true）
+- 如果你对仓库的私密性要求非常高，甚至可以不用npm而使用git应用依赖
+- 任何的json配置记不住，都可以用json schema
+:::
+
+#### lerna 外的选择-nx
+- Angular出品
+- 框架强相关：Angular、React
+- 支持插件机制
+- 远超mono-repo管理的强大功能
+
 ### 扩展资料
 
 [Git submodule的坑](https://blog.devtang.com/2013/05/08/git-submodule-issues/)
