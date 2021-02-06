@@ -300,7 +300,7 @@ Object.keys({a:1})
 
 ### 5.3.3 puugin / preset / env
 
-### plugin
+#### plugin
 
 - 插件
 
@@ -315,7 +315,7 @@ babel本身不会对代码做任何操作，所有功能都靠插件实现
 3. @bable/plugin-transform-classes
 
 4. ......
-### preset
+#### preset
 
 - preset是什么？
 
@@ -343,7 +343,7 @@ module.exports=function (){
 }
 ```
 
-### env
+#### env
 
 - nev的出现
 

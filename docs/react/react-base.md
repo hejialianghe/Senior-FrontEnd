@@ -501,7 +501,7 @@ css管理工具
     return (
       <div className='listItem'>
         {/* css Module+classnames/bind */}
-        <span className={cls('title')}>header<span>
+        <span className={cls('title','themd')}>header<span>
         {{/* classnames */}
         <span className={_cn}></span>
       <div>
@@ -510,7 +510,7 @@ css管理工具
   }
 ```
 
-### 2.4.3 扩展
+### 2.4.4 扩展
 
 [css module](http://www.ruanyifeng.com/blog/2016/06/css_modules.html)
 

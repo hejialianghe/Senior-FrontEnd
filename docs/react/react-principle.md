@@ -193,7 +193,7 @@ react 16.4中增加了在setState和forceUpdate()都会执行这个静态方法`
 
 - componentWillUnmount 卸载函数，组件卸载及销毁之前直接调用，主要用于清除一些在组件生命周期订阅，真实DOM事件以及setTimeout/setinterval的返回值
 
-### 异常捕获
+#### 异常捕获
 
 - componentDidCatch 生命周期方法在后代组件抛出错误后被调用，方法接受两个参数（err，info），分别是错误信息和错误组件的栈信息
 - getDerivedStateFromError 在后代组件抛出错误后调用，接受一个参数（error）表示具体的错误信息

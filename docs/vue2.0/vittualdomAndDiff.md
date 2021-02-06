@@ -193,7 +193,7 @@ export function cloneVNode (vnode: VNode): VNode {
 
 VNode类用js对象形式描述真实的dom，在vue初始化阶段，我们把`template`模板用`vnode`类实例化成js对象并缓存下来，当数据发生变化重新渲染页面的时候，我们把数据发生变化后用`vnode`类实例化的js对象与前一次缓存下来描述dom节点的js对象进行对比，找出差异；然后根据有差异的节点创建出真实的节点插入视图当中
 
-### 3.1.3  总结
+### 3.1.5  总结
 
  虚拟dom就是用以对象的形式去描述真实的dom，用js计算的性能换取操作真实dom所消耗的性能
 

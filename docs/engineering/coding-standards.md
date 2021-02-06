@@ -2,7 +2,7 @@
 
 ### 2.1.1 社区已有的规范
 
-🚀 HTML/CSS
+#### HTML/CSS
 
 - Google HTML/CSS/JS 规范
   著名的谷歌前端规范，大二全
@@ -10,7 +10,7 @@
 - AIrbnb Style 规范（包括CSS和Sass）
   AIrbnb的样式规范，不仅包含css规范，亦包含Sass的规范
 
- 🚀 javaScript 规范
+#### javaScript 规范
  
   - Airbnb javaScript规范
     Airbnb的javascript编码规范
@@ -18,7 +18,7 @@
   - javascript Standard Style
     Standard规范，影响力最大的JS编码规范，生态丰富，提供了开箱即用的各种lint规则和编辑器插件
 
- 🚀 框架相关
+#### 框架相关
     
   - Vue style Guide
     VueJS官方推荐的编码规范
@@ -328,7 +328,7 @@ Stylelint是目前生态最丰富的样式代码检查方案，主要有如下�
 - 不仅支持css，还支持scss、sass和less等预处理器
 - 已在Facebook、GitHub和WordPress等大厂得到广泛应用
 
-### 2.1.4  建立代码规范- Prettier
+### 2.1.5  建立代码规范- Prettier
 
 - prettier是啥？
 
@@ -465,7 +465,7 @@ Changelog是以时间为倒序的列表，记录所有版本的重大变化
 
 为什么让我提供库和框架的用户了解每个版本发生了哪些变化，提供多于版本号的信息
 
-### 2.2.2 自动化的npm包版本控制和Changelog
+### 2.2.3 自动化的npm包版本控制和Changelog
 
 - release-it
   - 根据git commit自动生成版本号
@@ -532,7 +532,7 @@ yarn release
 ```
 ###  扩展学习资料
 
-.npmrc-npm的配置文件
+:::tip .npmrc-npm的配置文件
 
 由于国内网络问题，部分常用的二进制依赖下载速度较慢，为了加速二进制依赖下载，我们可以利用.npmrc配置国内的镜像源：
 
@@ -541,6 +541,9 @@ ELECTRON_MIRROR = "https://npm.taobao.org/mirrors/electron/"       electron
 PHANTOMJS_CDNURL = "https://npm.taobao.org/mirrors/phantomjs/"    phantomjs
 
 SASS_BINARY_SITE = "https://npm.taobao.org/mirrors/node-sass/"     node-sass
+:::
+
+
 
 
 

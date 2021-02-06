@@ -39,7 +39,7 @@
 }
 ```
 
-### 1.1.2  npm scripts -脚本钩子
+### 1.1.3  npm scripts -脚本钩子
 
 - 脚本钩子类似于hook，当事件触发时，对应的钩子逻辑也被触发，git hook、web hook等
 - 部分npm内置脚本钩子如下：
@@ -69,7 +69,7 @@
     packageInfo.version=targetVersion
     ...
 ```
-### 1.1.3 思考
+### 1.1.4 思考
 
 1. 为什么脚本第一行需要有`#!usr/bin/env node`
 
@@ -296,7 +296,7 @@ ANARRAY=(1 2 3 4)
 ANARRAY[1]=0
 ```
 
-### 1.2.2 bash编程-运算
+### 1.2.3 bash编程-运算
 
 -  组合
 
@@ -318,7 +318,7 @@ ANUMBER=$(6-2）
 ANUMBER=$(6*2）
 ANUMBER=$(6/2）
 ```
-### 1.2.3 bash编程-条件语句
+### 1.2.4 bash编程-条件语句
 
 - if then
 
@@ -364,7 +364,7 @@ file1 -nt file2 # 检查file1是否比file2新
 file1 -ot file2 # 检查file1是否比file2旧
 ```
 
-### 1.2.3 bash编程-循环语句 
+### 1.2.5 bash编程-循环语句 
 
 - for循环
 
@@ -383,7 +383,7 @@ echo $i
 done
 ```
 
-### 1.2.4 bash编程-循环语句 
+### 1.2.6 bash编程-循环语句 
 
  - 函数的定义
 
@@ -426,7 +426,7 @@ shell中运行的每一个命令都使用退出状态码（exit status）来告�
  $? 显示最后命令的退出状态，0表示没有错误，其他任何值表明有错误
 ```
 
-### 1.2.4 bash编程-重定向
+### 1.2.7 bash编程-重定向
 
 - 什么是重定向
 
@@ -454,7 +454,7 @@ ls > ls.log # 在当前文件夹下生成了一个ls.log文件，文件里的内
 ls -al > ls.log # 把ls -al 输出的详细信息输入到ls.log文件中，这种做法会覆盖上一次文件里的内容，我们可以使用>>追加的方式
 ls >> ls.log # 会把ls输出的信息放到ls -al 输出信息的后面
 ```
-### 1.2.4 bash编程-交互式程序
+### 1.2.8 bash编程-交互式程序
 
 - echo和read
 
@@ -475,7 +475,7 @@ echo "$firstname $secondname";
 
 # 询问你firstname 和 secondname，当你输入后，最后会打印你输出的内容
 ```
-### 1.2.5 扩展学习资料
+### 1.2.9 扩展学习资料
 这是一本全面而详细的介绍Linux操作系统的好书，适合对Linux操作系统有兴趣和需要熟悉Linux环境的同学。
 
 [《鸟哥的Linux私房菜（基础学习篇）》](http://cn.linux.vbird.org/)

@@ -13,7 +13,6 @@ module.exports = {
             href: `/logo.jpeg`
         }]
     ],
-    dest: 'dist',
     ga: '',
     evergreen: true,
     configureWebpack: {
@@ -23,13 +22,27 @@ module.exports = {
         }
       }
     },
+
     themeConfig: {
-      repo: "hejialianghe/seniorFrontEnd",
+      repo: "hejialianghe/Senior-FrontEnd",
       editLinks: true,
+      searchMaxSuggestions:10,
       docsDir: "docs",
       editLinkText: "在 GitHub 上编辑此页",
       lastUpdated: "最新更新时间",
-      sidebarDepth: 1,
+      sidebarDepth: 3,
+      logo: '/logo.jpeg',
+      adsConfig: [
+        {
+          title: '联系作者',
+          src:"/weixin.jpeg",
+          url: 'https://item.jd.com/12755624.html'
+        }
+      ],
+      nav:[
+        { text: 'Home', link: '/'},
+        { text: 'Blog', link: 'http://youliaowu.com/' }
+      ],
         sidebar:[
             {
               title: "指南",
