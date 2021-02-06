@@ -1,6 +1,6 @@
 {
   "name": "pac-2",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "> TODO: description",
   "author": "hejialiang <984714129@qq.com>",
   "homepage": "https://github.com/hejialianghe/Senior-FrontEnd#readme",
@@ -24,6 +24,6 @@
     "url": "https://github.com/hejialianghe/Senior-FrontEnd/issues"
   },
   "dependencies": {
-    "pac-1": "^0.0.0"
+    "pac-1": "^0.0.1"
   }
 }
