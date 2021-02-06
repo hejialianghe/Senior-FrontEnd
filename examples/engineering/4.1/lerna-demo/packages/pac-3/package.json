@@ -22,5 +22,8 @@
   },
   "bugs": {
     "url": "https://github.com/hejialianghe/Senior-FrontEnd/issues"
+  },
+  "dependencies": {
+    "pac-2": "^0.0.0"
   }
 }
