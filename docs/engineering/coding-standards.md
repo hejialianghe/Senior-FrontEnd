@@ -385,7 +385,7 @@ eslint-plugin-prettier：让eslint以prettier的规则去检查代码，格式�
 ```json
 // .eslintrc.json
 {
-    "extends": ["prettier"],
+    "extends": ["plugin:prettier/recommended"],
     "plugins": ["prettier"],
     "rules": {
         "prettier/prettier": "error"
