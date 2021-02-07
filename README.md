@@ -5,7 +5,7 @@
 ## 1. 前言
 
 博主作为一个前端开发工程师，深知成长的重要，现市场上大多数是api工程师;就是只会用api并不了解原理，长此以往就成为了可替代的人，如何成为一个高级开发工程师！成为一个高级开发工程师需要会那些知识！
-跟着我的博客去学习，能让你了解web全栈工程师的知识体系，从此让你的学习有方向。
+跟着我的博客去学习，能让你了解web全栈工程师的知识体系，让自己的学习有方向。
 
 ## 2. 学习大纲
 
@@ -24,7 +24,7 @@
 
 如果有收获就给个start哦 ！！！ :pray: :pray: :pray:
 
-[gitee极速版](https://hejialianghe.gitee.io/)
+[gitee极速版阅读](https://hejialianghe.gitee.io/)
 
 [github阅读地址](https://hejialianghe.github.io/)
 

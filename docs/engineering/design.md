@@ -387,6 +387,8 @@ lerna changed # 查看文件变化
 - 任何的json配置记不住，都可以用json schema
 :::
 
+源码地址：/examples/engineering/4.1/lerna-demo
+
 #### lerna 外的选择-nx
 - Angular出品
 - 框架强相关：Angular、React
