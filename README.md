@@ -22,8 +22,13 @@
 
 ## 3. 给个start哦
 
-如果有收获就给个start哦 ！！！ :pray: :pray: :pray:  [文档阅读地址](https://hejialianghe.github.io/)
+如果有收获就给个start哦 ！！！ :pray: :pray: :pray:
 
+[gitee极速版](https://hejialianghe.gitee.io/)
+
+[github阅读地址](https://hejialianghe.github.io/)
+
+国内用户请使用gitee版访问阅读
 ## 4.赞赏
 
 ![赞赏方式](./money.f845196d.png)

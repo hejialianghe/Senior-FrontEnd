@@ -16,8 +16,15 @@
 ```
 
 ## 3. 给个start哦
-如果有收获就给个start哦 ！！！ :pray: :pray: :pray:   [项目地址](https://github.com/hejialianghe/seniorFrontEnd)
-[文档阅读地址](https://hejialianghe.github.io/)
+如果有收获就给个start哦 ！！！ :pray: :pray: :pray:   
+
+[项目地址](https://github.com/hejialianghe/seniorFrontEnd)
+
+[gitee极速版](https://hejialianghe.gitee.io/)
+
+[github阅读地址](https://hejialianghe.github.io/)
+
+国内用户请使用gitee版访问阅读
 
 ## 4.赞赏
 
