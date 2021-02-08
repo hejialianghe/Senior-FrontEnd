@@ -108,7 +108,36 @@ fetch(<jsonp-url>,{method: 'jsonp'})
       })
 ```
 
-#### 跨越资源共用 <Badge text="重要" type="tip"/> 
+#### 2. 跨越资源共用 <Badge text="重要" type="tip"/> 
 
 - 跨域资源共用（Cross-Origin Resource Sharing）使用额外HTTP头允许指定的源和另一个源进行交互
-  服务端设置 Access-control-Allow-Origin:域名
+  服务端设置 Access-control-Allow-Origin:https://a.com
+
+![](~@/network/corss.png)
+
+get、post我们称之为简单请求，简单请求在同源策略中会简单的处理,如果b.com返回了这个头`Access-control-Allow-Origin:https://a.com`，那么我们认为
+这个请求是可以通过的。
+
+预检
+
+但是还有复杂一点的请求，我们需要先发OPTIONS请求，a.com想请求b.com它需要发一个自定义的Headers：X-ABC和content-type，这个时候就不是简单请求了，
+a.com要给b.com 发一个options请求，它其实在问b.com我用post行不行，还想在Headers中带X-ABC和content-type；并不是所有的headers都发这个OPTIONS请求，因为X-ABC是自定义的，所以需要发；b.com看到OPTIONS请求，先不会返回数据，先检查自己的策略，看看能不能支持这次请求，如果支持就返回200。
+
+OPTIONS请求返回以下报文
+```js
+HTTP/2.0 20 OK
+Access-Control-Allow-Origin:https://a.com
+Access-Control-Allow-Methods:POST,GET,OPTIONS
+Access-Control-Allow-Headers:X-ABC,Content-Type
+     Access-Control-Max-Age:86400 // 告诉浏览器这个策略生效时间为一个小时，在一个小时之内发送类似的请求，不用在问服务端了，相当于缓存了
+```
+浏览器收到了OPTIONS的返回，会在发一次，这一次才是真正的请求数据，这次headers会带上X-ABC、contentType。
+
+整体的过程cors将请求分为2种，简单请求和复杂请求，需不需要发送OPTIONS浏览器说的算，浏览器判断是简单请求还是复杂请求，cors是非常广泛的跨域手段
+这里的缺点是OPTIONS请求也是一次请求，消耗带宽，真正的请求也会延迟。
+
+#### 3.反向代理 <Badge text="重要" type="tip"/> 
+
+![](~@/network/proxy.png)
+
+因为跨越是浏览器的限制，所以可以用同源的服务器去代理请求，代理服务使链路变的更长。
