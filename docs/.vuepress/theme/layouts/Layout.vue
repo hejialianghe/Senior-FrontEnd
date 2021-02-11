@@ -5,11 +5,12 @@
     @touchstart="onTouchStart"
     @touchend="onTouchEnd"
   >
+
+
     <Navbar
       v-if="shouldShowNavbar"
       @toggle-sidebar="toggleSidebar"
     />
-
     <div
       class="sidebar-mask"
       @click="toggleSidebar(false)"
@@ -43,7 +44,9 @@
         name="page-bottom"
         #bottom
       />
+
     </Page>
+          
   </div>
 </template>
 
@@ -53,7 +56,13 @@ import Navbar from '@theme/components/Navbar.vue'
 import Page from '@theme/components/Page.vue'
 import Sidebar from '@theme/components/Sidebar.vue'
 import { resolveSidebarItems } from '../util'
-
+import * as Sentry from "@sentry/browser";
+import { Integrations } from "@sentry/tracing";
+Sentry.init({
+  dsn: "https://39616798988c45a88e52d89282f7dcd1@o522017.ingest.sentry.io/5632836",
+  integrations: [new Integrations.BrowserTracing()],
+  tracesSampleRate: 1.0,
+});
 export default {
   components: { Home, Page, Sidebar, Navbar },
 
@@ -62,7 +71,6 @@ export default {
       isSidebarOpen: false
     }
   },
-
   computed: {
     shouldShowNavbar () {
       const { themeConfig } = this.$site
@@ -116,6 +124,7 @@ export default {
     this.$router.afterEach(() => {
       this.isSidebarOpen = false
     })
+    trrow new Error("出错了")
   },
 
   methods: {
