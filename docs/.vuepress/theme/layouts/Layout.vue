@@ -124,7 +124,6 @@ export default {
     this.$router.afterEach(() => {
       this.isSidebarOpen = false
     })
-    trrow new Error("出错了")
   },
 
   methods: {
