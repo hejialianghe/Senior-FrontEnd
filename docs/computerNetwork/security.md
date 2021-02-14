@@ -108,7 +108,7 @@ fetch(<jsonp-url>,{method: 'jsonp'})
       })
 ```
 
-#### 2. 跨越资源共用 <Badge text="重要" type="tip"/> 
+#### 2. 跨域资源共用 <Badge text="重要" type="tip"/>
 
 - 跨域资源共用（Cross-Origin Resource Sharing）使用额外HTTP头允许指定的源和另一个源进行交互
   服务端设置 Access-control-Allow-Origin:https://a.com
@@ -141,3 +141,145 @@ Access-Control-Allow-Headers:X-ABC,Content-Type
 ![](~@/network/proxy.png)
 
 因为跨越是浏览器的限制，所以可以用同源的服务器去代理请求，代理服务使链路变的更长。
+
+### 3.2.3 实战-CORS（fetch+node.js）
+
+- 观察node.js在服务端的实现CORS跨域
+- 观察浏览器器fetch的使用方法
+- 观察OPTIONS预检请求
+
+项目地址：/examples/computerNetwork/3.2
+
+1. 用express起2个服务
+
+```js
+const express = require('express');
+const app1 = express();
+
+app1.get('/',function(req,res){
+    res.send('hello')
+})
+
+app1.listen(3000)
+
+const app2 = express()
+app2.get('/api',function(req,res){
+    res.send('go')
+})
+
+app2.post('/api',function(req,res){
+    res.send('go')
+})
+app2.listen(3001)
+```
+
+启动node服务 nodeman cors.js
+
+2. 用`whislte`做代理
+
+```bash
+    npm i whistle -g # 下载，mac电脑：sudo npm i whistle -g 
+    whistle start # 启动
+    http://localhost:8899/ # 浏览器查看
+    SwitchOmega # 谷歌代理插件，可以配置127.0.0.1:8899的服务上
+```
+配置whislte进行代理的域名
+
+![](~@/network/whistle.png)
+
+谷歌代理插件SwitchOmega，配置代理服务器127.0.0.1:8899的服务
+
+![](~@/network/switchOmega.png)
+
+SwitchOmega 选择 proxy进行代理
+
+![](~@/network/webresquest.png)
+
+3. 在`dev.com`网站上请求`dev1.com/api`
+
+从上面看到在`dev.com`网站上请求`dev1.com/api`有跨域的报错信息，告诉我们可以用CORS加请求头,以下是解决方法。
+
+```diff
+const express = require('express');
+const app1 = express();
+
+app1.get('/',function(req,res){
+    res.send('hello')
+})
+
+app1.listen(3000)
+
+const app2 = express()
+app2.get('/api',function(req,res){
++    res.set('Access-Control-Allow-Origin','http://www.dev.com')
+    res.send('go')
+})
+
+app2.post('/api',function(req,res){
+    res.send('go')
+})
+
+app2.put('/api',function(req,res){
+    res.set('Access-Control-Allow-Origin','http://www.dev.com')
+    res.send('go')
+})
+app2.listen(3001)
+```
+
+在浏览器控制面板输入fetch('http://www.dev1.com/api',{method:'POST',headers:{'Content-Type':'application/json'}})进行请求；
+再次请求并加content-type字段，如果我们用post请求并在headers里加字段content-type:'application/json'，因为这是复杂请求，浏览器会先发送一个options请求，我们需要设置响应的headers允许添加某个字段。
+
+![](~@/network/options.png)
+
+```diff
+app1.listen(3000)
+
+const app2 = express()
+app2.get('/api',function(req,res){
+    res.set('Access-Control-Allow-Origin','http://www.dev.com')
+    res.send('go')
+})
++ app2.options('/api',function(req,res){
++   res.set('Access-Control-Allow-Origin','http://www.dev.com')
++   res.set('Access-Control-Allow-Headers','content-type')
++  res.sendStatus(200)
++ })
+app2.post('/api',function(req,res){
++    res.set('Access-Control-Allow-Origin','http://www.dev.com')
+    res.send('go')
+})
+
+app2.put('/api',function(req,res){
+    res.set('Access-Control-Allow-Origin','http://www.dev.com')
+    res.send('go')
+})
+app2.listen(3001)
+```
+用`put`请求看看，报错信息中可以看出是要在响应前加上允许`PUT`的请求
+
+![](~@/network/put.png)
+
+GET/POST/HEAD这种简单请求不会受这种影响,`put`、`delete`属于复杂请求，我们添加上以下代码来允许`PUT`请求
+
+```diff
+ app2.options('/api',function(req,res){
+  res.set('Access-Control-Allow-Origin','http://www.dev.com')
+  res.set('Access-Control-Allow-Headers','content-type')
++ res.set('Access-Control-Allow-Methods','PUT')
+  res.sendStatus(200)
+ })
+```
+我们在请求的时候在headers添加自定义字段 token,需要添加以下代码允许自定义
+
+```diff
+ app2.options('/api',function(req,res){
+  res.set('Access-Control-Allow-Origin','http://www.dev.com')
++ res.set('Access-Control-Allow-Headers','content-type,token')
+  res.set('Access-Control-Allow-Methods','PUT')
+  res.sendStatus(200)
+ })
+```
+<font color="red">子域名下请求父域名、父域名下请求子域名、子域名下请求子域名 都属于跨域，服务端通常通过判断是不是同一个一级域名，然后在origin里加上通过的域名</font>
+
+fetch('http://www.dev1.com/api',{method:'POST',mode:'no-cors'}) 这种加上no-cors，会显示请求成功了，但是拿不到数据，这种请求属于透明请求。
+

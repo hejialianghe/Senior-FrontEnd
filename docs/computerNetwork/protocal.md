@@ -121,9 +121,18 @@ cdn用于存变化不大的文件
 
 ## 1.4 HTTP入门和基础工具链
 
+#### 蒂姆.伯纳斯-李
+
+- 英国著名科学家（1955-）
+  - 万维网（1990年HTTP协议）
+  - 创办MIT人工智能实验室
+
 ### 1.4.1 HTTP协议
 
 - 超文本传输协议
+
+  超是一个形容词，形容这个文本很厉害,这个协议是挂在tcp上实现的，开始设计就是客户端和服务端通信的，它提供了一种标准就是中间可以传文本，
+  因为传二进制太复杂了，传文本大家都看的懂，容易推广就容易普及。
 - 处理客户端和服务端之间的通信
 - http请求/http返回
 - 网页/json/xml/提交表单
@@ -144,6 +153,15 @@ cdn用于存变化不大的文件
 - 1999 HTTP 1.1
 - 2015 HTTP 2.0
 
+#### 设计的基础因素
+
+- 带宽
+  - 基础网络（线路、设备等）
+- 延迟
+  - 浏览器
+  - DNS查询
+  - 建立连接（TCP三次握手）
+
 #### 设计考虑因素-缓存与带宽优化
 
 - 缓存
@@ -153,7 +171,9 @@ cdn用于存变化不大的文件
 - 带宽优化
   - （http 1.1）利用range头获取文件的某个部分
   - （http 1.1）利用长连接让多个请求在一个TCP连接上排队
+     如果每一个请求都建立一个TCP，这样是非常浪费带宽的，如果所有请求都复用一个tcp，那么这样省去了一些tcp握手的开销。
   - （http 2.0）利用多路复用技术同时传输多个请求
+     进一步节省带宽
 
 #### 设计考虑因素-压缩/安全性
 
@@ -165,7 +185,99 @@ cdn用于存变化不大的文件
   - 在HTTP和TCP/IP之间增加TSL/SSL层
   - 数据传输加密（非对称+对称加密）
 
-#### whistle
+### 1.4.2 HTTPS
+
+- 安全超文本传输协议（Hyper Text  Transfer Protocol Secure）
+- 数据加密传输
+  - 防止各种攻击手段（信息泄露、篡改等）
+-  SSL/TSL（Secure Socket Layer/Transport Layer Secure）
+   - SSL-安全套接层
+   - TSL-传输层安全性协议
+   - 需要在客户端安装证书
+
+![](~@/network/https.png)
+
+### 1.4.3 Node.js实战http请求
+
+🍎 Header和Body（实战）
+
+- http协议是一个文本传输协议，传输内容是人类可读的文本，大体分成2部分：
+  - 请求头（header）/返回头
+  - 消息体Body
+- 观察node实现http的基础协议
+
+```js
+const net = require('net')
+
+const response = `
+HTTP/1.1 200 ok
+Data: Tue,30 Jun 2020 01:00:00 GMT
+Content-Type: text/plain
+Connection: Closed
+// 上面是描述，下面设计文本内容
+Hello word
+`
+const server= net.createServer(socket=>{
+    socket.end(response)
+})
+
+server.listen(80,(err)=>{
+    console.log('err',err);
+})
+```
+我们请求一下`http://localhost/`
+
+![](~@/network/netttohttp.png)
+
+从上图可以看出respoons header是我们添加进去的，request header是浏览器帮我们添加进去的
+
+### 1.4.3 基础工具链
+
+1. Chrome
+
+- Google 开发的免费浏览器
+- Chrome 开发者拥有强大的调试能力
+
+2. cURL
+
+- 传输一个URL（和服务端交互的工具）
+  - url：网址（Uniform Resource Locator）
+- 支持多种协议（HTTP/HTTPS/FTP/FTPS/SCP/SFTP/DICT/TELNET）
+
+```bash
+curl www.baidu.com # 返回百度首页的内容，跟浏览器是一样的，会少一些响应头
+curl -I www.baidu.com # 返回协议头部
+
+HTTP/1.1 200 OK
+Accept-Ranges: bytes
+Cache-Control: private, no-cache, no-store, proxy-revalidate, no-transform
+Connection: keep-alive
+Content-Length: 277
+Content-Type: text/html
+Date: Sun, 14 Feb 2021 09:12:18 GMT
+Etag: "575e1f59-115"
+Last-Modified: Mon, 13 Jun 2016 02:50:01 GMT
+Pragma: no-cache
+Server: bfe/1.0.8.18
+```
+2. fetch
+
+- 在网络上获取数据的标准接口
+   - 提供对请求/返回对象（标准的Promise接口）
+   - 提供自定义header能力
+   - 提供跨域能力
+
+浏览器上可以直接请求 fetch("/")
+
+4. postMan
+
+- 协作的API开发工具
+
+经常用的场景是服务端工程师把一些复杂的请求参数配置好，通过postman可以分享出来给前端工程师
+
+5. whistle
+
+whistle是一个抓包的工具，也叫网络调试工具，它能看到这些分包，可以在http协议上修改一些参数。
 
 - 跨平台网络调试工具
   - 需要SwitchOmega插件
@@ -178,13 +290,25 @@ cdn用于存变化不大的文件
     http://localhost:8899/ # 浏览器查看
     SwitchOmega # 谷歌代理插件，可以配置127.0.0.1:8899的服务上
 ```
+谷歌代理插件SwitchOmega，配置代理服务器127.0.0.1:8899的服务
+![](~@/network/switchOmega.png)
+
+示例：以代理百度为例
+![](~@/network/baidu.png)
+
+![](~@/network/whistleweb.png)
+
+#### 小结
+
+简单比效率更重要（java/HTTP）等
+
 ## 1.8 UDP vs TCP，HTTP vs HTTPS
 
-#### 1.8.1 UDP
+### 1.8.1 UDP
 
 - 比TCP节省网络资源和迅速
 
-  -  不需要建立连接（延迟更低）
+  - 不需要建立连接（延迟更低）
   - 封包体积更小 （传输入速度快）
   - 不关心数据顺序（不需要序号和ACK，传输快速）
   - 不保证数据不丢失
