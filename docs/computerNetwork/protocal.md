@@ -1,3 +1,70 @@
+##  计算机网络简史
+<font color="red">学计算机一定要注重人文知识，人文知识最终影响你的判断力，以及你对未来的认知，有这样一部分功底，你就比别人看的多。</font>
+
+### 1. ARPANET 的发展
+
+ARPA那时候不叫计算机网路，有一个叫做数据网的方向，黄色部分连接的美国的地图。
+
+![](~@/network/arpanet.png)
+
+#### 1965-packet switching（分包交换）
+
+The data packets take different routes to their destinations
+
+![](~@/network/packet-switching.png)
+
+#### 1969 
+  
+  - 第一个RFC（开始通过APPANET发布）
+    R：request F：from C：comment
+    就是写一篇文章，别人可以对你的文章进行评论
+  - 第一个接口处理信息单元（interface Message Processor）
+  - 互联网internet
+
+#### 1970s
+
+ - 1971- 第一个email（ARPANET）
+ - 1971- ALOHAnet：第一个wifi（Wireless Fidelity）
+ - 1973- Ethernet
+ - 1973- SATNET
+ - 1973- IP电话/互联网电话（VOIP），第一个给用户使用的电话在1995
+ - 1974- 路由器（施乐 Xerox）
+ - 1976- 第一个IP路由器，但是被称做网关（Gateway）
+ - 1978- Bob Kahn发明了TCP/IP协议
+
+ ### 2. 逐渐成形的互联网
+
+ #### 1980s
+
+  - 1981- internet protocal Version 4 ，RCF 791
+  - 1981- BITNet
+  - 1981- CSNet
+  - 1983- ARPANET迁移到TCP/IP协议
+  - 1983- DNS（Domain Name System）
+  - 1986- BITNet II
+  - 1988- WaveLan（Wi-Fi）
+  - 1988- Packet filter wall （第一个防火墙Paper）
+  - 1988- APAPNet 升级为T1主干网络
+
+ #### 1990s
+
+ - 1990 - 第一个交换机（Kalpana）
+ - 1996 - IPv6
+ - 1997 - 802.11 wifi 标准（2mbps）
+ - 1999 - 802.1a 标准（5GHz 25mbps）
+ - 1999 - 802.11b 标准（11mbps）
+ - 1999 - WEP加密协议（RC4+CRC-32）
+
+ #### 2000s
+
+| 年份   |  事件  | 
+| :---: | :-----: | 
+|  2003  | 801.11g（54mbps）|
+|  2003  | WPA加密协议 |
+|  2003  | WPA2加密协议 |
+|  2008  | 4G标准（100Mbps）|
+|  2009  | 802.11n标准（600Mbps）|
+
 ## 1.1 OSI七层模型
 
 OSI七层模型
@@ -301,6 +368,12 @@ whistle是一个抓包的工具，也叫网络调试工具，它能看到这些�
 #### 小结
 
 简单比效率更重要（java/HTTP）等
+
+## 1.5 HTTP协议详情讲解
+
+### 1.5.1 HTTP协议内容和方法
+
+![](~@/network/httpres.png)
 
 ## 1.8 UDP vs TCP，HTTP vs HTTPS
 
