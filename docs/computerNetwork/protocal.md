@@ -389,12 +389,14 @@ Content-length: 0 # content-length
 
 - GET 
    - 从服务器获取资源
+- HEAD
+  - HEAD和GET类似，只是服务器的响应中只返回头部（没有实体部分）；在不获取资源情况下了解资源的状况
 - POST
    - 在服务器创建资源
 - PUT
-   - 在服务器修改资源（幂等性）
+   - 在服务器修改资源（幂等性），同一个url多次请求只修改一次
 - DELETE
-   - 在服务器删除资源（幂等性）
+   - 在服务器删除资源（幂等性），同一个url多次请求只删除一次
 - OPTIONS
    - 跨域时复杂请求
 - TRACE 用于显示调试信息
@@ -405,9 +407,43 @@ Content-length: 0 # content-length
 - PATCH
    -  对资源进行部分更新（极少用）
 
+### 1.5.2 常见HTTP状态码
+
 #### 状态码
 
 - 1.xx ：提供信息
+  - 100 continue 主要用来提供信息的，这个100还有一点历史原因，现在带宽都比较大；有时候传输数据比较大
+    客户端询问一下服务端，服务端如果发送100continue，客户端继续向服务端传送，现在已经用的很少了。
+  - 101  切换协议（switch Protocol）
+  我们浏览器生态不光有http协议、websocket协议、还有一些视频流的一些协议；这些协议和http之间是怎么切换的，客户端请求服务端的时候，如果服务端需要切换协议，会返回101，告诉客户端切换协议
+
+  ```bash
+  HTTP/1.1 101 Switching Protocols  
+  Upgrade:websocket
+  Connection: Upgrade
+  ```
+- 2XX：成功
+  - 200-ok
+  - 201- Created 已创建
+  - 202- Accepted 已接收
+  - 203- Non-Authoritative information 非权威内容
+  - 204- No Content 那样内容
+  - 205- Reset Content 重置内容
+  - 206- Partial Content 服务器下发了部分内容（range header）
+  注：多数服务端开发已经不遵循状态码
+- 3XX：重定向
+  - 300- Multiple Choices 用户请求了多个选项的资源（返回选项列表）
+  - 301- Moved Permanently 永久转移
+  - 302- Found 资源被找到（以前是临时转移）
+  - 303- See Other 可以使用GET方法在另一个URL找到资源
+  - 304- Not Modified 没有修改（缓存部分特别说明）
+  - 305- Use Proxy需要代理
+  - 307- Temporary Redirect 临时重定向
+  - 308- Permanent Redirect 永久重定向
+- 4XX：客户端错误
+- 5XX：服务端错误
+
+
   
 ## 1.8 UDP vs TCP，HTTP vs HTTPS
 
