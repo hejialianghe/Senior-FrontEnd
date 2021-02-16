@@ -373,8 +373,42 @@ whistle是一个抓包的工具，也叫网络调试工具，它能看到这些�
 
 ### 1.5.1 HTTP协议内容和方法
 
+#### HTTP常见的请求头
 ![](~@/network/httpres.png)
 
+#### HTTP常见的返回头
+
+```bash
+HTTP/1.1 201 Created # 协议版本、状态码
+x-Powered-By: Express # X-Powered-By
+Date:Sun,19 Jul 2020 14:01:51 GMT # 日期
+Connection: keep-alive  # Connection
+Content-length: 0 # content-length
+```
+#### 基本方法
+
+- GET 
+   - 从服务器获取资源
+- POST
+   - 在服务器创建资源
+- PUT
+   - 在服务器修改资源（幂等性）
+- DELETE
+   - 在服务器删除资源（幂等性）
+- OPTIONS
+   - 跨域时复杂请求
+- TRACE 用于显示调试信息
+   - 多数网站不支持，会泄露一些调试信息或者只有内部的时候才支持，它能帮助你追述整个http的链路，假如http发出去，它可能接收第一个不是网关；
+   它可能是代理服务器，再通过负载均衡才到达你真实的服务器，这里面有一定的路径，trace可以帮助我们请求http协议的网址时协议调试信息
+- CONNECT
+   - 代理
+- PATCH
+   -  对资源进行部分更新（极少用）
+
+#### 状态码
+
+- 1.xx ：提供信息
+  
 ## 1.8 UDP vs TCP，HTTP vs HTTPS
 
 ### 1.8.1 UDP

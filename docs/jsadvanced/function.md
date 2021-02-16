@@ -630,17 +630,23 @@ pipe函数compose类似，只不过从左往右执行
               let timer=null
               return function (..args) {
                 if(timer) clearTimeout(timer)
-                setTimeout(()=>{
+                timer = setTimeout(()=>{
                   fn(..args)
                 },delay)
               }
             }
             oDiv.onmousemove=deBounce(changeNum,500)
+            // or
+            let _deBounce = deBounce(changeNum,500)
+            oDiv.onmousemove=function(){
+              _deBounce()
+             }
         </script>
     </body>
     </html>
         
   ```
+
   ####  :tomato: underscore库debounce源码
    
   ```javascript

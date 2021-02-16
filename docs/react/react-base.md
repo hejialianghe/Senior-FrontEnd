@@ -501,6 +501,7 @@ css管理工具
     return (
       <div className='listItem'>
         {/* css Module+classnames/bind */}
+        {/* css module 结合 classnames 可以添加2个类名 */}
         <span className={cls('title','themd')}>header<span>
         {{/* classnames */}
         <span className={_cn}></span>
