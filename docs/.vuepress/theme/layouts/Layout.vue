@@ -64,15 +64,7 @@ Sentry.init({
   integrations: [new Integrations.BrowserTracing()],
   tracesSampleRate: 1.0,
 });
-// 百度埋点
-var _hmt = _hmt || [];
-(function() {
-  var hm = document.createElement("script");
-  hm.src = "https://hm.baidu.com/hm.js?a56e4bf87056c895a1e9e9d38298da40";
-  var s = document.getElementsByTagName("body")[0]; 
-    console.log("----------",s);
-  s.appendChild(hm);
-})();
+
 export default {
   components: { Home, Page, Sidebar, Navbar },
 
@@ -80,6 +72,15 @@ export default {
     return {
       isSidebarOpen: false
     }
+  },
+  beforeMount(){
+  // 百度埋点
+    var _hmt = _hmt || [];
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?a56e4bf87056c895a1e9e9d38298da40";
+    var s = document.getElementsByTagName("body")[0];
+    s.appendChild(hm);
+
   },
   computed: {
     shouldShowNavbar () {

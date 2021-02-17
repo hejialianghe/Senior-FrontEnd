@@ -13,8 +13,8 @@
     "upload-server": "sh deploy.sh"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "hejialiang",
+  "license": "MIT",
   "devDependencies": {
     "vuepress": "^1.2.0"
   },
