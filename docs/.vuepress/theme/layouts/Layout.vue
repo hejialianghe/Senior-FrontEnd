@@ -58,11 +58,21 @@ import Sidebar from '@theme/components/Sidebar.vue'
 import { resolveSidebarItems } from '../util'
 import * as Sentry from "@sentry/browser";
 import { Integrations } from "@sentry/tracing";
+//  sentry异常监控
 Sentry.init({
   dsn: "https://39616798988c45a88e52d89282f7dcd1@o522017.ingest.sentry.io/5632836",
   integrations: [new Integrations.BrowserTracing()],
   tracesSampleRate: 1.0,
 });
+// 百度埋点
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?a56e4bf87056c895a1e9e9d38298da40";
+  var s = document.getElementsByTagName("body")[0]; 
+    console.log("----------",s);
+  s.appendChild(hm);
+})();
 export default {
   components: { Home, Page, Sidebar, Navbar },
 
