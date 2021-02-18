@@ -67,7 +67,7 @@ The data packets take different routes to their destinations
 
 ## 1.1 OSI七层模型
 
-OSI七层模型
+### 1.1.1 OSI七层模型
 
 - 开放式系统互联网模型
 - 世界范围内的网络标准概念模型
@@ -152,11 +152,11 @@ OSI七层模型
 
 - 光电信号的传输
 
-### 1.2.1 TCP/IP的三次握手
+### 1.2.2 TCP/IP的三次握手
 
 ![](~@/network/threehand.png)
 
-### 1.2.2TCP/IP协议的消息顺序处理方法
+### 1.2.3 TCP/IP协议的消息顺序处理方法
 
 - 消息的绝对顺序用（SEQ，ACK）这一对元组描述
   - SEQ（Sequence）：这个消息发送前一共发送了多少字节
@@ -266,7 +266,7 @@ cdn用于存变化不大的文件
 
 ### 1.4.3 Node.js实战http请求
 
-🍎 Header和Body（实战）
+#### :tomato: Header和Body（实战）
 
 - http协议是一个文本传输协议，传输内容是人类可读的文本，大体分成2部分：
   - 请求头（header）/返回头
@@ -357,11 +357,16 @@ whistle是一个抓包的工具，也叫网络调试工具，它能看到这些�
     http://localhost:8899/ # 浏览器查看
     SwitchOmega # 谷歌代理插件，可以配置127.0.0.1:8899的服务上
 ```
-谷歌代理插件SwitchOmega，配置代理服务器127.0.0.1:8899的服务
+#### :tomato: 谷歌代理插件SwitchOmega，配置代理服务器127.0.0.1:8899的服务
 ![](~@/network/switchOmega.png)
 
-示例：以代理百度为例
+#### :tomato: 示例：以代理百度为例
+
+在想要代理的网址上选择`proxy`
+
 ![](~@/network/baidu.png)
+
+查看代理信息
 
 ![](~@/network/whistleweb.png)
 
@@ -373,10 +378,10 @@ whistle是一个抓包的工具，也叫网络调试工具，它能看到这些�
 
 ### 1.5.1 HTTP协议内容和方法
 
-#### HTTP常见的请求头
+#### :tomato: HTTP常见的请求头
 ![](~@/network/httpres.png)
 
-#### HTTP常见的返回头
+#### :tomato: HTTP常见的返回头
 
 ```bash
 HTTP/1.1 201 Created # 协议版本、状态码
@@ -385,7 +390,7 @@ Date:Sun,19 Jul 2020 14:01:51 GMT # 日期
 Connection: keep-alive  # Connection
 Content-length: 0 # content-length
 ```
-#### 基本方法
+#### :tomato: 基本方法
 
 - GET 
    - 从服务器获取资源
@@ -409,9 +414,9 @@ Content-length: 0 # content-length
 
 ### 1.5.2 常见HTTP状态码
 
-#### 状态码
+#### :tomato: 状态码
 
-- 1.xx ：提供信息
+- <font color="green">1.xx ：提供信息</font>
   - 100 continue 主要用来提供信息的，这个100还有一点历史原因，现在带宽都比较大；有时候传输数据比较大
     客户端询问一下服务端，服务端如果发送100continue，客户端继续向服务端传送，现在已经用的很少了。
   - 101  切换协议（switch Protocol）
@@ -422,29 +427,124 @@ Content-length: 0 # content-length
   Upgrade:websocket
   Connection: Upgrade
   ```
-- 2XX：成功
-  - 200-ok
-  - 201- Created 已创建
-  - 202- Accepted 已接收
-  - 203- Non-Authoritative information 非权威内容
-  - 204- No Content 那样内容
-  - 205- Reset Content 重置内容
-  - 206- Partial Content 服务器下发了部分内容（range header）
+-  <font color="green">2XX：成功</font>
+    - 200-ok
+    - 201- Created 已创建
+    - 202- Accepted 已接收
+    - 203- Non-Authoritative information 非权威内容
+    - 204- No Content 那样内容
+    - 205- Reset Content 重置内容
+    - 206- Partial Content 服务器下发了部分内容（range header） 
   注：多数服务端开发已经不遵循状态码
-- 3XX：重定向
+
+- <font color="green">3XX：重定向</font>
   - 300- Multiple Choices 用户请求了多个选项的资源（返回选项列表）
-  - 301- Moved Permanently 永久转移
-  - 302- Found 资源被找到（以前是临时转移）
-  - 303- See Other 可以使用GET方法在另一个URL找到资源
-  - 304- Not Modified 没有修改（缓存部分特别说明）
+  - 301- Moved Permanently 永久转移 （如果以前是post、delete等方法，如果在303的情况都会变成get） 
+  - 302- Found 资源被找到（以前是临时转移，现在被拆成了2个状态码303和307）  
+  - 303- See Other 可以使用GET方法在另一个URL找到资源（不管以前使用什么方法跳转过来的，最终303都给跳转一个get方法）
+  - 304- Not Modified 没有修改（这个资源没有再请求一遍，现在很多web服务器，它在下发资源给浏览器的时候，它会把资源内容做一次计算，计算出一个唯一的哈希值，哈希值会作为target传下来，浏览器会对比这个target，target变化会再去请求一次，web服务器知道哪些资源有变化，它有些算法在里面，计算出有没有变化，没有变化会返回一个304，并不会返回真实的资源。） 
   - 305- Use Proxy需要代理
   - 307- Temporary Redirect 临时重定向
-  - 308- Permanent Redirect 永久重定向
-- 4XX：客户端错误
-- 5XX：服务端错误
+  - 308- Permanent Redirect 永久重定向 （如果是post请求，收到308后还是308请求）
 
+<font color="red">收到服务端状态码，我们该怎么做？</font>
 
-  
+这不是程序所决定的，它不是这个逻辑，因为整体设计是一个协议一个标准；在请求的时候我们能拿到状态码，即使返回了301我们都可以不用去跳转，反正你就不遵守协议，这无所谓，但是设计浏览器的人，他们都遵循这些协议，这些协议是一个标准，正常来说也要遵循这些协议；即使权利交到你手里 ，如果总是违反协议做事情，大家都乱了，大家要重新商议协议，沟通成本会增加。
+
+:tomato: 面试解惑：301 vs 308
+ 
+ - 共同点
+   - 资源被永久移动到新的地址
+ - 差异 
+   - 客户端收到308请求后，之前是什么method，那么之后也会沿用这个method(POST/GET/PUT)到新地 址
+   - 客户端收到301请求后，通常用户会向新地址发起GET请求
+
+历史原因：最早的浏览器设计不是像今天这样用ajax请求去动态创建网页，过去网页是网页设计师写出来的，那时候主要的请求都是GET，最早定义规范的人，他也强调过301怎么去做，定义协议的人其实考虑到这个问题了，但是大家都没有遵守这个协议，一开始本来你给我POST，我给你POST ，只是网址变化一下，但都大家不理它，导致http1.1之后还有增加308这些头。
+
+:tomato: 面试解惑：302/303/307
+  - 共同点
+    - 资源临时放到新地址（请不要缓存）
+  - 差异
+    - 302是http1.0提出的，最早叫做Moved Temporarily；很多浏览器实现的时候没有遵循标准，把所以请求都重定向到GET
+    - 1999年标准委员会增加了303和307，并将302重新定义为Found
+    - 303告诉客户端使用GET方法重定向资源
+    - 307告诉客户端使用原请求method重定向资源
+
+- <font color="green">4XX：客户端错误</font>
+    - 400- Bad Request 请求格式错误
+    - 401- Unauthorized 没有授权
+    - 402- Payment Required 请先付费
+    - 403- Forbidden 禁止访问
+    - 404- Not Found 没有找到
+    - 405- Mehtod Not Allowed 方法不被允许
+    - 406- Not Acceptable 服务端可以提供的内容和客户端期待不一样
+
+   注：多数服务端开发已经不遵循状态码 
+- <font color="green">5XX：服务端错误</font>
+    - 500 - internal Server Error（内部服务器错误）
+    - 501 - Not implemented（没有实现）
+    - 502 - Bad Gateway（网管错误）
+    - 503 - Servive Unavailable（服务不可用）
+    - 504 - Gateway Timeout （网关超时）
+    - 505 - HTTP Version Not Supported（版本不支持）
+
+  注：多数服务端开发已经不遵循状态码
+
+### 1.5.3 常见HTTP头
+
+#### :tomato: Content-Length
+
+ - 发送给接收者的Body内容长度（字节）
+   - 一个byte是8bit
+   - Utf-8编码的自渎1-4字节
+
+#### :tomato: User-Agent
+
+- 帮助区分客户端特性的字符串
+  - 操作系统
+  - 浏览器
+  - 制造商（手机类型等）
+  - 内核类型
+  - 版本号......
+
+#### :tomato: Content-Type
+
+- 帮助区分资源的媒体类型（Media Type/MIME Type）
+   - text/html
+   - text/css
+   - application/json
+   - image/jpeg
+   - ......
+
+#### :tomato: Origin
+
+- 描述请求来源地址
+  - scheme://host:port
+  - 不含路径
+  - 可以是null
+
+#### :tomato: Accept
+
+- 建议服务端返回何种媒体类型（MIME Type）
+  - */*代表所有类型（默认）
+  - 多个类型用逗号隔开例如：text/html，application/json
+- Accept-Encoding：建议服务端发送哪种编码（压缩算法）
+  - deflate,gzip;q=1.0,*;q=0.5
+- Accept-Language：建议服务端传递哪种语言
+  - Accept-Language：fr-CH,fr;q=0.9,en;q=0.8,de;q=0.7,*;q=0.5
+
+#### :tomato: Referer
+
+- 告诉服务端打开当前页面的上一张页面的URL；如果是ajax请求，那么就告诉服务端发送请求的URL的是什么
+   - 非浏览器环境有时候不发送Referer（或者虚拟Referer，通常是爬虫）
+   - 常常用于用户行为分析
+
+#### :tomato: Connection
+
+- 决定连接是否在当前事务完成后关闭
+  - Http1.0 默认是close
+  - Http1.1后默认是keep-alive
+
 ## 1.8 UDP vs TCP，HTTP vs HTTPS
 
 ### 1.8.1 UDP
@@ -478,13 +578,13 @@ Content-length: 0 # content-length
 - 压缩HTTP头部
 - 服务端推送
 
-#### HTTP 1.1 排队问题
+#### :tomato: HTTP 1.1 排队问题
 
 多个文件共用一个TCP，如果第一个文件响应慢，会阻塞后面的文件，浏览器最多会建立6个tcp连接
 
 ![](~@/network/http1.1.png)
 
-#### HTTP 2.0 
+#### :tomato: HTTP 2.0 
 
 1. 多路复用
 
@@ -503,7 +603,3 @@ Content-length: 0 # content-length
   例如：METHOD GET 用2表示
 
 3. 服务端推送
-
-
-
-
