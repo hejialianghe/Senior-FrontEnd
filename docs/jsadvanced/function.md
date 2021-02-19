@@ -1035,25 +1035,23 @@ pipe函数compose类似，只不过从左往右执行
   ####  :tomato: 案例： 给数组`[2,4,3,5,1,5]`进行排序
    ``` javascript
      let arr = [2,4,3,5,1,5]
-    // 正向遍历
-     function bubbleSort1(src) {
-      let arr=[...src] //做浅拷贝，避免影响原数组
-      let flag=true
-      let current
-      for (let i=0; j<arr.length-1;i++){ 
-        //为什么arr.length-1-j？因为每次遍历完后最大值肯定在最右边，数组的后面的那段其实已经是排序好，无需在排序
-          for(let j=0;j<arr.length-1-i;j++){
-              if(arr[j]>arr[j+1]){
-                current=arr[j]
-                arr[j]=arr[j+1]
-                arr[j+1]=current
-              }     
-          }
-        // 用flag判断，如果第一次循环，前面的参数没有大于后面的参数，说明数列无需排序，跳出循环
-          if(flag) break
-       }
-       return arr
-     }
+     // 正向遍历
+      function bubbleSort1(src) {
+        let arr = [...src] // 做浅拷贝，避免影响原数组
+        let len = arr.length;
+        let current
+        for (let i=0;i<len-1;i++){ 
+          //为什么arr.length-1-i？因为每次遍历完后最大值肯定在最右边，数组的后面的那段其实已经是排序好，无需在排序
+            for(let j=0;j<len-1-i;j++){
+                if(arr[j]>arr[j+1]){
+                  current=arr[j]
+                  arr[j]=arr[j+1]
+                  arr[j+1]=current
+                };
+            } 
+        }
+        return arr
+      }
       /*
        反向遍历实现
         - 冒泡排序第一次遍历后会将最大值放到最右边，这个值是全局的最大值
