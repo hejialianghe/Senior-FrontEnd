@@ -298,7 +298,7 @@ Object.keys({a:1})
 [1,2,3].includes(2)
 ```
 
-### 5.3.3 puugin / preset / env
+### 5.3.3 plugin / preset / env
 
 #### plugin
 
