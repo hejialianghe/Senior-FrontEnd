@@ -34,7 +34,9 @@
 
 我为什么网名蚂蚁，我希望我能够像蚂蚁一样，虽然身体小但是力量要大，希望你们也一样！如果发现文章有错误，请即时使联系我！
 
-<img  width="500px" src="/weixin.jpeg">
+<img  width="500px" src="https://hejialianghe.gitee.io/weixin.jpeg">
+
+![赞赏方式](./money.f845196d.png)
 
 ## 5.赞赏
 
