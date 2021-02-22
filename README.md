@@ -1,6 +1,6 @@
 ![seniorFrontEnd](./image/seniorFrontEnd.png)
 
-[![Build Status](https://travis-ci.com/hejialianghe/Senior-FrontEnd.svg?branch=master)](https://travis-ci.com/hejialianghe/Senior-FrontEnd)
+[![Build Status](https://travis-ci.com/hejialianghe/Senior-FrontEnd.svg?branch=master)](https://travis-ci.com/hejialianghe/Senior-FrontEnd)[![GitHub forks](https://img.shields.io/github/forks/hejialianghe/Senior-FrontEnd.svg?style=flat-square)](https://github.com/hejialianghe/Senior-FrontEnd/network)[![GitHub stars](https://img.shields.io/github/stars/hejialianghe/Senior-FrontEnd.svg?style=flat-square)](https://github.com/hejialianghe/Senior-FrontEnd/stargazers)[![GitHub issues](https://img.shields.io/github/issues/hejialianghe/Senior-FrontEnd.svg?style=flat-square)](https://github.com/hejialianghe/Senior-FrontEnd/issues)[![GitHub last commit](https://img.shields.io/github/last-commit/hejialianghe/Senior-FrontEnd.svg?style=flat-square)](https://github.com/hejialianghe/Senior-FrontEnd/commits/master)
 
 ## 1. 前言
 
@@ -10,13 +10,14 @@
 ## 2. 学习大纲
 
 ```bash
-├── javaScript进阶          # 大厂如何去做防抖和节流
-├── 计算机网络               # 学会基础知识，才能更好的理解下面的知识
-├── vue                     # 源码讲解，涉及3.0
-├── react                   # 源码讲解，涉及16.8hook
-├── node.js                 # koa源码
-├── 工程化                   # 涉及cli
-├── 项目实践                 #有道云笔记
+
+├── javaScript进阶            # 大厂如何去做防抖和节流
+├── 计算机网络                 # 学会基础知识，才能更好的理解下面的知识
+├── vue                      # 源码讲解，涉及3.0
+├── react                    # 源码讲解，涉及16.8hook
+├── node.js                  # koa源码
+├── 工程化                    # 涉及cli
+├── 项目实践                  #有道云笔记
 
 ```  
 
@@ -32,15 +33,16 @@
 
 ## 4.联系方式 :vibration_mode:
 
-我为什么网名蚂蚁，我希望我能够像蚂蚁一样，虽然身体小但是力量要大，希望你们也一样！如果发现文章有错误，请即时使联系我！
+我为什么网名蚂蚁，我希望我能够像蚂蚁一样，虽然身体小但是力量大，希望你们也一样！如果发现文章有错误，请即时联系我！
 
-![wx](./image/weixin.jpeg)
+<img src="./docs/.vuepress/public/weixin.jpeg" width="200" />
 
 ## 5.赞赏
 
 ![赞赏方式](./image/money.f845196d.png)
 
 ### 赞赏名单:art:
+
 | 昵称  |  赞赏时间  | 赞赏方式 | 赞赏金额 |   备注   |
 | :---: | :--------: | :------: | :------: | :------: |
 |  *可  | 2020-01-02 |  支付宝  | ￥8.00  |    -     |
