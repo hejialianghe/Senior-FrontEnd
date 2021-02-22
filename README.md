@@ -36,8 +36,6 @@
 
 <img  width="500px" src="https://hejialianghe.gitee.io/weixin.jpeg">
 
-![赞赏方式](./money.f845196d.png)
-
 ## 5.赞赏
 
 ![赞赏方式](./money.f845196d.png)
