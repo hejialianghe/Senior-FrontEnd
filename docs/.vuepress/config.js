@@ -65,7 +65,8 @@ module.exports = {
                 collapsable: false,
                 children: [
                   ["computerNetwork/protocal",'网络协议'],
-                  ["computerNetwork/security",'网络安全']
+                  ["computerNetwork/security",'网络安全'],
+                  ["computerNetwork/tools",'工具链和其他']
                 ]
               },
               {
