@@ -221,7 +221,6 @@ export default {
  .test{
      font-size:21px
  }
-
 </style>
 
 // 最后编译出来的html上会添加一个属性
@@ -230,20 +229,29 @@ export default {
 </div>
 
 // 最后编译出来style,也会以这个属性做选择器，从而做到样式的封装
-
 <style scoped lang=“scss”>
  .test[data-v-382addcf]{
      font-size:21px
  }
- // 如果用到组件库，想修改组件库里的的样式
- .test {
-     /deep/ .van-btn{
 
-     }
+ // 如果用到组件库，想修改组件库里的的样式，并且使用css的预处理器(less, sass, scss)）
+ .test {
+    /deep/ .van-btn{
+
+    }
+    // or /deep/在某些时候会报错,::v-deep更保险并且编译速度更快
+    ::v-deep .van-btn{
+
+    }
  }
 </style>
 
-
+// 如果用到组件库，想修改组件库里的的样式且style为css
+<style scoped>
+.test >>> .van-btn {
+ 
+}
+</style>
 ```
 
 ## 2.5 组件
