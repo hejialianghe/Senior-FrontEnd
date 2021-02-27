@@ -66,7 +66,8 @@ module.exports = {
                 children: [
                   ["computerNetwork/protocal",'网络协议'],
                   ["computerNetwork/security",'网络安全'],
-                  ["computerNetwork/tools",'工具链和其他']
+                  ["computerNetwork/network-actual.md",'网络请求实战'],
+                  ["computerNetwork/tools",'工具链和其他'],
                 ]
               },
               {
