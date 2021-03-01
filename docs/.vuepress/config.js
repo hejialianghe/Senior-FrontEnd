@@ -40,7 +40,8 @@ module.exports = {
       ],
       nav:[
         { text: '极速版阅读', link: 'https://hejialianghe.gitee.io/'},
-        { text: 'Blog', link: 'http://youliaowu.com/' }
+        { text: 'Blog', link: 'http://youliaowu.com/' },
+        { text: 'Gitee', link: 'https://gitee.com/hejialianghe' }
       ],
         sidebar:[
             {

@@ -229,7 +229,7 @@ Map Local可以替换任意charles能抓包到的文件，甚至可以将api请�
 
 ![](~@/engineering/rewrite2.png)
 
-将head标签替换成<script src="地址">new VConsole()</script></head>
+上面其实就是将`</head>`标签替换成 `<script src="<script src="https://cdn.bootcdn.net/ajax/libs/vConsole/2.5.0/vconsole.min.js"></script>">new VConsole()</script></head>`
 
 ## 8.5 在公网访问本地服务
 

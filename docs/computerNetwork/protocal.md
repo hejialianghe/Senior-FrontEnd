@@ -545,6 +545,117 @@ Content-length: 0 # content-length
   - Http1.0 默认是close
   - Http1.1后默认是keep-alive
 
+## 1.6 全栈角度看HTTP协议
+
+### 1.6.1 解析Body和2xx状态码
+
+#### :tomato: 实战-method和解析body
+
+1. 查询 GET /product
+
+```js
+const express = require('express')
+const app = express()
+
+app.get('/product',(req,res)=>{
+    res.send('ok')
+})
+app.listen(3000,()=>{
+    console.log('启动成功');
+})
+```
+2. 新增 POST /product
+
+```js
+const express = require('express')
+const app = express()
+
+app.post('/product',(req,res)=>{
+    const contentType =  req.headers['content-type']
+    let requestText=""
+    // http请求基于tcp，tcp会把传的数据，分成一个个分包；并不是一次传过来的；req不仅是一个请求对象，也继承了流的性质
+    // 流代表了未来的数据，当数据来的时候把数据给装起来
+    req.on('data',(buffer)=>{
+        // utf-8 用1到4个字节描述一个字符，世界上有太多字符了，像a、b、c这样的一个字节就描述完了
+        console.log('buffer',buffer.length)
+        requestText += buffer.toString('utf-8')
+    })
+    req.on('end', ()=>{
+        console.log('contentType',contentType)
+        switch(contentType) {
+            case "application/json" :
+            // console.log('requestText',JSON.parse(requestText))
+            res.set('content-type','application/json')
+            res.status(201).send(JSON.stringify({success:'ok'}))
+            break
+        }
+    })
+
+})
+app.listen(3000,()=>{
+    console.log('启动成功');
+})
+```
+在浏览器上请求一下`fetch("/product",{method:"POST",headers:{'content-type':'application/json'},body:JSON.stringify({name:''.padStart(100000,'A')})}).then(res=>{console.log(res)})`
+![](~@/network/post-product.png)
+
+在控制台中可以看出，打印buffer.length出现了2次，因为传值不是一下传过来的，因为tcp是分包传输。
+```bash
+➜  1.6 git:(master) ✗ nodemon ./index.js
+[nodemon] 2.0.4
+[nodemon] to restart at any time, enter `rs`
+[nodemon] watching path(s): *.*
+[nodemon] watching extensions: js,mjs,json
+[nodemon] starting `node ./index.js`
+启动成功
+buffer 64773
+buffer 35238
+contentType application/json
+```
+
+3. 修改 PUT /product/:id
+
+```js
+app.put('/product/:id',(req,res)=>{
+    console.log(req.params.id)
+    res.sendStatus(204)
+})
+```
+4. 删除 DELETE /product/:id
+
+```js
+app.delete('/product/:id',(req,res)=>{
+    console.log(req.params.id)
+    res.sendStatus(204)
+})
+```
+
+### 1.6.2 跳转Header和3xx状态码
+
+#### :tomato: 实战-重定向观察
+
+- 观察下列重定向行为的区别
+  - 301、302、303、307、308
+
+1. 301
+
+当访问`http://localhost:3000/301`时候，浏览器会跳转到`http://localhost:3000/def`；跳转是浏览器的行为。
+
+```js
+const express = require('express')
+const app = express()
+
+app.get('/301',(req,res)=>{
+    res.redirect(301,'/def')
+})
+
+app.get('/def',(req,res)=>{
+   res.send('THIS IS DEF(get)')
+})
+
+app.listen(3000,()=>{})
+```
+
 ## 1.8 UDP vs TCP，HTTP vs HTTPS
 
 ### 1.8.1 UDP
