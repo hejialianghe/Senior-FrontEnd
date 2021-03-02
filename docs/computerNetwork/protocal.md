@@ -635,7 +635,7 @@ app.delete('/product/:id',(req,res)=>{
 #### :tomato: 实战-重定向观察
 
 - 观察下列重定向行为的区别
-  - 301、302、303、307、308
+  - 301、302、303、307
 
 1. 301
 
@@ -644,7 +644,7 @@ app.delete('/product/:id',(req,res)=>{
 ```js
 const express = require('express')
 const app = express()
-
+// 遵守规范有利于网站的seo，不能随便用301，浏览器会有缓存
 app.get('/301',(req,res)=>{
     res.redirect(301,'/def')
 })
@@ -655,6 +655,110 @@ app.get('/def',(req,res)=>{
 
 app.listen(3000,()=>{})
 ```
+2. 302、303、307
+
+```js
+const express = require('express')
+const app = express()
+
+// 302、303 post请求会重定向到get请求
+app.post('/302',(req,res)=>{
+    res.redirect(303,'/def')
+})
+
+app.post('/303',(req,res)=>{
+    res.redirect(303,'/def')
+})
+
+app.get('/def',(req,res)=>{
+   res.send('THIS IS DEF(get)')
+})
+
+// 307 post请求，会重定向到post请求
+app.post('/307',(req,res)=>{
+    res.redirect(307,'/def')
+})
+
+app.post('/def',(req,res)=>{
+   res.send('THIS IS DEF(307post)')
+})
+
+app.listen(3000,()=>{})
+```
+### 1.6.3 实战-错误处理
+
+- 为下列场景返回不同的错误码
+  - 用户没有登录
+  - 服务器报错
+  - 内容没有找到
+  - 不支持POST请求
+
+```js
+const express = require('express')
+const app = express()
+
+// 用户没有登录
+app.post('/test',(req,res)=>{
+    res.sendStatus(404)
+})
+
+// 500服务端抛错，会自定帮你做
+app.post('/test',(req,res)=>{
+    throw "Error"
+})
+
+// 502网管错误，一般不自己指定
+app.post('/test',(req,res)=>{
+    res.sendStatus(502)
+})
+
+// 找不到资源，一般找不到资源框架会帮去返回404
+app.post('/test',(req,res)=>{
+    res.sendStatus(404)
+})
+
+app.listen(3000,()=>{})
+```
+## 1.7 加密和HTTP证书
+
+### 1.7.1 对称加密和非对称加密
+
+#### :tomato: 明文传输
+
+如果2个人对话，本来就是私密的，当然不想让三个人看见；如果小区有交换机，小区的工人人员就可以看报文，可能就会动起了坏心思。
+
+![](~@/network/proclaimedinwriting.png)
+
+#### :tomato: 加密
+
+给Alice传的发出内容进行加密，Bob这边在进行解密；加密解密也没回绝对安全；这样给破解人增加了难度。
+
+![](~@/network/encryption.png)
+
+#### :tomato: 什么是加密
+
+将明文信息变成不可读的密文内容，只有拥有解密方法的对象才能够将密闻还原成加密前的内容
+
+下面的例子就是隔3个拿一个字符，从而达到给明文加密
+
+![](~@/network/encryption1.png)
+
+#### :tomato: 加密方法/解密方法
+
+- 计算机中，加密方法和解密方法，可以描述为一段程序，我们称作加密/解密算法
+- 加密有时候会对暗号，比如上一个例子中每次跳过3个字符，[3]就是一个暗号，我们称作密钥
+
+#### :tomato: 对称加密/非对称加密
+
+- 加密和解密的暗号（秘钥）相同，我们称为对称加密
+- 加密和解密的暗号（秘匙）不同，我们称为非对称加密
+
+#### :tomato: 非对称加密（秘钥对）
+
+- 创建者创建一个秘钥对（分成公钥和私钥）
+- 公钥加密必须私钥解密
+- 私钥加密必须公钥解密
+- 创建者保留私钥，公钥向外界公开
 
 ## 1.8 UDP vs TCP，HTTP vs HTTPS
 
