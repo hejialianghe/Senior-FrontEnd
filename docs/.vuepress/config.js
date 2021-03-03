@@ -3,7 +3,12 @@ module.exports = {
     title: 'web全栈体系',
     description: 'Hello, my friend!',
     dest: "dist",
-    serviceWorker: true, //支持PWA配置
+    serviceWorker: false, //支持PWA配置
+    plugins:['@vuepress/nprogress','@vuepress/back-to-top',
+    '@vuepress/active-header-links', {
+      sidebarLinkSelector: '.sidebar-link',
+      headerAnchorSelector: '.header-anchor'
+    }],
     markdown: {
       lineNumbers: true
     },
