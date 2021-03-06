@@ -11,7 +11,7 @@
     "dev": "vuepress dev docs",
     "build": "vuepress build docs",
     "upload-server": "sh deploy.sh",
-    "release": "release-it"
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -w -r 0"
   },
   "keywords": [],
   "author": "hejialiang",
@@ -19,7 +19,6 @@
   "devDependencies": {
     "@vuepress/plugin-active-header-links": "^1.8.2",
     "@vuepress/plugin-back-to-top": "^1.8.2",
-    "release-it": "^14.4.1",
     "vuepress": "^1.2.0"
   },
   "dependencies": {

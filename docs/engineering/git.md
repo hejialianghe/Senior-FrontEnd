@@ -75,7 +75,7 @@ scope | commit影响的范围
 ```bash
 # cz-conventional-changelog changelog插件 
 npm install -g commitizen cz-conventional-changelog
-# 配置到czrc目录下
+# 命令行中输入以下命令，配置到czrc目录下
 echo '{ "path": "cz-conventional-changelog"}' > ~/.czrc
 git cz
 ```
