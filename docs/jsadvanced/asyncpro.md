@@ -1673,10 +1673,103 @@ Promise.race=function(promises){
 
 [完整代码](https://github.com/hejialianghe/Senior-FrontEnd/tree/master/examples/jsadvanced/promise)
 
+
+## 3.8 Web Workers的多线程机制（上）
+
+### 3.8.1 Web Workers介绍
+
+- web Workers
+  - 一个Web API-> 浏览器能力 -> 提供一个js可以运行的环境
+  - Web应用程序可以在独立于主线层的后台线程中，运行一个脚本操作
+  - 关键点：性能考虑
+
+web Workers主要处理一些耗时的任务，比如一家公司老板忙不来，肯定会招一些人，这些会承担一些公司的脏活累活，占用时间比较多的活，老板只做一些核心的事情。所以web worker是来分担主线程的负担的，所以web worker的意义在于一些耗时的任务从主线层剥离出来，让worker做这些耗时的处理；
+那么主线程专注于页面的渲染和交互，那么我们访问的页面的性能会更好。
+
+#### :tomato: worker线程和主线程的通信
+
+
+<img width="500px" src="~@/network/worker-info.png">
+
+我们知道worker是一个线程，那么主线程指派任务给worker线程是怎样通信的呢？就设计到2个线程之间的通信。
+
+主线程有一个`postMessage`方法用来通知worker线程任务，worker有一个`onMessage`的方法用来接收主线程的任务，接收到主线程的消息之后就去工作，工作完之后worker也有一个`postMessage`方法用来通知主线程干完了；主线程也有一个`onMessage`方法，能获取到worker的工作已经做完了，以及结果是什么。
+
+### 3.8.1 实战一个web worker的案例
+
+这个案例是我们把耗时的斐波那契数列放到worker里计算
+
+1. index.html
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script src="./main.js"></script>
+</body>
+</html>
+```
+
+2. main.js
+
+```js
+//  new Worker 之后，worker进行工作
+const worker = new Worker("worker.js")
+
+worker.onmessage = function (e) {
+ console.log('拿到worker通知的数据',e)
+ worker.postMessage("message收到了")
+}
+```
+
+3. worker.js
+
+worker线程去计算斐波那契数列
+
+```js
+function fibonacci (n) {
+    if(n===1 || n ==2) {
+        return 1
+    }
+    return fibonacci(n-2) + fibonacci(n-1)
+}
+// 告诉主线程
+postMessage(fibonacci(40))
+
+// 收到主线程的消息
+onmessage = function (e) {
+    console.log('好的，拿到了就好',e);
+}
+```
+#### 当你点开index.html会出现报错
+
+![](~@/jsasvanced/worker-err.png)
+
+这个报错是什么原因呢？
+
+因为我们用worker是限制的，不是本地跑一个html就行，`new Worker("worker.js")`里的参数不能通过本地路径去取的，不支持file协议；需要起一个静态资源服务，我们可以用`browser-sync`。
+
+```bash
+npm install -g browser-sync # 下载
+
+browser-sync -s # 启动，注意启动服务要在index.html这个文件夹
+```
+
+启动完之后，访问http://localhost:3000/index.html
+
+源代码地址：Senior-FrontEnd/examples/jsadvanced/1.8/
+
 ##  总结
 
 这章我们学习了异步编程的解决方法
 
 回调->发布订阅->promise->Generator->async/await
 
- 
+
+
