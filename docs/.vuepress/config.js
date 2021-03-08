@@ -73,6 +73,7 @@ module.exports = {
                   ["computerNetwork/protocal",'网络协议'],
                   ["computerNetwork/security",'网络安全'],
                   ["computerNetwork/network-actual.md",'网络请求实战'],
+                  ["computerNetwork/browser-status",'浏览器状态同步和路由'],
                   ["computerNetwork/tools",'工具链和其他'],
                 ]
               },

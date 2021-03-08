@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script type="javascript/worker" id="worker">
+      function fibonacci (n) {
+            if(n===1 || n ==2) {
+                return 1
+            }
+            return fibonacci(n-2) + fibonacci(n-1)
+        }
+
+        postMessage(fibonacci(40))
+    </script>
+    <script>
+        var workerScript = document.querySelector('#worker').textContent
+        var blob = new Blob([workerScript],{type:'text/javascript'})
+        var worker = new Worker(window.URL.createObjectURL(blob))
+        worker.onmessage = function (e) {
+            console.log('拿到worker通知的数据',e)
+            worker.postMessage("message收到了")
+        }
+    </script>
+</body>
+</html>

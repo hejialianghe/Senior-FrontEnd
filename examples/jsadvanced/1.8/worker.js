@@ -8,5 +8,5 @@ function fibonacci (n) {
 postMessage(fibonacci(40))
 
 onmessage = function (e) {
-    console.log('好的，知道主线程拿到了数据',e);
+    console.log('好的，拿到了就好',e);
 }

@@ -1674,7 +1674,7 @@ Promise.race=function(promises){
 [完整代码](https://github.com/hejialianghe/Senior-FrontEnd/tree/master/examples/jsadvanced/promise)
 
 
-## 3.8 Web Workers的多线程机制（上）
+## 3.8 Web Workers的多线程机制
 
 ### 3.8.1 Web Workers介绍
 
@@ -1686,6 +1686,10 @@ Promise.race=function(promises){
 web Workers主要处理一些耗时的任务，比如一家公司老板忙不来，肯定会招一些人，这些会承担一些公司的脏活累活，占用时间比较多的活，老板只做一些核心的事情。所以web worker是来分担主线程的负担的，所以web worker的意义在于一些耗时的任务从主线层剥离出来，让worker做这些耗时的处理；
 那么主线程专注于页面的渲染和交互，那么我们访问的页面的性能会更好。
 
+#### worker的主要方法
+
+- onerror、onmessage、onmessageerror、postMessage、importScripts、close
+
 #### :tomato: worker线程和主线程的通信
 
 
@@ -1695,7 +1699,7 @@ web Workers主要处理一些耗时的任务，比如一家公司老板忙不来
 
 主线程有一个`postMessage`方法用来通知worker线程任务，worker有一个`onMessage`的方法用来接收主线程的任务，接收到主线程的消息之后就去工作，工作完之后worker也有一个`postMessage`方法用来通知主线程干完了；主线程也有一个`onMessage`方法，能获取到worker的工作已经做完了，以及结果是什么。
 
-### 3.8.1 实战一个web worker的案例
+### 3.8.2 实战一个web worker的案例
 
 这个案例是我们把耗时的斐波那契数列放到worker里计算
 
@@ -1764,6 +1768,89 @@ browser-sync -s # 启动，注意启动服务要在index.html这个文件夹
 启动完之后，访问http://localhost:3000/index.html
 
 源代码地址：Senior-FrontEnd/examples/jsadvanced/1.8/
+
+### 3.8.3 worker的能力是受限制的
+
+####  预习资料
+| 预习资料名称  |  链接  | 备注 |
+| :---: | :--------: | :------: |
+|  Blob对象用法 | [阅读地址](https://developer.mozilla.org/zh-CN/docs/Web/API/Blob)  | 	嵌入式webworkers会用到Blob |
+|  JavaScript中的Blob对象 | [阅读地址](https://juejin.im/entry/5937c98eac502e0068cf31ae)  | 掘金上比较基础的一篇文章 |
+
+
+- 与主线程脚本同源
+
+  在主线程下运行的worker必须与主线程同源
+
+- 与主线程上下文不同
+  - 在worker下无法操作dom，可以操作Navigator、location等，就是不会引起页面混乱的可以用。
+  - 不能执行alert等
+
+- 不能读取本地文件
+   - 所有加载的文件来源于网络，不来来源于file协议。
+
+可以在worker.js下打印this看一下它的全局对象
+
+#### 嵌入式worker
+
+我们刚刚了解到，`new Worker(woker路径)`里的路径不能去从本地读取的，但是我们现在很多都是模块的写法，很多都会用到`require.js`,那么有没有简单的方法在项目中使用workers呢？看下面案例。
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+   <!-- type="javascript/worker" 写上这个类型，里面的脚本是不会执行的 -->
+    <script type="javascript/worker" id="worker">
+      function fibonacci (n) {
+            if(n===1 || n ==2) {
+                return 1
+            }
+            return fibonacci(n-2) + fibonacci(n-1)
+        }
+
+        postMessage(fibonacci(40))
+    </script>
+    <script>
+       // 拿到worker里的代码字符串
+        var workerScript = document.querySelector('#worker').textContent
+        // Blob ：二进制大对象
+        var blob = new Blob([workerScript],{type:'text/javascript'})
+        // blob:null/9d8594c9-1783-46f9-8001-c6112af6a15a 可以在浏览器中访问，可以看见worker里的代码
+        var worker = new Worker(window.URL.createObjectURL(blob))
+        worker.onmessage = function (e) {
+            console.log('拿到worker通知的数据',e)
+            worker.postMessage("message收到了")
+        }
+    </script>
+</body>
+</html>
+```
+
+#### webworkify
+
+如果按照上面的写法，在2个script标签里面写，显得不是很优雅；于是前辈给我们封装了`webworkify`,它也是利用`blob`、`createObjectURL`。
+
+### 3.8.3 Web Worker的使用场景
+
+- 解决的痛点
+  - js执行复杂运算时阻塞了页面渲染
+- 使用场景
+  - 复杂运算
+  - 渲染优化（canvas有个离线的api结合worker）
+  - 流媒体数据处理
+
+#### 哪些项目中用到了Web worker？
+
+- flv.js
+ 用h5的标签去播放flv格式的视频，用于直播、录播，它去解码http-flv格式的视频，通过Media SourceExtensions,解码的过程就是在workers里执行的。
+
+了解SharedWorker和ServiceWOrker（pwa的基础，可以做页面的缓存优化）
 
 ##  总结
 
