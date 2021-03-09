@@ -1836,7 +1836,7 @@ browser-sync -s # 启动，注意启动服务要在index.html这个文件夹
 
 如果按照上面的写法，在2个script标签里面写，显得不是很优雅；于是前辈给我们封装了`webworkify`,它也是利用`blob`、`createObjectURL`。
 
-### 3.8.3 Web Worker的使用场景
+### 3.8.4 Web Worker的使用场景
 
 - 解决的痛点
   - js执行复杂运算时阻塞了页面渲染
@@ -1851,6 +1851,10 @@ browser-sync -s # 启动，注意启动服务要在index.html这个文件夹
  用h5的标签去播放flv格式的视频，用于直播、录播，它去解码http-flv格式的视频，通过Media SourceExtensions,解码的过程就是在workers里执行的。
 
 了解SharedWorker和ServiceWOrker（pwa的基础，可以做页面的缓存优化）
+
+## 3.8 Service Workers
+
+Service Workers的本质充当WEB应用程序、浏览器与网络（可用时）之间的代理服务器，这个API旨在创建有效的离线体验，它会拦截网络请求并根据网络是否可用来采取适当的动作，更新来自服务器的资源，它还提供入口推送通知和访问后台同步API。
 
 ##  总结
 

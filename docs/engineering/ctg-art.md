@@ -345,7 +345,7 @@ module.exports=function (){
 
 #### env
 
-- nev的出现
+- env的出现
 
 @bable/preset-env是一种更加智能的preset，让我们指需要根据我们的目标环境，快速配置babel
 

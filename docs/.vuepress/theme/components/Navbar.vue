@@ -1,7 +1,7 @@
 <template>
   <header class="navbar">
     <SidebarButton @toggle-sidebar="$emit('toggle-sidebar')"/>
-
+     
     <router-link
       :to="$localePath"
       class="home-link"
@@ -19,7 +19,7 @@
         :class="{ 'can-hide': $site.themeConfig.logo }"
       >{{ $siteTitle }}</span>
     </router-link>
-
+    <Carousel></Carousel>
     <div
       class="links"
       :style="linksWrapMaxWidth ? {
@@ -30,8 +30,10 @@
         v-if="isAlgoliaSearch"
         :options="algolia"
       />
+      
       <SearchBox v-else-if="$site.themeConfig.search !== false && $page.frontmatter.search !== false"/>
       <NavLinks class="can-hide"/>
+      
     </div>
   </header>
 </template>
@@ -41,9 +43,10 @@ import AlgoliaSearchBox from '@AlgoliaSearchBox'
 import SearchBox from '@SearchBox'
 import SidebarButton from '@theme/components/SidebarButton.vue'
 import NavLinks from '@theme/components/NavLinks.vue'
+import Carousel from './Carousel.vue'
 
 export default {
-  components: { SidebarButton, NavLinks, SearchBox, AlgoliaSearchBox },
+  components: { SidebarButton, NavLinks, SearchBox, AlgoliaSearchBox ,Carousel},
 
   data () {
     return {
@@ -130,4 +133,24 @@ $navbar-horizontal-padding = 1.5rem
       overflow hidden
       white-space nowrap
       text-overflow ellipsis
+// .div1 {
+// 	width:200px;
+// 	height:200px;
+// 	overflow:hidden;
+// 	margin:auto;
+// 	position:relative;
+// }
+// @keyframes anis {
+// 	100% {
+// 	transform:translateY(-200px)
+// }
+// }img {
+// 	position:absolute;
+// }
+// .div2 {
+// 	animation:anis 10s linear infinite;
+// }
+// .div2:hover {
+// 	animation-play-state:paused;
+// }
 </style>
