@@ -1767,7 +1767,7 @@ browser-sync -s # 启动，注意启动服务要在index.html这个文件夹
 
 启动完之后，访问http://localhost:3000/index.html
 
-源代码地址：Senior-FrontEnd/examples/jsadvanced/1.8/
+源代码地址：Senior-FrontEnd/examples/jsadvanced/3.8/
 
 ### 3.8.3 worker的能力是受限制的
 
@@ -1852,10 +1852,46 @@ browser-sync -s # 启动，注意启动服务要在index.html这个文件夹
 
 了解SharedWorker和ServiceWOrker（pwa的基础，可以做页面的缓存优化）
 
-## 3.8 Service Workers
+## 3.9 Service Workers
+
+### 3.9.1 初识 Service Workers
+
+Service Worker（以下简称sw）是基于WEB Worker而来的。
 
 Service Workers的本质充当WEB应用程序、浏览器与网络（可用时）之间的代理服务器，这个API旨在创建有效的离线体验，它会拦截网络请求并根据网络是否可用来采取适当的动作，更新来自服务器的资源，它还提供入口推送通知和访问后台同步API。
 
+#### service worker的特点
+
+- 网站必须使用HTTPS，除了本地开发环境（localhost）
+- 运行于浏览器，可以控制打开的作用域范围下所有的页面请求，可拦截请求和返回，缓存文件；sw可以通过fetch这个api，来拦截网络和处理网络请求，再配合cacheStorage来实现web页面的缓存管理以及与前端postMessage通信
+- 单独的作用域范围，单独的运行环境和执行环境
+- 不能操作页面DOMM，可以通过是事件机制来处理
+- 完全异步，同步API（如XHR和localStorage）不能再service work中使用，sw大量使用promise
+- 一旦被 install，就永远存在，除非被 uninstall或者dev模式手动删除
+- 响应推送
+- service worker是事件驱动的worker，生命周期与页面无关。 关联页面未关闭时，它也可以退出，没有关联页面时，它也可以启动。
+
+#### service worker的生命周期
+
+- installing（安装中）
+
+  这个状态发生在service worker注册之后，表示开始安装，同时会进入service Worker的install事件中，触发install的事件回调指定一些静态资源进行离线缓存
+- install(安装后)
+
+  安装完成，进入了waiting状态，等待其他Service worker被关闭，所以当前脚本尚未激活，处于等待中；可以通过self.skipWaiting()跳过等待
+
+- activating（激活中）
+
+  等待激活，在这个状态下没有被其他的Servie Worker控制的客户端，允许当前worker完成安装，并且清除了了其他的worker以及关联缓存的旧缓存资源（在acitive的事件回调中，可以调用self.clients.claim()）
+
+- activated（激活后）
+
+  在这个状态会处理actived事件回调，并且提供处理功能性事件：fetch（请求）、sync（后台同步）、push（推送）
+   
+- redundant
+
+  表示一个 Service Worker 的生命周期结束
+  
 ##  总结
 
 这章我们学习了异步编程的解决方法
