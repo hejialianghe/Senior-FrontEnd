@@ -1,6 +1,6 @@
-## 5.1 前端路由和服务端路由
+## 4.1 前端路由和服务端路由
 
-### 5.1.1 前端路由和History API
+### 4.1.1 前端路由和History API
 
 #### History API
 
@@ -58,11 +58,11 @@ history.pushState(null,'/test2')
 history.replaceState(null,'/test3')
 ```
 
-### 5.1.2 实战服务端路由
+### 4.1.2 实战服务端路由
 
 #### 观察node.js实现服务端路由
 
-源码地址：/Senior-FrontEnd/examples/computerNetwork/5.1
+源码地址：/Senior-FrontEnd/examples/computerNetwork/4.1
 
 做的功能是当访问`http://localhost:8080/details`返回的是`details.html`,当访问`http://localhost:8080/list`返回的是`list.html`
 
@@ -116,3 +116,125 @@ if(cluster.isMaster) {
     console.log(`Worker${process.pid} started`)
 }
 ```
+### 4.1.3 实战一个但页面应用
+
+1. 服务端怎么做?
+
+```js
+const app = require('express')()
+const path =  require('path')
+
+const htmlFile =  path.resolve(__dirname, "page/spa.html")
+// 请求products 或者product/123 都访问spa.html
+app.get(/\/product(s|\/\d+)/,(req,res)=>{
+    res.sendFile(htmlFile)
+})
+
+app.listen(3000)
+```
+2. 前端怎么做？
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        a {
+            color : skyblue;
+            cursor: pointer
+        }
+    </style>
+    <title>Document</title>
+</head>
+<body>
+  <h2>单页面应用示例</h2>
+  <div id="content"></div>
+
+  <ul>
+      <li><a onclick="route('/products')">列表</a></li>
+      <li><a onclick="route('/product/123')">详情</a></li>
+  </ul>
+
+  <script>
+      // 更新列表的函数
+      function pageList (){
+          const html = `
+          <ul>
+            <li>Apple</li>
+            <li>TicTok</li>
+            <li>Alibaba</li>
+          </ul>
+          `
+        document.getElementById('content').innerHTML =  html
+      }
+    //  更新详情的函数
+      function pageDetail() {
+          document.getElementById('content').innerHTML = "DETAIL"
+      }
+ 
+   // 实现页面切换并加入记录
+      function route (page) {
+        history.pushState(null,null,page)
+        matchRoute(pages,window.location.href)
+      }
+
+      const pages = [
+          {
+              match: /\/products/,
+              route: pageList
+          },
+          {
+              match : /\/product\/\d+/,
+              route: pageDetail
+          }
+      ]
+
+      // 监听浏览器前进回退按钮，实现页面渲染
+     window.onpopstate= function() {
+        matchRoute(pages,window.location.href)
+     }
+     // 匹配当前页面
+      function matchRoute(pages,href) {
+        const page =  pages.find(page=>page.match.test(href))
+        page.route()
+      }
+      matchRoute(pages,window.location.href)
+  </script>
+</body>
+</html>
+```
+
+## 4.2 Session&Cookie&Storage和单点登录
+
+### 4.2.1 Session和Storage
+
+#### 登录场景（理解Session和Cookie）
+
+<img width="500px" src="~@/network/sessionandcookie.png">
+
+- Session 代表一次会话
+- SessionID 是这一次会话的唯一标识
+- Cookie 是浏览器用于存储少量数据的存储手段
+
+#### 实战Session/Cookie
+
+- 观察浏览器发出请求，服务端返回cookie
+- 观察Set-Cookie在跨域情况下会发生什么
+
+```js
+const express =  require('express')
+
+const app1 = express()
+app1.get('/',(req,res)=>{
+    res.setHeader('Set-Cookie','abc=123')
+    res.send('ok')
+})
+app1.listen(3000)
+```
+![](~@/network/setcookie.png)
+
+
+

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        a {
+            color : skyblue;
+            cursor: pointer
+        }
+    </style>
+    <title>Document</title>
+</head>
+<body>
+  <h2>单页面应用示例</h2>
+  <div id="content"></div>
+
+  <ul>
+      <li><a onclick="route('/products')">列表</a></li>
+      <li><a onclick="route('/product/123')">详情</a></li>
+  </ul>
+
+  <script>
+      function pageList (){
+          const html = `
+          <ul>
+            <li>Apple</li>
+            <li>TicTok</li>
+            <li>Alibaba</li>
+          </ul>
+          `
+        document.getElementById('content').innerHTML =  html
+      }
+      function pageDetail() {
+          document.getElementById('content').innerHTML = "DETAIL"
+      }
+ 
+      function route (page) {
+        history.pushState(null,null,page)
+        matchRoute(pages,window.location.href)
+      }
+      const pages = [
+          {
+              match: /\/products/,
+              route: pageList
+          },
+          {
+              match : /\/product\/\d+/,
+              route: pageDetail
+          }
+      ]
+
+      // 监听浏览器前进回退按钮
+     window.onpopstate= function() {
+        matchRoute(pages,window.location.href)
+     }
+      function matchRoute(pages,href) {
+        const page =  pages.find(page=>page.match.test(href))
+        page.route()
+      }
+      matchRoute(pages,window.location.href)
+  </script>
+</body>
+</html>
