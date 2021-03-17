@@ -219,22 +219,148 @@ app.listen(3000)
 - SessionID 是这一次会话的唯一标识
 - Cookie 是浏览器用于存储少量数据的存储手段
 
-#### 实战Session/Cookie
+#### 实战Session/Cookie-1
 
 - 观察浏览器发出请求，服务端返回cookie
 - 观察Set-Cookie在跨域情况下会发生什么
 
 ```js
 const express =  require('express')
-
 const app1 = express()
+
+app1.set('etag',false)
 app1.get('/',(req,res)=>{
     res.setHeader('Set-Cookie','abc=123')
     res.send('ok')
 })
 app1.listen(3000)
 ```
+```bash
+nodemon ./cookie.js
+```
+为了后面演示方便我们用`whistle`做代理服务；
+`whistle`怎么用过？可以参考：[跳转地址](/computerNetwork/protocal.html#_1-4-3-%E5%9F%BA%E7%A1%80%E5%B7%A5%E5%85%B7%E9%93%BE)
+基础工具链第5个类型
+
+![](~@/network/whistle-cookie.png)
+
+从上图可以看出，我们配置了3个域名，分别代理到本地服务
+
+我们在chrome浏览器上访问`http://www.dev.com/`，就可以访问本地启动的3000端口的服务了，可以在Cookies里看见我们刚刚设置的cookie：apc=123；
+cookie也是受同源策略限制的，只有同域名下才能访问我们设置的cookie，如果没有设置失效时间，就会一直在。
+
 ![](~@/network/setcookie.png)
 
+#### 实战Session/Cookie-2 <Badge text="重要" type="tip"/>
+
+我们在`dev.com`下请求`api.dev.com`看看会发生什么？
+
+```diff
+const express =  require('express')
+const app1 = express()
++ const app2 = express()
+
+app1.set('etag',false)
+app1.get('/',(req,res)=>{
+    res.setHeader('Set-Cookie','abc=123')
+    res.send('ok')
+})
+
++ app2.get('/',(req,res)=>{
++ res.setHeader('Set-Cookie','apc=123')
++ res.setHeader(
++   "Access-Control-Allow-Origin",
++    "http://www.dev.com"
++)
++ res.send('ok')
++ })
+app1.listen(3000)
++ app2.listen(3001)
+```
+
+![](~@/network/setcookie2.png)
+
+`api.dev.com`是`dev.com`的二级域名，受同源策略限制，我们通过设置`Access-Control-Allow-Origin`允许在`api.dev.com`跨域请求，虽然请求通了，但我们发现请求头里没有携带`cookie`,这是因为只有同源的情况下才会自动携带cookie。那怎么在不同源的情况下携带cookie呢？
+
+可以在请求参数里加上`{credentials:'include'}`,不过你又会发现下面报错了，它希望服务端加上`Access-Control-Allow-Credentials`
+
+![](~@/network/credentials.png)
+
+```diff
+const express =  require('express')
+const app1 = express()
+const app2 = express()
+
+app1.set('etag',false)
+app1.get('/',(req,res)=>{
+    res.setHeader('Set-Cookie','abc=123')
+    res.send('ok')
+})
+
+
+app2.get('/',(req,res)=>{
+ res.setHeader('Set-Cookie','apc=123')
+ res.setHeader(
+     "Access-Control-Allow-Origin",
+     "http://www.dev.com"
+ )
++ res.setHeader(
++    "Access-Control-Allow-Credentials",
++    "true"
++ )
+ res.send('ok')
+})
+app1.listen(3000)
+app2.listen(3001)
+```
+:::tip 总结
+cookie也受同源策略限制，同源才会自动携带cookie，不同源需要添加Credentials
+:::
+
+#### 实战Session/Cookie-3 <Badge text="重要" type="tip"/>
+
+我们在`dev.com`下请求`api.com`看看会发生什么？
+
+因为2个域名属于不同的主域名，如果想让请求`api.com`时候携带`dev.com`下的cookie需要满足以下2个条件
+
+1. 必须是https协议
+2. SameSite=None;Secure
+
+```diff
+const express =  require('express')
+const app1 = express()
+const app2 = express()
+
+app1.set('etag',false)
+app1.get('/',(req,res)=>{
++    res.setHeader('Set-Cookie','abc=123;SameSite=None;Secure')
+    res.send('ok')
+})
+
+
+app2.get('/',(req,res)=>{
+ res.setHeader('Set-Cookie','apc=123')
+ res.setHeader(
+     "Access-Control-Allow-Origin",
+     "http://www.dev.com"
+ )
+ res.setHeader(
+    "Access-Control-Allow-Credentials",
+    "true"
+)
+ res.send('ok')
+})
+app1.listen(3000)
+app2.listen(3001) 
+```
+
+#### 其他浏览器存储
+
+|   |  ccokie  | Local storage | Session Storage | 
+| :---: | :--------: | :------: | :------: | 
+|  容量  | 4kb |  10mb  |  5mb |
+| 作用域  | 同源 |  同源   | 当前网页 | 
+| 过期时间  | 手动 |   永久  | 当前网页关闭 | 
+| 位置  | 浏览器/服务端 | 浏览器  | 浏览器 | 
 
 
