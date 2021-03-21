@@ -1665,3 +1665,490 @@ webpack配置
 ### 扩展学习
 
 [loader-utils项目地址：](https://www.npmjs.com/package/loader-utils)
+
+## 5.9 webpack性能优化
+
+### 5.9.1 webpack数据分析
+
+#### webpack-bundle-analyzer(文件体积分析)
+
+它能分析打包出的文件有哪些，大小占比如何，模块包含关系，依赖项，文件是否重复，压缩后大小
+
+1. webpack.config.js
+
+```js
+const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer')
+module.exports={
+plugins: [
+    new BundleAnalyzerPlugin({
+    analyzerMode: 'disabled', // 不启动展示打包报告的http服务器
+    generateStatsFile: true, // 是否生成stats.json文件 
+    })
+ ] 
+}
+```
+2. package.json
+
+```json
+"scripts": {
+  "build": "webpack",
+  "start": "webpack serve",
+  "dev":"webpack  --progress",
+   "analyzer": "webpack-bundle-analyzer --port 8888 ./dist/stats.json"
+}
+```
+#### speed-measure-webpack-plugin（分析打包速度）
+
+1. webpack.config.js
+
+```js
+const SpeedMeasureWebpackPlugin = require('speed-measure-webpack5-plugin');
+const smw = new SpeedMeasureWebpackPlugin();
+module.exports = smw.wrap({
+  mode: "development",
+  devtool: 'source-map',
+  ...
+});
+```
+
+#### friendly-errors-webpack-pluginK(美化输出日志)
+
+```bash
+yarn friendly-errors-webpack-plugin  node-notifier -D
+```
+
+```js
+const path = require("path");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
+const notifier = require('node-notifier');
+
+module.exports = {
+  mode: "development",
+  devtool: 'source-map',
+  context: process.cwd(),
+  entry: {
+    main: "./src/index.js",
+  },
+  output: {
+    path: path.resolve(__dirname, "dist"),
+    filename: "main.js"
+}, 
+plugins:[
+    new HtmlWebpackPlugin(),
+    new FriendlyErrorsWebpackPlugin({
+    onErrors: (severity, errors) => {
+    const error = errors[0];
+    notifier.notify({
+    title: "Webpack编译失败",
+    message: severity + ': ' + error.name, subtitle: error.file || '',
+    })
+    }
+  })
+ ] 
+};
+```
+
+### 5.9.2 编译时间优化
+
+#### :tomato: 1. extensions
+
+- 添加extensions后我们在用`require`、`import`的时候不用添加文件扩展名
+- 编译的时候会依次添加扩展名进行匹配
+
+```js
+module.exports = {
+    resolve: {
+        extensions:[".js"、".jsx"、".json"]
+    }
+}
+```
+
+#### :tomato: 2. alias
+
+配置文件别名可以加快webpack查找模块的速度
+
+```js
+const elementUi = path.resolve(__dirname,'node_modules/element-ui/lib/theme-chalk/index.css')
+module.exports = {
+        resolve: {
+        extensions:[".js"、".jsx"、".json"],
+        alias: {'element-ui'}
+    }
+}
+```
+当我们引入elementUi模块的时候，它会直接引入elementUi，不需要从node_modules文件中按模块规则查找
+
+#### :tomato: 3. modules
+
+指定项目的所有第三方模块都是在项目根目录下的node_modules
+
+```js
+const elementUi = path.resolve(__dirname,'node_modules/element-ui/lib/theme-chalk/index.css')
+module.exports = {
+        resolve: {
+        extensions:[".js"、".jsx"、".json"],
+        modules: ['node_modules']
+    }
+}
+```
+#### :tomato: 4. oneOf
+
+- 每个文件对于rules中的所有规则都会遍历一遍，如果使用oneOf，只要能匹配一个就立即退出
+- 在oneOf中不能2个配置处理同一类型文件
+
+```js
+module.exports = {
+  module: {
+    rules: [{
+     oneOf:[
+         {
+          test: /\.js$/,
+          include: path.resolve(__dirname, "src"),
+          exclude: /node_modules/,
+          use: [
+                {
+                loader: 'thread-loader',
+                options: {
+                workers: 3 
+                }
+            },
+            {
+              loader:'babel-loader',
+              options: {
+                cacheDirectory: true
+              }
+            }
+          ]
+        },
+        {
+          test: /\.css$/,
+          use: ['cache-loader','logger-loader', 'style-loader', 'css-loader']
+       } 
+     ]
+    }]
+  }
+}
+```
+
+
+#### :tomato: 5. external
+
+如果某个库我们不想让它被webpack打包，想让它用cdn的方法是引入，并且不影响我们在程序中以CMD、AMD方式进行使用
+
+下载插件
+
+```bash
+yarn add html-webpack-externals-plugin -D
+```
+在html文件中引入cdn的文件
+
+```html
+<script src="https://cdn.abc.com/vue/2.5.11/vue.min.js"></script>
+```
+webpack中的配置
+
+```bash
+ externals: {
+  vue: 'vue',
+},
+```
+#### :tomato: 6. resolveLoader
+
+就是指定loader的resolve，只作用于loader；resolve配置用来影响webpack模块解析规则。解析规则也可以称之为检索，索引规则。配置索引规则能够缩短webpack的解析时间，提升打包速度。
+
+```js
+module.exports = {
+    resolve: {
+        extensions:[".js"、".jsx"、".json"],
+        modules: ['node_modules']
+    },
+    resolveLoader:{
+     modules: [path.resolve(__dirname, "loaders"),'node_modules'],
+  },   
+}
+```
+#### :tomato: 7. noParse
+
+- 用于配置哪些模块的文件内容不需要进行解析
+- 不需要解析依赖就是没有依赖的第三方大型类库，可以配置这个字段，以提高整体的构建速度
+- 使用noparse进行忽略的模块文件中不能使用import、require等语法
+
+```js
+module.exports = {
+module: {
+    noParse: /test.js/, // 正则表达式
+ } 
+}
+```
+#### :tomato: 8. thread-loader(多进程)
+
+- 把thread-loader放置在其他 loader 之前
+- include 表示哪些目录中的 .js 文件需要进行 babel-loader
+- exclude 表示哪些目录中的 .js 文件不要进行 babel-loader
+- exclude 的优先级高于 include ,尽量避免 exclude ，更倾向于使用 include
+
+```js
+module.exports = {
+  module: {
+    rules: [{
+     oneOf:[
+         {
+          test: /\.js$/,
+          include: path.resolve(__dirname, "src"),
+          exclude: /node_modules/,
+          use: [
+                {
+                loader: 'thread-loader',
+                options: {
+                  workers: require('os').cpus().length - 1 // 自己电脑的核心数减1
+                }
+            },
+            {
+              loader:'babel-loader',
+              options: {
+             // babel在转移js非常耗时间，可以将结果缓存起来，下次直接读缓存；默认存放位置是 node_modules/.cache/babel-loader
+                cacheDirectory: true 
+              }
+            }
+          ]
+        },
+        {
+          test: /\.css$/,
+          use: ['cache-loader','logger-loader', 'style-loader', 'css-loader']
+       } 
+     ]
+    }]
+  }
+}
+```
+#### :tomato: 8. cache-loader
+
+- 在一些性能开销较大的loader之前添加cache-loader，可以将结果缓存到磁盘中
+- 默认保存在 node_modules/.cache/cache-loader 目录下
+
+```js
+module.exports = {
+  module: {
+    rules: [{
+     oneOf:[
+        {
+          test: /\.css$/,
+          use: ['cache-loader','logger-loader', 'style-loader', 'css-loader']
+       } 
+     ]
+    }]
+  }
+}
+```
+
+#### :tomato: 9. hard-source-webpack-plugin
+
+- HardSourceWebpackPlugin 为模块提供了中间缓存,缓存默认的存放路径是
+node_modules/.cache/hard-source
+- 配置 hard-source-webpack-plugin 后，首次构建时间并不会有太大的变化，但是从第二次开始， 构建时间大约可以减少80% 左右
+- webpack5中已经内置了模块缓存,不需要再使用此插件
+
+```bash
+yarn add hard-source-webpack-plugin -D
+```
+
+```js
+const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
+module.exports = {
+plugins: [
+   new HardSourceWebpackPlugin()
+ ] 
+}
+```
+### 5.9.3 编译体积优化
+
+#### :tomato: 1. 压缩js、css、HTML和图片
+
+- optimize-css-assets-webpack-plugin是一个优化和压缩CSS资源的插件 
+- terser-webpack-plugin是一个优化和压缩JS资源的插件 
+- image-webpack-loader可以帮助我们对图片进行压缩和优化
+
+```bash
+yarn terser-webpack-plugin optimize-css-assets-webpack-plugin image-webpack-
+loader -D
+```
+```js
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const OptimizeCssAssetsWebpackPlugin = require('optimize-css-assets-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin');
+
+module.exports = {,
+  optimization: {
+     minimize: true
+     minimizer: [
+         new TerserPlugin()
+     ]
+  },
+   module:{
+     rules:[
+         {
+          test: /\.(png|svg|jpg|gif|jpeg|ico)$/,
+          use: [
+            'url-loader',
+            {
+                loader: 'image-webpack-loader',
+                options: {
+                    mozjpeg: {
+                       progressive:true,
+                       quality: 65 
+                    },
+                    optipng: {
+                        enabled: false
+                    },
+                    pngquant: {
+                        quality: '65-90',
+                        speed: 4
+                    },
+                    gifsicle: {
+                        interlaced: false
+                    },
+                    webp: {
+                         quality: 75,
+                    }
+                }
+            }
+         }]
+     ]
+  },
+  plugins:[
+     new HtmlWebpackPlugin({
+         template: './src/index.html',
+          minify: {
+              collapseWhitespace: true,
+              removeComments: true
+         }
+     }) 
+    new OptimizeCssAssetsWebpackPlugin(), 
+  ]
+ }
+```
+#### :tomato: 2. 清除无用的css
+
+purgecss-webpack-plugin单独提取CSS并清除用不到的CSS
+
+```js
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const PurgecssPlugin = require("purgecss-webpack-plugin");
+const glob = require("glob");
+const PATHS = {
+    src: path.join(__dirname, "src"),
+};
+
+module.exports = {,
+  optimization: {
+     minimize: true
+     minimizer: [
+         new TerserPlugin()
+     ]
+  },
+   module:{
+     rules:[
+         {
+          test: /\.css$/,
+          include: path.resolve(__dirname, "src"),
+          exclude: /node_modules/,
+          use: [
+            {
+              loader: MiniCssExtractPlugin.loader,  
+            },
+             "css-loader",
+         }]
+     ]
+  },
+  plugins:[
+     new MiniCssExtractPlugin({
+         filename: "[name].css"
+     }) 
+    new OptimizeCssAssetsWebpackPlugin({
+        paths: glob.sync(`${PATHS.src}/**/*`, { nodir: true})
+    }), 
+  ]
+ }
+```
+#### :tomato: 3. Tree shaking
+
+- webpack默认支持,可在 production mode下默认开启 
+- 在package.json 中配置:
+  - "sideEffects": false 所有的代码都没有副作用(都可以进行 tree shaking) 
+  - 可能会把 css和@babel/polyfill 文件干掉可以设置 "sideEffects":["*.css"]
+
+会把以下情况的代码 Tree shaking
+
+1. 没有导入和使用
+
+```js
+function func1(){
+  return 'func1';
+}
+function func2(){
+  return 'func2';
+}
+export {
+  func1,
+  func2
+}
+```
+
+```js
+import {func2} from './functions';
+var result2 = func2();
+console.log(result2);
+```
+2. 代码不会被执行，不可到达
+
+```js
+if(false){
+ console.log('false')
+}
+```
+
+3. 代码执行的结果不会被用到
+
+```js
+import {func2} from './functions';
+func2();
+```
+4. 代码中只写不读的变量
+
+```js
+var a=1
+a= 2
+```
+
+#### :tomato: 3. Scope Hoisting
+
+- Scope Hoisting 可以让 Webpack 打包出来的代码文件更小、运行的更快，它又译作 "作用域提升"，是在 Webpack3 中新推出的功能。
+- scope hoisting的原理是将所有的模块按照引用顺序放在一个函数作用域里，然后适当地重命名一 些变量以防止命名冲突
+- 这个功能在mode为 下默认开启,开发环境要用 webpack.optimizeModuleConcatenationPlugin 插件
+
+doc.js
+
+```js
+export default 'test';
+```
+app.js
+
+```js
+import str from './doc.js';
+console.log(str)
+```
+作用域提升
+
+```js
+var str = ('test');
+console.log(str);
+```
+
+
+
+
+
+

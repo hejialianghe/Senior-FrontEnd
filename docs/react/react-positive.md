@@ -502,7 +502,7 @@ class Stated extends PrueComponent {
 - 每次UI更新时调用
 - 更新一些外部数据资源
 
-### 3.4.4 卸载阶段 componentWillmount
+### 3.4.4 卸载阶段 componentWillUnmount
 - 组件移除时调用
 - 可以用来做资源的释放
 
