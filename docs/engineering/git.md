@@ -121,7 +121,7 @@ Git 钩子（hooks）是在Git仓库中特定事件（certain points）触发后
 | post-merge | 成功完成一次merge行为后触发 |
 | pre-auto-gc | 执行垃圾回收前触发 |
 
-#### 客户端 Hooks
+#### 服务端 Hooks
 
 | 类型  |  详细介绍  |
 | :---: | :--------: |

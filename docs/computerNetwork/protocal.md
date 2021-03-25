@@ -126,9 +126,15 @@ The data packets take different routes to their destinations
 
 ## 1.2 TCP/IP 协议和互联网协议群
 
+今天使用最多的协议群
+
 ### 1.2.1 TCP/IP协议群简介
 
-- 类似OSI模型，一种网络协议的基本模型
+#### 互联网协议群
+
+- 类似OSI模型，一种网络协议的概念模型
+
+它对OSI七层模型做了简化，把OSI的应用层、展示层、会话层简化成了应用层
 
 ![](~@/network/suite.png)
 
