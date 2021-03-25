@@ -2146,9 +2146,112 @@ console.log(str)
 var str = ('test');
 console.log(str);
 ```
+### 5.9.4 运行速度优化
 
+- 对于大的Web应用来讲，将所有的代码都放在一个文件中显然是不够有效的，特别是当你的某些 代码块是在某些特殊的时候才会被用到。
+- webpack有一个功能就是将你的代码库分割成chunks语块，当代码运行到需要它们的时候再进行 加载
 
+#### :tomato: 1. 入口点分割
 
+```js
+module.exports = {
+ entry: {
+        index: "./src/index.js",
+        login: "./src/login.js"
+ }
+}
+```
+- 这种方法的问题
+    - 如果入口chunks之间包含重复的模块(lodash)，那些重复模块都会被引入到各个bundle中 
+    - 不够灵活，并且不能将核心应用程序逻辑进行动态拆分代码
 
+#### :tomato: 2. 懒加载
+
+可以用`import()`方式去引入模块，当需要的时候在加载某个功能对应代码
+
+```js
+const Login = () => import(/* webpackChunkName: "login" */'@/components/Login/Login')
+```
+
+#### :tomato: 3. prefetch
+
+- 使用预先拉取，你表示该模块可能以后会用到。浏览器会在空闲时间下载该模块
+-  prefetch的作用是告诉浏览器未来可能会使用到的某个资源，浏览器就会在闲时去加载对应的资
+  源，若能预测到用户的行为，比如懒加载，点击到其它页面等则相当于提前预加载了需要的资源
+- `<link rel="prefetch" as="script" href="test.js">`此方法添加头部，浏览器会在空闲时间预先拉取该文件
+
+```js
+import(/* webpackChunkName: 'login', webpackPrefetch: true
+*/'./login').then(result => {
+        console.log(result.default);
+});
+```
+#### :tomato: 4. 提取公共代码
+
+[splitChunks](https://webpack.js.org/plugins/split-chunks-plugin/#root)
+
+webpack
+
+```js
+module.exports = {
+output:{
+      filename:'[name].js',
+      chunkFilename:'[name].js'
+    },
+ entry: {
+        index: "./src/index.js",
+        login: "./src/login.js"
+ },
+optimization: {
+    splitChunks: {
+    chunks: 'all',  // 分割同步异步的代码
+    minSize: 0,    // 最小体积
+    minRemainingSize: 0, // 代码分割后的最小保留体积，默认等于minSize
+    maxSize: 0,  // 最大体积
+    minChunks: 1,  // 最小代码快
+    maxAsyncRequests: 30, // 最大异步请求数
+    maxInitialRequests: 30, // 最小异步请求数
+    automaticNameDelimiter: '~', // 名称分离符
+    enforceSizeThreshold: 50000, //执行拆分的大小阈值，忽略其他限制
+    // (minRemainingSize、maxAsyncRequests、maxInitialRequests) 
+    cacheGroups: {
+    defaultVendors: {
+        test: /[\\/]node_modules[\\/]/,//控制此缓存组选择哪些模块
+        priority: -10,//一个模块属于多个缓存组,默认缓存组的优先级是负数，自定义缓存组的优先级更高，默认值为0 //如果当前代码块包含已经主代码块中分离出来的模块，那么它将被重用，而不是生成新的模块。这可能会影响块的结果文件名。
+    }, 
+    default: {
+                minChunks: 2,
+                priority: -20
+            }
+    } 
+  }
+}
+ plugins: [
+      new HtmlWebpackPlugin({
+        template:'./src/index.html',
+        filename:'page1.html',
+        chunks:['index']
+      }),
+      new HtmlWebpackPlugin({
+        template:'./src/index.html',
+        filename:'page2.html',
+        chunks:['login']
+      }),
+ ]
+}
+```
+#### :tomato: 4. CDN
+
+- 最影响用户体验的是网页首次打开时的加载等待。 导致这个问题的根本是网络传输过程耗时大， CDN的作用就是加速网络传输。
+- CDN 又叫内容分发网络，通过把资源部署到世界各地，用户在访问时按照就近原则从离用户最近 的服务器获取资源，从而加速资源的获取速度
+- 用户使用浏览器第一次访问我们的站点时，该页面引入了各式各样的静态资源，如果我们能做到持 久化缓存的话，可以在 http 响应头加上 Cache-control Expires字段来设置缓存，浏览器可以 将这些资源一一缓存到本地
+- 用户在后续访问的时候，如果需要再次请求同样的静态资源，且静态资源没有过期，那么浏览器可以直接走本地缓存而不用再通过网络请求资源
+- 缓存配置
+    - HTML文件不缓存，放在自己的服务器上，关闭自己服务器的缓存，静态资源的URL变成指向 CDN服务器的地址 
+    - 静态的JavaScript、CSS、图片等文件开启CDN和缓存，并且文件名带上HASH值 
+    - 为了并行加载不阻塞，把不同的静态资源分配到不同的CDN服务器上
+- 域名限制
+  - 同一时刻针对同一个域名的资源并行请求是有限制 可以把这些静态资源分散到不同的 CDN 服务上去 多个域名后会增加域名解析时间
+  - 可以通过在 HTML HEAD 标签中 加入去预解析域名，以降低域名解析带来的延迟
 
 
