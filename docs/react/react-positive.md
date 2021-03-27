@@ -420,6 +420,7 @@ class Stated extends PrueComponent {
 
 尽可能通过状态提升原则，将需要的状态提取到父组件中，而其他的组件使用无状态组件编写
 
+
 ### 3.3.6 扩展资料
 
 [不可变数据](https://github.com/immutable-js/immutable-js)

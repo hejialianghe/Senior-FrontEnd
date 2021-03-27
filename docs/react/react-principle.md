@@ -573,6 +573,37 @@ useEffect(()=>{
     }
 })
 ```
+6. useImperativeHandle
+
+可以让你在使用ref时自定义暴露给父组件的实例值,useImperativeHandle 应当与forwardRef 一起使用，这样可以父组件可以调用子组件的方法
+
+```js
+// 父组件
+function Father () {
+ const modelRef = useRef(null);
+ /* 确定 */
+  function sureBtn() {
+      // 调用子组件的方法
+    inputRef.current.model();
+  }
+ return (
+     <>
+     <Button onClick={sureBtn}>确定</Button>
+     <Children ref={modelRef}></Children>
+     </>
+ )
+}
+// 子组件
+const Children = React.forwardRef((props,ref)=>{
+const [visible, setVisible] = useState(false);
+    useImperativeHandle(ref, () => ({
+      model: () => {
+        setVisible(true);
+      },
+    }));
+})
+
+```
 ### 5.4.4 扩展资料
 
 [React Hooks 官方文档](https://reactjs.org/docs/hooks-intro.html)
