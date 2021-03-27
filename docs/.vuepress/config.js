@@ -107,7 +107,8 @@ module.exports = {
                   ["react/react-ecology",'react生态'],
                   ["react/react-principle",'react原理'],
                   ["react/react-state-mana",'react状态管理'],
-                  ["react/react-actualCombat",'react高级实战']
+                  ["react/react-actualCombat",'react高级实战'],
+                  ["react/react-hooks",'react-hooks']
                 ]
               },
               {
