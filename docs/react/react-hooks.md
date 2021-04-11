@@ -161,7 +161,9 @@ value prop决定
 另一种"useState"，跟redux有点类似
 - useRef
 返回一个突变的ref对象，对象在函数的生命周期内一直存在
--useCustom
+- useMemo 缓存数值
+- useCallback 缓存函数
+- useCustom
 自定义Hooks组件
 
 1. useState 
@@ -381,7 +383,93 @@ const [visible, setVisible] = useState(false);
 })
 
 ```
-### 8.1.4 扩展资料
+7. useMemo
+
+useMemo的理念和memo差不多，都是根据判断是否满足当前的有限条件来决定是否执行useMemo的callback函数，第二个参数是一个deps数组，数组里的参数变化决定了useMemo是否更新回调函数。
+
+useMemo和useCallback参数一样，区别是useMemo的返回的是缓存的值，useCallback返回的是函数。
+
+- useMemo减少不必要的渲染
+```js
+// 用 useMemo包裹的list可以限定当且仅当list改变的时候才更新此list，这样就可以避免List重新循环 
+ {useMemo(() => (
+      <div>{
+          list.map((i, v) => (
+              <span
+                  key={v} >
+                  {i.patentName} 
+              </span>
+          ))}
+      </div>
+), [list])}
+
+```
+- useMemo减少子组件的渲染次数
+
+```js
+ useMemo(() => (
+     { /* 减少了PatentTable组件的渲染 */ }
+        <PatentTable
+            getList={getList}
+            selectList={selectList}
+            cacheSelectList={cacheSelectList}
+            setCacheSelectList={setCacheSelectList} />
+ ), [listshow, cacheSelectList])
+```
+- useMemo避免很多不必要的计算开销
+
+```js
+
+const Demo=()=>{
+  /* 用useMemo 包裹之后的log函数可以避免了每次组件更新再重新声明 ，可以限制上下文的执行 */
+    const newLog = useMemo(()=>{
+     const log =()=>{
+           // 大量计算 
+           // 在这里面不能获取实时的其他值
+        }
+        return log
+    },[])
+    // or
+   const log2 = useMemo（()=>{
+           // 大量计算 
+        
+        return // 计算后的值
+    },[list])
+    return <div onClick={()=>newLog()} >{log2}</div>
+}
+```
+8. useCallback
+
+useMemo和useCallback接收的参数都是一样，都是依赖项发生变化后才会执行；useMemo返回的是函数运行结果，useCallback返回的是函数；父组件传递一个函数
+给子组件的时候，由于函数组件每一次都会生成新的props函数，这就使的每次一个传递给子组件的函数都发生的变化，这样就会触发子组件的更新，有些更新是没有必要的。
+
+```js
+
+const Father=({ id })=>{
+    const getInfo  = useCallback((sonName)=>{
+          console.log(sonName)
+    },[id])
+    return <div>
+        {/* 点击按钮触发父组件更新 ，但是子组件没有更新 */}
+        <button onClick={ ()=>setNumber(number+1) } >增加</button>
+        <DemoChildren getInfo={getInfo} />
+    </div>
+}
+
+/* 用react.memo */
+const Children = React.memo((props)=>{
+   /* 只有初始化的时候打印了 子组件更新 */
+    console.log('子组件更新',props.getInfo())
+   return <div>子组件</div>
+})
+
+```
+useCallback必须配合 react.memo pureComponent，否则不但不会提升性能，还有可能降低性能。
+
+react-hooks的诞生，也不是说它能够完全代替class声明的组件，对于业务比较复杂的组件，class组件还是首选，只不过我们可以把class组件内部拆解成funciton组件，根据业务需求，哪些负责逻辑交互，哪些需要动态渲染，然后配合usememo等api，让性能提升起来。react-hooks使用也有一些限制条件，比如说不能放在流程控制语句中，执行上下文也有一定的要求。
+
+
+### 8.1.5扩展资料
 
 [React Hooks 官方文档](https://reactjs.org/docs/hooks-intro.html)
 
