@@ -1,39 +1,27 @@
 <template>
 <div class="carousel">
-    <div class="main">
-        <p>注意！请及时刷新浏览器！有缓存！</p>
-        <p>注意！请及时刷新浏览器！有缓存！</p>
-        <p>注意！请及时刷新浏览器！有缓存！</p>
-    </div>
+        <Marquee>
+            <MarqueeItem>友情提示：有缓存，请及时刷新浏览器！</MarqueeItem>
+            <MarqueeItem>友情提示：有缓存，请及时刷新浏览器！</MarqueeItem>
+        </Marquee>
 </div>
 </template>
 
 <script>
+import Marquee from './Marquee/Marquee'
+import MarqueeItem from './Marquee/Marquee-item'
 export default {
-
+    components:{
+        Marquee,
+        MarqueeItem
+    }
 }
 </script>
 
 <style scoped>
 .carousel {
-	height:100%;
-	overflow:hidden;
-	margin:auto;
-	position:relative;
+    height:2.2rem;
     display: inline-block;
-    margin-left: 20px;
+    color: #3eaf7c;
 }
-@keyframes anis {
- 100% {
-	transform:translateY(-100px)
-  }
-}
-.main {
-   animation:anis 5s linear infinite;
-   color: #f35626;
-}
-.main:hover {
-	animation-play-state:paused;
-}
-
 </style>

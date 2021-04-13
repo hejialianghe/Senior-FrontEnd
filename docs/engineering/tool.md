@@ -493,6 +493,8 @@ console.log(users)
 }
 // 10个相同的对象
 ```
+由于用`Random`生成的都是一样的，这可能不是我们想要的，我们想要每一个对象里的数据都不一样，那就看下面的占位符。
+
 :tomato: Mock.js 的占位符
 
 - 占位符
@@ -509,8 +511,8 @@ const { Random } = Mock
 const user = Mock.mock({
   code: '200',
   'list|10': [{
-    name: `${Random.first()} ${Random.last()}`,
-    avatar: Random.image()
+    name: '@first @last',
+    avatar: '@image'
   }]
 })
 
@@ -524,7 +526,7 @@ console.log(users)
     .....
   ]
 }
-// 10个相同的对象
+// 10个不同的对象
 ```
 ## 8.7 RestFul API 快速模拟
 
