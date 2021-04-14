@@ -111,7 +111,7 @@ export default {
 .xxyp-marquee-box li {
   margin: 0;
   width: 100%;
-  height: .8rem;
-  line-height: .8rem;
+  height: 1rem;
+  line-height: 1rem;;
 }
 </style>

@@ -474,3 +474,70 @@ react-hooks的诞生，也不是说它能够完全代替class声明的组件，�
 [React Hooks 官方文档](https://reactjs.org/docs/hooks-intro.html)
 
 [useEffect 完整指南](https://overreacted.io/zh-hans/a-complete-guide-to-useeffect/)
+
+## 8.2 React-hooks原理解析
+
+### 8.2.1 前言
+
+::: warning
+阅读以下内容之前先了解一下，[hooks出现的动机](https://zh-hans.reactjs.org/docs/hooks-intro.html#motivation),同时也要熟悉hooks的用法，可以参考上一篇文章
+:::
+
+废话不多说，我首先克隆一份代码下来
+
+```bash
+git clone --branch v17.0.2 https://github.com/facebook/react.git
+```
+hooks导出部分在`react/packages/react/src/ReactHooks.js`，虽然在react导出，但是真正实现在`react-reconciler`这个包里面。
+
+读源码，我们逐个击破的方式:
+
+1. useState
+
+2. useEffect
+
+### 8.2.2 useState
+
+```js
+export function useState<S>(
+  initialState: (() => S) | S, // flow类型注解
+) {
+  const dispatcher = resolveDispatcher();
+  return dispatcher.useState(initialState);
+}
+```
+在`ReactHooks.js`搜索到了useState，函数里先执行了`resolveDispatcher`,我们先看看resolveDispatcher函数做了写什么？
+`resolveDispatcher`函数的执行，获取了`ReactCurrentDispatcher`的current，那我们在看看`ReactCurrentDispatcher`是什么？
+
+```js
+function resolveDispatcher() {
+  const dispatcher = ReactCurrentDispatcher.current;
+  invariant(
+    dispatcher !== null,
+    'Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for' +
+      ' one of the following reasons:\n' +
+      '1. You might have mismatching versions of React and the renderer (such as React DOM)\n' +
+      '2. You might be breaking the Rules of Hooks\n' +
+      '3. You might have more than one copy of React in the same app\n' +
+      'See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.',
+  );
+  return dispatcher;
+}
+```
+
+
+```js
+/**
+ * Keeps track of the current dispatcher.
+ */
+const ReactCurrentDispatcher = {
+  /**
+   * @internal
+   * @type {ReactComponent}
+   */
+  current: (null: null | Dispatcher),
+};
+
+export default ReactCurrentDispatcher;
+```
+`ReactCurrentDispatcher`现在是null，到这里我们线索好像中断了，因为current要有个`useState`方法才行；
