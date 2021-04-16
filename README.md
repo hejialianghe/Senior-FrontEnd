@@ -23,7 +23,7 @@
 
 ## 3. 给个start哦
 
-如果有收获就给个start哦 ！！！ :pray: :pray: :pray:
+如果有收获就给个start哦 ！！！ :pray: :pray: :pray:，本项目开源免费阅读,不设置任何障碍阻止阅读！
 
 [gitee极速版阅读](https://hejialianghe.gitee.io/)
 

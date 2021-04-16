@@ -1,7 +1,7 @@
 <template>
   <header class="navbar">
     <SidebarButton @toggle-sidebar="$emit('toggle-sidebar')"/>
-     
+  
     <router-link
       :to="$localePath"
       class="home-link"
@@ -32,8 +32,8 @@
       />
       
       <SearchBox v-else-if="$site.themeConfig.search !== false && $page.frontmatter.search !== false"/>
+
       <NavLinks class="can-hide"/>
-      
     </div>
   </header>
 </template>

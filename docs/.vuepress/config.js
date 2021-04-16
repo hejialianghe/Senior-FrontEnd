@@ -29,7 +29,7 @@ module.exports = {
     },
 
     themeConfig: {
-      repo: "hejialianghe/Senior-FrontEnd",
+      // repo: "hejialianghe/Senior-FrontEnd",
       editLinks: true,
       searchMaxSuggestions:10,
       docsDir: "docs",
@@ -44,7 +44,7 @@ module.exports = {
         }
       ],
       nav:[
-        { text: '极速版阅读', link: 'https://hejialianghe.gitee.io/'},
+        { text: 'GitHub', link: 'https://github.com/hejialianghe/Senior-FrontEnd' },
         { text: 'Blog', link: 'http://youliaowu.com/' },
         { text: 'Gitee', link: 'https://gitee.com/hejialianghe' }
       ],

@@ -17,7 +17,11 @@
 ```
 
 ## 3. 给个start哦
-如果有收获就给个start哦 ！！！ :pray: :pray: :pray:   
+如果有收获就给个start哦 ！！！ :pray: :pray: :pray: ，本项目开源免费阅读,不设置任何障碍阻止阅读！
+
+![GitHub stars](https://img.shields.io/github/stars/hejialianghe/Senior-FrontEnd.svg?style=flat-square) 
+![GitHub forks](https://img.shields.io/github/forks/hejialianghe/Senior-FrontEnd.svg?style=flat-square)
+![GitHub last commit](https://img.shields.io/github/last-commit/hejialianghe/Senior-FrontEnd.svg?style=flat-square)
 
 [项目地址](https://github.com/hejialianghe/seniorFrontEnd)
 

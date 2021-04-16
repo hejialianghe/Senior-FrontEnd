@@ -3,6 +3,10 @@
     class="nav-links"
     v-if="userLinks.length || repoLink"
   >
+      <a href="https://github.com/hejialianghe" class="repo-star">
+          <img src="https://img.shields.io/github/stars/hejialianghe/Senior-FrontEnd.svg?style=flat-square" alt="">
+      </a>
+
     <!-- user links -->
     <div
       class="nav-item"
@@ -148,4 +152,9 @@ export default {
     &:hover, &.router-link-active
       margin-bottom -2px
       border-bottom 2px solid lighten($accentColor, 8%)
+
+.repo-star
+  img 
+     vertical-align middle
+ 
 </style>

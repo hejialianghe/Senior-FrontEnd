@@ -1,9 +1,9 @@
 <template>
 <div class="carousel">
         <Marquee>
-            <MarqueeItem>友情提示：有缓存，请及时刷新浏览器！</MarqueeItem>
-            <MarqueeItem>友情提示：有缓存，请及时刷新浏览器！</MarqueeItem>
-        </Marquee>
+            <MarqueeItem>每次更新会有缓存，请刷新浏览器！</MarqueeItem>
+            <MarqueeItem>每次更新会有缓存，请刷新浏览器！</MarqueeItem>
+        </Marquee>    
 </div>
 </template>
 
