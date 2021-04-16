@@ -65,91 +65,11 @@ export function HooksAvatar (){
 - React 16.8引入的Hooks，使得实现相同功能而代码量更少成为现实
 - 通过使用Hooks，不仅在编码层面减少代码的数量，同样在编译之后的代码也会更少
 
-### 8.1.2 hooks原理
 
-hooks不是一个新ap也不是一个黑魔法，就是单纯的一个数组，看上面的例子hook api返回一个数组，一个是当前值，一个是设置当前值的函数
-#### hooks中的useState
-
-```jsx
-import React ,{useState}from 'react';
-
-const App = () => {
-    const [name,setName]=useState('王艺瑾')
-    return (<div>
-             <div>{name}</div>
-             <button
-                onClick={()=> setName('张艺凡')}
-               >切换</button>
-           </div>
-       );
-}
-export default App;
-```
-- 上边是一个非常简单的Hook API，创建了name和setName，在页面上展示name，按钮的点击事件修改name
-
-- 那么在这个过程中setState是如何实现的呢？
-
-#### useState源码解析
-
-```ts
-useState<S>(initialState:(()=>S) | S) :[S,Dispatch<BasicStateAction<S>>] {
-
-    currentHookNameInDev='useState'
-    mountHookTypesDev()
-    const preDispatcher=ReactCurrentDispatcher.current
-    ReactCurrentDispatcher.current=InvalidNestedHooksDispatcherOnMountInDEV
-    try{
-        return mountState(initialState)
-    }finally {
-        ReactCurrentDispatcher.current=prevDispatcher
-    }
-}
-```
-- useState API 虽然是在react中引入的，其内部实现是在react-reconciler包中完成的
-- 在try/catch代码部分，调用了mountState方法
-- 顺着这个方法，我们去探寻一下mountState的实现
-
-#### mountState解析
-
-```ts
-function mountState<S>(initialState:(()=>S | S,):[S,Dispatch<BasicStateAction<S>]{
-    // 返回当前正在运行的hook对象
-    const hook=mountWorkInProgressHook()
-    // 初始值如果是函数，现执行函数
-    if(typeof initialState==='function'){
-        initialState=initialState()
-    }
-    // 如果是字符串就赋值给hook对象，hook.baseState和hook.memoizedState
-    hook.memoizedState=hook.baseState=initialState
-    // 定义一个队列
-    const queue=(hook.queue={
-        pending:null,
-        dispatch:null,
-        lastRenderedReducer:basicStateReducer,
-        lastRenderedState:(initialState:any)
-    })
-    // dispatch挂载的queue，
-    const dispatch:Dispatch<BasicStateAction<S>>=(
-        dispatchAction.bind(
-            null,
-            currentlyRenderingFiber,
-            queue // 传入queue与dispatch关联起来
-         ):any))
-        //  2个值以数值的形式返回
-         return [hook.memoizedState,dispatch]
-}
-```
-如果方法里面有多个useState方法，如何让这些按期望顺序执行呢？怎样维护queue对象？
-
-![](~@/react/mountState.png)
-
-- 在初始化时，每一次申明useState就图上所示，会生成一对state/setter映射。
-接着每次渲染都会按照这个序列从数组最小下标遍历到最大值
-- 在前面代码（mountState）中，我们说会先返回一个hook对象，state值（memoizedState）和返回的setXXX都会关联到这个hook对象，因此在触发某一个setXXX方法的时候可以正确地设置memoizedState值
-
-### 8.1.3 hooks实践
+### 8.1.2 hooks实践
 
 #### Hook官方APi（大概率用到的）
+
 - useState 
  函数组件中的state方法
 - useEffect
@@ -498,6 +418,35 @@ hooks导出部分在`react/packages/react/src/ReactHooks.js`，虽然在react导
 
 ### 8.2.2 useState
 
+hooks不是一个新ap也不是一个黑魔法，就是单纯的一个数组，看下面的例子hooks api返回一个数组，一个是当前值，一个是设置当前值的函数。
+
+#### hooks中的useState
+
+```jsx
+import React ,{useState}from 'react';
+
+const App = () => {
+    const [name,setName]=useState('王艺瑾')
+    return (<div>
+             <div>{name}</div>
+             <button
+                onClick={()=> setName('张艺凡')}
+               >切换</button>
+           </div>
+       );
+}
+export default App;
+```
+- 上边是一个非常简单的Hook API，创建了name和setName，在页面上展示name，按钮的点击事件修改name
+
+- 那么在这个过程中setState是如何实现的呢？
+
+#### react 包中导出的useState
+
+源码出处：`react/packages/react/src/ReactHooks.js`
+
+react包中导出的usesate，其实没什么东西，大致看一下就能明白
+
 ```js
 export function useState<S>(
   initialState: (() => S) | S, // flow类型注解
@@ -524,8 +473,6 @@ function resolveDispatcher() {
   return dispatcher;
 }
 ```
-
-
 ```js
 /**
  * Keeps track of the current dispatcher.
@@ -541,3 +488,71 @@ const ReactCurrentDispatcher = {
 export default ReactCurrentDispatcher;
 ```
 `ReactCurrentDispatcher`现在是null，到这里我们线索好像中断了，因为current要有个`useState`方法才行；
+
+<font color="red">下面才是正文，千万不要放弃</font>
+
+#### useState 真正在reconilcer实现
+
+源码出处：`react/packages/react-reconciler/src/ReactFiberHooks.new.js`
+
+```ts
+  useState<S>(
+      initialState: (() => S) | S,
+    ): [S, Dispatch<BasicStateAction<S>>] {
+      currentHookNameInDev = 'useState';
+      mountHookTypesDev();
+      const prevDispatcher = ReactCurrentDispatcher.current;
+      ReactCurrentDispatcher.current = InvalidNestedHooksDispatcherOnMountInDEV;
+      try {
+        return mountState(initialState); //传入初始化的值，调用mountState
+      } finally {
+        ReactCurrentDispatcher.current = prevDispatcher;
+      }
+    },
+```
+- useState API 虽然是在react中引入的，其内部实现是在react-reconciler包中完成的
+- 在try/catch代码部分，调用了mountState方法
+- 顺着这个方法，我们去探寻一下mountState的实现
+
+#### mountState解析
+
+```ts
+function mountState<S>(
+  initialState: (() => S) | S,
+): [S, Dispatch<BasicStateAction<S>>] {
+     // 返回当前正在运行的hook对象
+  const hook = mountWorkInProgressHook();
+    // 初始值如果是函数，现执行函数
+  if (typeof initialState === 'function') {
+    // $FlowFixMe: Flow doesn't like mixed types
+    initialState = initialState();
+  }
+// 如果是字符串就赋值给hook对象，hook.baseState和hook.memoizedState
+  hook.memoizedState = hook.baseState = initialState;
+ // 定义一个队列
+  const queue = (hook.queue = {
+    pending: null,
+    dispatch: null,
+    lastRenderedReducer: basicStateReducer,
+    lastRenderedState: (initialState: any),
+  });
+// dispatch挂载的queue，
+  const dispatch: Dispatch<
+    BasicStateAction<S>,
+  > = (queue.dispatch = (dispatchAction.bind(
+    null,
+    currentlyRenderingFiber,
+    queue,
+  ): any));
+
+ //  2个值以数值的形式返回
+  return [hook.memoizedState, dispatch];
+}
+```
+如果方法里面有多个useState方法，如何让这些按期望顺序执行呢？怎样维护queue对象？
+
+![](~@/react/mountState.png)
+
+- 在初始化时，每一次申明useState就图上所示，会生成一对state/setter映射。
+接着每次渲染都会按照这个序列从数组最小下标遍历到最大值
+- 在前面代码（mountState）中，我们说会先返回一个hook对象，state值（memoizedState）和返回的setXXX都会关联到这个hook对象，因此在触发某一个setXXX方法的时候可以正确地设置memoizedState值
