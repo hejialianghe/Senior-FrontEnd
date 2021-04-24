@@ -556,3 +556,5 @@ function mountState<S>(
 - 在初始化时，每一次申明useState就图上所示，会生成一对state/setter映射。
 接着每次渲染都会按照这个序列从数组最小下标遍历到最大值
 - 在前面代码（mountState）中，我们说会先返回一个hook对象，state值（memoizedState）和返回的setXXX都会关联到这个hook对象，因此在触发某一个setXXX方法的时候可以正确地设置memoizedState值
+
+`queue.pending`永远指向最后一个更新，`pending.next`永远指向第一个更新

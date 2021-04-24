@@ -135,6 +135,13 @@ module.exports = {
                 ]
               },
               {
+                title: "小程序",
+                collapsable: false,
+                children: [
+                  ["applets/performance",'小程序性能优化'],
+                ]
+              },
+              {
                 title: "项目实战",
                 collapsable: false,
                 children: [
