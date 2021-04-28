@@ -135,3 +135,74 @@ Naitve和Web都有它们的优势和劣势，我们想有一种混合的方案�
   - 减少初始化阶段的同步形式的方法调用
   - 避免过多或过复杂的主包页面和过多的自定义组件
   - 不参与渲染的数据采用纯数据字段
+
+  #### 数据预拉取和周期性更新
+  
+  - 数据预拉取可以在小程序冷启动的同时，提前拉取指定接口的数据，节省数据的请求时间
+  - 周期性更新可以按小程序的配置，每隔12小时定时拉取指定接口的数据，不需要小程序被启动，但是需要7天内被使用过
+
+```js
+App({
+    onLaunch() {
+        wx.setBackgroundFethcToken({
+            token:'xxx' // 可以发送小程序存储的用户标识
+        })
+        wx.getBackgroundFetchData({
+            fetch:'pre/periodic', // 预拉取或者周期性更新类型
+            success(res) {
+                console.log(res.fetchData) // 缓存数据
+                console.log(res.timeStamp) // 客户端拿到缓存数据的时间戳
+            }
+        })
+    }
+})
+```
+  #### 首屏渲染--骨架屏
+
+  [骨架屏文档](https://developers.weixin.qq.com/miniprogram/dev/devtools/skeleton.html)
+
+  用开发者工具生成，然后引入业务页面，显示隐藏即可
+
+### 1.2.3 加快小程序的动态渲染
+
+#### 减少setData传递的数据量
+
+- setData涉及到进程间的通信，尤其是Native向Web传递使用的是EvaluateScript的方式，过大的数据量，就需要更长的处理时间
+- 可以只传递data中变化的部分，也可以将多次setData合并为一次调用
+
+#### 正确使用自定义组件
+
+- 如果无法避免的需要频繁更新某一部分渲染层的ui，可以将该部分声明为一个独立的自定义组件，因为这些组件内部的数据更新是独立的，计算开销更小
+- 去掉自定义组件不必要的dataset属性，因为每次时间触发时，这些数据都会被收集传递到逻辑层
+- 一个页面内自定义组件的数量也不宜过多，否则将会因为自定义组件的注册开销影响到首屏的渲染速度
+
+#### 使用WXS
+
+可以理解为：WXS就是直接运行于渲染层，也就是浏览器的脚本，所以存在一些能力和限制。
+
+- 语法上只支持类似ES5的标准
+- 与逻辑层javascript作用域隔离
+- 可以通过调用组件实例的方法或者发出自定义事件来实现与逻辑层的间接通信
+- 可以直接获取或修改组件上元素的样式
+
+```js
+// 导出变量pull
+<wxs module="pull" src="./pull.wxs">
+<scroll-view
+  class="pulldown-wrapper"
+  bindtouchstart="{{pull.touchStart}}"
+  bindtouchstart="{{pull.touchMove}}"s
+  bindtouchstart="{{pull.touchEnd}}"
+  change:prop="{{pull.monitorShowRefresh}}"
+  prop="{{showRefresh}}"
+>
+<view>{{text}}</view>
+</scroll-view>
+```
+wxs的通信方式
+
+![](~@/applets/wechat-com.png)
+
+动态设置data到wxml上
+
+[wxs传送门](https://developers.weixin.qq.com/miniprogram/dev/reference/wxs/)
