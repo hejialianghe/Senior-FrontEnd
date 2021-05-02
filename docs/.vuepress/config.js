@@ -138,7 +138,7 @@ module.exports = {
                 title: "小程序",
                 collapsable: false,
                 children: [
-                  ["applets/performance",'小程序性能优化'],
+                  ["applets/performance",'小程序进阶'],
                 ]
               },
               {

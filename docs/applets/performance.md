@@ -1,4 +1,6 @@
 ## 1.1 小程序的工作原理
+### 1.1.1 双线程架构和Exparser框架
+
 #### 常见的页面渲染方式
 1. Naitve：流畅度好，但是修改和发布不够灵活
 2. Web渲染：修改和发布灵活，但是加载可能不稳定，渲染有时不够流畅
@@ -37,6 +39,188 @@ Naitve和Web都有它们的优势和劣势，我们想有一种混合的方案�
 2. 非实时性：由于渲染层和逻辑层的分离，大多数操作都变成了异步，复杂场景处理繁琐
 3. 能力限制：页面大小，打开数量和内存回收都存在限制和一定的不可控性
 4. 性能优化：与传统的web开发的性能问题有所不同，需要另行优化性能问题
+
+####  Exparser框架
+
+微信小程序中负责组件的组织框架，包括内置组件和自定义组件的管理
+ - 基于shadow DOM模型，但是又不依赖浏览器和其他工具库
+ - 可在JS环境中运行，使的逻辑层和渲染层模型一致
+ - 高效轻量，性能表现好，在组件实例极多的环境下表现尤其优异，同时代码尺寸也较小
+
+自定义组件的创建流程
+
+1. 以Component构造器的内容创建组件对象
+2. 为组件对象添加注册时声明的data
+3. 结合WXML，生成组件Shadow Tree
+4. Shadow Tree装入Compose Tree
+5. 依次触发组件的created、attached等事件
+
+### 1.1.2 Web和Native的通信原理
+
+#### Web发送数据到Native <Badge text="重要" type="tip"/>
+
+- 拦截URL Scheme ：Native的WebView拦截Web页面发出的特定格式的网络请求
+- 拦截prompt API ：Native的WebView拦截Web页面中的window.prompt等api的调用
+- Native API注入：Native在javaScript环境上下文直接注入javascript方法以供调用
+
+#### 1. 拦截URL Scheme
+
+`net://post?id=123` net是自定义的协议，可以定义成net也可以是abc等
+
+- Scheme就是应用自定义的URL协议名，如上面代码中的netease
+- 客户端可以通过API对WebView发出的请求进行捕获并根据Scheme决定是否拦截和解析
+
+```js
+// 这种方式不推荐，只适用于demo或低频场景
+// 因为多次连续调用时，客户端只会收到最后一次消息
+location.href="net://post?id=3"
+
+// 推荐使用这种方式，消息不会丢失
+const iframe = doucment.createElement('iframe')
+iframe.style.display='none'
+iframe.src='net://post?id=123'
+doucment.body.appendChild(iframe)
+setTimeout(()=>{
+    iframe.remove()
+},100)
+// ios端：可以接收至少3000w个字符的URL；
+// Android端可以接收至少200w个字符的URL
+// 消息太长不利于性能；需要考虑是否直接传输这么大量的数据
+
+```
+优点：
+- 发送简单（location.href或iframe.src）
+- 兼容性强（IOS2.0+ Android 1.0+）
+- 侵入性低
+缺点：
+- 消息长度限制（？）
+- 过于灵活，缺少限制，容易出错
+
+#### 2. 拦截prompt API
+
+- Native可以捕获和拦截WebView中`alert/confirm/console/prompt`等API的调用
+- 一般拦截prompt较多，因为该方法使用的使用的频率较低，不容易冲突
+  - IOS：runJavaScriptTextInputPanelWithPrompt
+  - Android：WebChromeClient.onJsPrompt
+
+```js
+// 最好先判断是否处于APP内的WebView再调用
+const isInAPP = /net/i.test(navigator.userAgent)
+isInAPP && prompt('post?id=1')
+```
+#### 2.Native 直接注入
+
+- WebView中的javascript是运行于WebView所提供的环境中的，所以Native可以通过WebView直接介入javascript的执行环境（context）
+
+```js
+// IOS UIWebview
+JScontext *context=[uiWebViewvalueForKeyPath："documentView.webView.mainFrame.javascriptContext"];
+
+context["postBridgeMessage"]= ^(NSArray<NSArray *>*calls){
+    // Native 逻辑
+}
+// Android
+// 其中@javascriptInterface注解是安全机制，可以搜索后详细了解
+public class BridgeLogic {
+    // @JavascriptInterface
+    public void sendData(String message) {
+        // native 逻辑
+    }
+}
+private void initView() {
+    webView=(WebView) findViewById(R.id.webview);
+    // 开启webview Javascript 手动执行 默认为false
+    webview.getSettings().setJavascriptEnabled(true)
+    // 传入BridgeLogic的实例并挂载到Javascript中 window.JSBridge上
+    webview.addJavascriptInterface(new  BridgeLogic(),"JSBridge")
+}
+
+// Web端的Javascript调用代码
+// IOS UIWebView内
+window.postBridgeMessage('post?id=123')
+window.JSBridge.sendData('post?id=123')
+```
+优点：
+- 执行效率相对较高
+缺点：
+- 数据格式灵活，但学习成本较高
+- 两端耦合性较强
+- 可能出现命名空间冲突（window对象）
+
+#### Native发送数据到Web <Badge text="重要" type="tip"/>
+
+- ios：stringByEvakuatingjavaScriptFromString(该方法可以直接获取到javascript的执行结果)
+```js
+// Swift
+let title = webview.stringByEvakuatingjavaScriptFromString("document.title")
+// OC
+NSString*title = [webview stringByEvakuatingjavaScriptFromString:@"document.title"]
+```
+- Android：loadUrl(4.4,无法直接获取javascript的执行结果)
+
+```js
+// java
+webView.loadUrl("javascript:alert('NativeMessage')")
+```
+- Android：evaluatejavascript(4.4+,可以直接获取到javascript的执行结果)
+
+```js
+// java
+mWebView.evaluatejavascript("javascript:document.title",new ValueCallback<string>(){
+    @Override
+    public void onReceiveValue(Strinf value){
+        // 此处为js 返回结果
+    }
+})
+```
+### 1.1.3 原生组件和同层渲染
+
+####  原生组件
+
+原生组件的优点：
+- 扩展Web的能力：比如输入框对键盘的更好的控制
+- 更好的体验：将地图、视频交互由Native线程渲染，不占用Webview渲染线程
+- 更快的性能L：在一些高频操作场景下，可以绕过setData通信流程直接渲染
+
+原生组件的限制：
+- css支持不全
+- ui渲染方面的限制
+- 只能在最高层级
+- 事件模型的限制
+
+开发中涉及到原生组件的调试时，最好在真机环境下进行验证，开发者工具无法完全模拟原生组件的特性
+
+####  同层渲染
+
+由于原生组件带来的限制，微信研制除了同层渲染，原生组件个webview是同一层了，解决了事件绑定和css问题
+![](~@/applets/same-rendering.png)
+
+####  实现原理 
+
+ios
+- wkWebView会为overflow:scroll的元素生成原生渲染层WKChildScrollView
+- 原生渲染层与其他Web元素的渲染关系已经由WKWebView内部维护好
+- 原生组件就可以插入到因为Scroll而生成的原生渲染层中
+
+Android
+- Chromium内部存在embed类型的节点
+- Chromium会为Webview内embed节点创建Webplugin实例，并生成一个RenderLayer
+- RenderLayer可以渲染外部设置的内容
+- 小程序就可以将原生组件的内容渲染到对应的embed节点生成的RenderLayer上
+
+利用embed渲染pdf，小程序也是利用这个特性实现了同层渲染
+![](~@/applets/pdf.png)
+
+####  同层渲染后
+
+css支持更好：position、margin、box-shadow、transform等都基本支持
+渲染层级可控：可以使用z-index控制原生组件的渲染层级
+事件机制正常：原生组件上的事件可以冒泡到父元素上进行监听或阻止
+依然有一些限制：
+- 避免频繁修改CSS
+- 不能通过本组件或者父组件设置border-radius截取显示内容
+- 低版本安卓可能不支持
+- 原生组件全屏后原生组件外的元素将不可见
 
 ## 1.2 性能优化
 
@@ -206,3 +390,5 @@ wxs的通信方式
 动态设置data到wxml上
 
 [wxs传送门](https://developers.weixin.qq.com/miniprogram/dev/reference/wxs/)
+
+
