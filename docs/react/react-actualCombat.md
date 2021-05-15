@@ -297,6 +297,46 @@ export default class Home extends Component {
 
 - 实质是shouldComponentUpdate 方法中进行浅比较
 
+父组件
+```js
+import React  from 'react';
+
+export default class extends React.Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            date : new Date(),
+            id:1
+        }
+    }
+    componentDidMount(){
+        setInterval(()=>{
+            this.setState({
+                date:new Date()
+            })
+        },1000)
+    }
+    render(){
+        return (
+            <div>
+                <Child seconds={id}/>
+                <div>{this.state.date.toString()}</div>
+            </div>
+        )
+    }
+```
+从上面可以看出`date`变量的变化，整个组件都需要diff，我们看出child组件并不依赖`date`变量；所以date变化的时候，子组件完全没不要渲染，那么我们可以用`PureComponent`优化一下。
+
+```js
+class Child extends React.PureComponent {
+    render(){
+        return (
+            <div>{this.props.seconds}</div>
+        )
+    }
+}
+```
+
 #### memo 
 
 - 函数组件优化工具
@@ -305,6 +345,35 @@ export default class Home extends Component {
 
 - 可以指定比较函数
 
+```js
+function Child({seconds}){
+    return (
+        <div>I am update every {seconds} seconds</div>
+    )
+};
+export default React.memo(Child)
+```
+::: warning
+React.memo()可接受2个参数，第一个参数为纯函数的组件，第二个参数用于对比props控制是否刷新，与shouldComponentUpdate()功能类似。[2]
+:::
+
+```js
+function Child({seconds}){
+    return (
+        <div>I am update every {seconds} seconds</div>
+    )
+};
+
+function areEqual(prevProps, nextProps) {
+    if(prevProps.seconds===nextProps.seconds){
+        return true
+    }else {
+        return false
+    }
+
+}
+export default React.memo(Child)
+```
 #### 原生事件、定时器的销毁
 
 ![](~@/react/reactNature.png)

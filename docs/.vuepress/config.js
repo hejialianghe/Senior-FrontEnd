@@ -141,6 +141,13 @@ module.exports = {
                   ["applets/performance",'小程序进阶'],
                 ]
               },
+              // {
+              //   title: "Taro",
+              //   collapsable: false,
+              //   children: [
+              //     ["taro/principle",'taro原理介绍'],
+              //   ]
+              // },
               {
                 title: "项目实战",
                 collapsable: false,

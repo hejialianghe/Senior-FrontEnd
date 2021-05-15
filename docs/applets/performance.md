@@ -149,7 +149,9 @@ window.JSBridge.sendData('post?id=123')
 
 #### Native发送数据到Web <Badge text="重要" type="tip"/>
 
-- ios：stringByEvakuatingjavaScriptFromString(该方法可以直接获取到javascript的执行结果)
+我们可以注册一个方法到window上,native可以调用此方法并传值
+
+- ios：stringByEvaluatingjavaScriptFromString(该方法可以直接获取到javascript的执行结果)
 ```js
 // Swift
 let title = webview.stringByEvakuatingjavaScriptFromString("document.title")

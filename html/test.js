@@ -1,9 +1,12 @@
-async function async1 () {
-    await  1
-    console.log(1)
+function Test(){
+  const p=  new Promise((r)=>{
+        r(1)
+    })
+    p.then(res=>{
+        console.log('res2',res);
+    })
+    return p
 }
-Promise.resolve().then(res=>{
-    console.log(3)
+Test().then(res=>{
+    console.log('res',res);
 })
-async1()
-console.log(2)
