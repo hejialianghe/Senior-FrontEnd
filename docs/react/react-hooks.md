@@ -558,3 +558,151 @@ function mountState<S>(
 - 在前面代码（mountState）中，我们说会先返回一个hook对象，state值（memoizedState）和返回的setXXX都会关联到这个hook对象，因此在触发某一个setXXX方法的时候可以正确地设置memoizedState值
 
 `queue.pending`永远指向最后一个更新，`pending.next`永远指向第一个更新
+
+## 8.3 使用hooks会遇到的问题
+
+[react hooks遇到的问题](https://zh-hans.reactjs.org/docs/hooks-faq.html)
+
+在工程中必须引入lint插件，并开启相应规则，避免踩坑。
+
+```js
+{
+  "plugins": ["react-hooks"],
+  "rules": {
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
+  }
+}
+```
+这2条规则，对于新手，这个过程可能是比较痛苦的，如果你觉得这2个规则对你编写代码造成了困扰，说明你还未完全掌握hooks，对于某写特殊场景，确实不需要「exhaustive-deps」，可在代码处加eslint-disable-next-line react-hooks/exhaustive-deps；切记只能禁止本处代码，不能偷懒把整个文件都禁了。
+
+### 8.3.1 useEffect相关问题
+
+1. 依赖变量问题
+
+```js
+function ErrorDemo() {
+  const [count, setCount] = useState(0);
+  const dom = useRef(null);
+  useEffect(() => {
+    dom.current.addEventListener('click', () => setCount(count + 1));
+  }, [count]);
+  return <div ref={dom}>{count}</div>;
+```
+像这种情况，每次count变化都会重新绑定一次事件，那我们怎么解决呢？
+
+```js
+function ErrorDemo() {
+  const [count, setCount] = useState(0);
+  const dom = useRef(null);
+  useEffect(() => {
+    dom.current.addEventListener('click', () => setCount(count + 1));
+  }, []);
+  return <div ref={dom}>{count}</div>;
+```
+把依赖count变量去掉吗?如果把依赖去掉的话，意味着hooks只在组件挂载的时候运行一次，count的值永远不会超过1；因为在effect
+执行时，我们会创建一个闭包，并将count的值保存在闭包当中，且初始值为0
+
+#### 思路1:消除依赖
+
+```js
+  useEffect(() => {
+     // 在这不依赖于外部的 `count` 变量
+    dom.current.addEventListener('click', () => setCount((precount)=>++precount); 
+  }, []) // 我们的 effect 不使用组件作用域中的任何变量
+```
+setCount也可以接收一个函数，这样就不用依赖count了
+
+#### 思路1: 重新绑定事件
+
+```js
+  useEffect(() => {
+    const $dom = dom.current;
+    const event = () => {
+      setCount(count);
+    };
+    $dom.addEventListener('click', event);
+    return  $dom.removeEventListener('click', event);
+  }, [count]);
+```
+#### 思路2:ref
+
+你可以 使用一个 ref 来保存一个可变的变量。然后你就可以对它进行读写了
+
+当你实在找不到更好的办法的时候，才这么做，因为依赖的变更使组件变的难以预测
+
+```js
+  const [count, setCount] = useState(0);
+  const dom = useRef(null);
+  const countRef=useRef(count)
+  useEffect(() => {
+    countRef.current=count
+  });
+  useEffect(() => {
+     // 在任何时候读取最新的 count
+    dom.current.addEventListener('click', () => setCount(countRef.current + 1));
+  }, []); // 这个 effect 从不会重新执行
+```
+
+1. 依赖函数问题
+
+只有 当函数（以及它所调用的函数）不引用 props、state 以及由它们衍生而来的值时，你才能放心地把它们从依赖列表中省略。下面这个案例有一个 Bug：
+
+```js
+function ProductPage({ productId }) {
+  const [product, setProduct] = useState(null);
+
+  async function fetchProduct() {
+    const response = await fetch('http://myapi/product/' + productId); // 使用了 productId prop
+    const json = await response.json();
+    setProduct(json);
+  }
+
+  useEffect(() => {
+    fetchProduct();
+  }, []); // 🔴 这样是无效的，因为 `fetchProduct` 使用了 `productId`
+  // ...
+```
+
+#### 思路1:推荐的修复方案是把那个函数移动到你的 effect 内部
+
+这样就能很容易的看出来你的 effect 使用了哪些 props 和 state，并确保它们都被声明了：
+
+```js
+function ProductPage({ productId }) {
+  const [product, setProduct] = useState(null);
+
+  useEffect(() => {
+    // 把这个函数移动到 effect 内部后，我们可以清楚地看到它用到的值。
+    async function fetchProduct() {
+      const response = await fetch('http://myapi/product/' + productId);
+      const json = await response.json();
+      setProduct(json);
+    }
+
+    fetchProduct();
+  }, [productId]); // ✅ 有效，因为我们的 effect 只用到了 productId
+  // ...
+}
+```
+
+#### 思路2: useCallback
+
+把函数加入 effect 的依赖但 把它的定义包裹 进 useCallback Hook。这就确保了它不随渲染而改变，除非 它自身 的依赖发生了改变
+
+```js
+function ProductPage({ productId }) {
+  const [product, setProduct] = useState(null);
+
+  const fetchProduct = useCallback(() => {
+    const response = await fetch('http://myapi/product/' + productId); // 使用了 productId prop
+    const json = await response.json();
+    setProduct(json);
+  }
+  }, [productId]); 
+}
+
+  useEffect(() => {
+    fetchProduct();
+  }, [ProductPage]); 
+```
