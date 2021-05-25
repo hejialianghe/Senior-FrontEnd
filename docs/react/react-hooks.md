@@ -418,7 +418,7 @@ hooks导出部分在`react/packages/react/src/ReactHooks.js`，虽然在react导
 
 ### 8.2.2 useState
 
-hooks不是一个新ap也不是一个黑魔法，就是单纯的一个数组，看下面的例子hooks api返回一个数组，一个是当前值，一个是设置当前值的函数。
+hooks不是一个新api也不是一个黑魔法，就是单纯的一个数组，看下面的例子hooks api返回一个数组，一个是当前值，一个是设置当前值的函数。
 
 #### hooks中的useState
 
@@ -473,6 +473,8 @@ function resolveDispatcher() {
   return dispatcher;
 }
 ```
+源码出处：`react/packages/react/src/ReactCurrentDispatcher.js`
+
 ```js
 /**
  * Keeps track of the current dispatcher.
@@ -487,40 +489,59 @@ const ReactCurrentDispatcher = {
 
 export default ReactCurrentDispatcher;
 ```
-`ReactCurrentDispatcher`现在是null，到这里我们线索好像中断了，因为current要有个`useState`方法才行；
+`ReactCurrentDispatcher`现在是null，到这里我们线索好像中断了，因为current要有个`useState`等方法才行；我们可以断点的形式，去看看在mount阶段，react执行了什么？也就是在mount阶段ReactCurrentDispatcher.current挂在的hooks，蓝色部分就是react在初始化阶段执行的函数
+
+![](~@/react/Hooksprinciple.png)
 
 <font color="red">下面才是正文，千万不要放弃</font>
 
-#### useState 真正在reconilcer实现
-
 源码出处：`react/packages/react-reconciler/src/ReactFiberHooks.new.js`
 
-```ts
-  useState<S>(
-      initialState: (() => S) | S,
-    ): [S, Dispatch<BasicStateAction<S>>] {
-      currentHookNameInDev = 'useState';
-      mountHookTypesDev();
-      const prevDispatcher = ReactCurrentDispatcher.current;
-      ReactCurrentDispatcher.current = InvalidNestedHooksDispatcherOnMountInDEV;
-      try {
-        return mountState(initialState); //传入初始化的值，调用mountState
-      } finally {
-        ReactCurrentDispatcher.current = prevDispatcher;
-      }
-    },
+1. renderWithHooks
+
+```js
+const HooksDispatcherOnMount = { // 初次挂载的钩子
+    useState: mountState,
+}
+const HooksDispatcherOnUpdate = { // 更新时候的钩子
+     useState: updateState,
+}
+
+// 挂载和更新页面的时候，用的是不同的hooks
+
+let currentlyRenderingFiber;//当前正在使用的fiber
+//hooks在不同的阶段有不同的实现
+/**
+ * @param {*} current 上一个fiber 初次挂载 的时候null
+ * @param {*} workInProgress 这一次正在构建中的fiber
+ * @param {*} Component 当前组件
+ */
+export function renderWithHooks(current, workInProgress, Component) {
+    //每当在新渲染一个函数组件fiber的时候
+    currentlyRenderingFiber = workInProgress;
+    currentlyRenderingFiber.memoizedState=null;//在执行组件方法之前，要清空hook链表 因为你肯定要创建新的hook链表
+
+    // current === null || current.memoizedState === null 说明是mount阶段，否则是更新阶段
+     ReactCurrentDispatcher.current =
+      current === null || current.memoizedState === null
+        ? HooksDispatcherOnMount
+        : HooksDispatcherOnUpdate;
+
+    let children = Component();//Counter组件的渲染方法
+    currentlyRenderingFiber = null;//渲染结束 后把currentlyRenderingFiber清空
+    workInProgressHook = null;
+    currentHook = null;
+    return children;
+}
 ```
-- useState API 虽然是在react中引入的，其内部实现是在react-reconciler包中完成的
-- 在try/catch代码部分，调用了mountState方法
-- 顺着这个方法，我们去探寻一下mountState的实现
 
-#### mountState解析
+2.  mountState
 
 ```ts
-function mountState<S>(
-  initialState: (() => S) | S,
-): [S, Dispatch<BasicStateAction<S>>] {
-     // 返回当前正在运行的hook对象
+function mountState(
+  initialState
+) {
+     // 返回当前正在运行的hook对象,构建hook单项链表
   const hook = mountWorkInProgressHook();
     // 初始值如果是函数，现执行函数
   if (typeof initialState === 'function') {
@@ -549,6 +570,27 @@ function mountState<S>(
   return [hook.memoizedState, dispatch];
 }
 ```
+3. mountWorkInProgressHook
+
+```js
+function mountWorkInProgressHook(): Hook {
+  const hook  = { //创建一个hooks对象
+    memoizedState: null, // 自己的状态
+    baseState: null, /
+    baseQueue: null,
+    queue: null, // 自己的更新队列，形成环状列表
+    next: null, // 下一个更新
+  };
+      //说明这是我们的第一个hook
+    if (workInProgressHook === null) {
+        //fiber的memoizedState指向第一个hook对象
+        currentlyRenderingFiber.memoizedState = workInProgressHook = hook;
+    } else {
+        workInProgressHook = workInProgressHook.next = hook;
+    }
+    return workInProgressHook;
+}
+```
 如果方法里面有多个useState方法，如何让这些按期望顺序执行呢？怎样维护queue对象？
 
 ![](~@/react/mountState.png)
@@ -562,6 +604,7 @@ function mountState<S>(
 ## 8.3 使用hooks会遇到的问题
 
 [react hooks遇到的问题](https://zh-hans.reactjs.org/docs/hooks-faq.html)
+[React Hooks完全上手指南](https://zhuanlan.zhihu.com/p/92211533)
 
 在工程中必须引入lint插件，并开启相应规则，避免踩坑。
 
