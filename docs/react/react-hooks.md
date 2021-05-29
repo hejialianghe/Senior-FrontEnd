@@ -489,7 +489,7 @@ const ReactCurrentDispatcher = {
 
 export default ReactCurrentDispatcher;
 ```
-`ReactCurrentDispatcher`现在是null，到这里我们线索好像中断了，因为current要有个`useState`等方法才行；我们可以断点的形式，去看看在mount阶段，react执行了什么？也就是在mount阶段ReactCurrentDispatcher.current挂在的hooks，蓝色部分就是react在初始化阶段执行的函数
+`ReactCurrentDispatcher`现在是null，到这里我们线索好像中断了，因为current要有个hooks方法才行；我们可以断点的形式，去看看在mount阶段，react执行了什么？也就是在mount阶段ReactCurrentDispatcher.current挂在的hooks，蓝色部分就是react在初始化阶段执行的函数
 
 ![](~@/react/Hooksprinciple.png)
 
@@ -499,72 +499,130 @@ export default ReactCurrentDispatcher;
 
 1. renderWithHooks
 
+为什么从renderWithhooks讲起？因为这个函数是调用函数组件的主要函数。
+
 ```js
-const HooksDispatcherOnMount = { // 初次挂载的钩子
+// 挂载和更新页面的时候，用的是不同的hooks，hooks在不同的阶段有不同的实现
+// 举个例子，页面在初始化阶段我们在页面中调用的useSate实际调用的是mountState，在更新阶段调用的是updateState；其他的hooks也是同理
+
+const HooksDispatcherOnMount = { // 存储初次挂载的hook
     useState: mountState,
+    useEffect:mountEffect
+     ......
 }
-const HooksDispatcherOnUpdate = { // 更新时候的钩子
+const HooksDispatcherOnUpdate = { // 存储更新时候的hook
      useState: updateState,
+     useEffect:updateEffect
+     ......
 }
 
-// 挂载和更新页面的时候，用的是不同的hooks
+let currentlyRenderingFiber; //当前正在使用的fiber
+let workInProgressHook = null // 存储当前最新的hook，跟链表有关系，往下看会明白
 
-let currentlyRenderingFiber;//当前正在使用的fiber
-//hooks在不同的阶段有不同的实现
 /**
  * @param {*} current 上一个fiber 初次挂载 的时候null
- * @param {*} workInProgress 这一次正在构建中的fiber
+ * @param {*} workInProgress 这一次正在构建中的fiber树
  * @param {*} Component 当前组件
  */
-export function renderWithHooks(current, workInProgress, Component) {
-    //每当在新渲染一个函数组件fiber的时候
-    currentlyRenderingFiber = workInProgress;
-    currentlyRenderingFiber.memoizedState=null;//在执行组件方法之前，要清空hook链表 因为你肯定要创建新的hook链表
+export function renderWithHooks(
+  current, 
+  workInProgress, 
+  Component,
+  props,
+  secondArg,
+  ) {
+    currentlyRenderingFiber = workInProgress; 
 
-    // current === null || current.memoizedState === null 说明是mount阶段，否则是更新阶段
+   //在执行组件方法之前，要清空hook链表 因为你肯定要创建新的hook链表，要把新的信息挂载到这2个属性上
+   //在函数组件中 memoizedState以链表的形式存放hook信息，如果在class组件中，memoizedState存放state信息
+    workInProgress.memoizedState = null;
+    workInProgress.updateQueue = null;
+
+    // current === null || current.memoizedState === null 说明是mount阶段，否则是update阶段
+    // 我们就在这里给ReactCurrentDispatcher.current赋值了
      ReactCurrentDispatcher.current =
       current === null || current.memoizedState === null
         ? HooksDispatcherOnMount
         : HooksDispatcherOnUpdate;
 
-    let children = Component();//Counter组件的渲染方法
+    // 调用我们的组件函数，然后我们组件里的hooks才会被依次执行
+    let children = Component(props,secondArg); 
+
+   /*
+    我们的hooks必须写在组件函数的内部，当上面组件里的hooks执行完后，
+    我们又给ReactCurrentDispatcher.current赋值了，ContextOnlyDispatcher会报错的形式提示，hooks不能函数外面；
+    在不同的阶段赋值不同的hooks对象，判断hooks执行是否在函数组件内部
+   */
+    ReactCurrentDispatcher.current = ContextOnlyDispatcher;
+
     currentlyRenderingFiber = null;//渲染结束 后把currentlyRenderingFiber清空
     workInProgressHook = null;
+    // 指向当前调度的hooks节点
     currentHook = null;
+
     return children;
 }
 ```
+current：初始化阶段为null，当第一次渲染之后会产生一个fiber树，最终会换成真实的dom树
+workInProgress：正在构建的fiber树，更新过程中会从current赋值给workInProgress；更新完毕后将当前的workInProgress树赋值给current
 
+```js
+// 不在函数内写的hooks指向的函数
+const ContextOnlyDispatcher = {
+    useState:throwInvalidHookError
+}
+function throwInvalidHookError() {
+  invariant(
+    false,
+    'Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for' +
+      ' one of the following reasons:\n' +
+      '1. You might have mismatching versions of React and the renderer (such as React DOM)\n' +
+      '2. You might be breaking the Rules of Hooks\n' +
+      '3. You might have more than one copy of React in the same app\n' +
+      'See https://fb.me/react-invalid-hook-call for tips about how to debug and fix this problem.',
+  );
+}
+```
 2.  mountState
 
+初次挂载的时候，useState对应的函数是mountState
+
 ```ts
+function basicStateReducer(state, action) {
+  return typeof action === 'function' ? action(state) : action;
+}
 function mountState(
   initialState
 ) {
-     // 返回当前正在运行的hook对象,构建hook单项链表
+  
+  // 返回当前正在运行的hook对象,构建hook单项链表，下面会详细讲解
   const hook = mountWorkInProgressHook();
-    // 初始值如果是函数，现执行函数
+    /*
+     初始值如果是函数，就执行函数拿到初始值
+     useState((preState)=> return '初始值')
+    */
   if (typeof initialState === 'function') {
-    // $FlowFixMe: Flow doesn't like mixed types
     initialState = initialState();
   }
-// 如果是字符串就赋值给hook对象，hook.baseState和hook.memoizedState
+// 把初始值赋值给 hook.baseState和hook.memoizedState
   hook.memoizedState = hook.baseState = initialState;
  // 定义一个队列
   const queue = (hook.queue = {
-    pending: null,
-    dispatch: null,
-    lastRenderedReducer: basicStateReducer,
-    lastRenderedState: (initialState: any),
+    pending: null, // 存放update对象
+    dispatch: null,  // 放hooks更新函数
+    lastRenderedReducer: basicStateReducer, //用于得到最新的 state
+    lastRenderedState: initialState, // // 最后一次得到的 state
   });
-// dispatch挂载的queue，
-  const dispatch: Dispatch<
-    BasicStateAction<S>,
-  > = (queue.dispatch = (dispatchAction.bind(
+
+/*  
+  dispatchAction 是负责更新的函数,就是代表下面的setState函数
+  const [state,setState]=useState()
+*/
+  const dispatch = (queue.dispatch = (dispatchAction.bind(
     null,
     currentlyRenderingFiber,
     queue,
-  ): any));
+  )));
 
  //  2个值以数值的形式返回
   return [hook.memoizedState, dispatch];
@@ -572,18 +630,42 @@ function mountState(
 ```
 3. mountWorkInProgressHook
 
+构建hooks单向链表，将组件中的hooks函数以链表的形式串连起来，并赋值给workInProgress的memoizedState；
+
+例子：
 ```js
-function mountWorkInProgressHook(): Hook {
-  const hook  = { //创建一个hooks对象
-    memoizedState: null, // 自己的状态
-    baseState: null, /
+function work (){
+  const [name,setName]=useState('h') // hooks1
+  const [age,setAge]=useState(20) // hooks2
+  const [gender,setGender]=useState('男') // hooks3
+}
+ // 构建单向链表
+ currentlyRenderingFiber.memoizedState={
+   memoizedState:'h',
+   next:{
+      memoizedState:'20',
+      next:{
+          memoizedState:'男',
+          next:null
+      }
+   }
+ }
+// hooks1的next指向hooks2，hooks2的next指向hooks3
+```
+
+```js
+function mountWorkInProgressHook() {
+  //创建一个hooks对象
+  const hook  = { 
+    memoizedState: null, // 自己的状态，useState中保存state信息，useEffect中保存Effect对象，useMemo中保存缓存的值和依赖；useRef保存的是ref对象
+    baseState: null, //useState和useReducer中保存最新的更新队列
     baseQueue: null,
-    queue: null, // 自己的更新队列，形成环状列表
-    next: null, // 下一个更新
+    queue: null, // 自己的更新队列，形成环状链表
+    next: null, // 下一个更新，就是我们下的页面中下一个hooks
   };
       //说明这是我们的第一个hook
     if (workInProgressHook === null) {
-        //fiber的memoizedState指向第一个hook对象
+        //fiber的memoizedState指向第一个hook对象链表
         currentlyRenderingFiber.memoizedState = workInProgressHook = hook;
     } else {
         workInProgressHook = workInProgressHook.next = hook;
@@ -591,15 +673,45 @@ function mountWorkInProgressHook(): Hook {
     return workInProgressHook;
 }
 ```
-如果方法里面有多个useState方法，如何让这些按期望顺序执行呢？怎样维护queue对象？
+4. dispatchAction
 
-![](~@/react/mountState.png)
+```js
+/**
+ * @param {*} fiber 当前正在使用的fiber
+ * @param {*} queue 队列的初始对象
+ * @param {*} action 更新函数
+ * 
+ */
+function dispatchAction(fiber, queue, action) {
+  // 创建一个update对象
+ const update= {
+    action,
+    eagerReducer: null,
+    eagerState: null,
+    next: null,
+  }
+  const pending = queue.pending;
+  if (pending === null) {  // 证明第一次更新
+    update.next = update;
+  } else { // 不是第一次更新
+    update.next = pending.next;
+    pending.next = update;
+  }
+  queue.pending = update;
+// queue.pending`永远指向最后一个更新，pending.next 永远指向第一个更新
+  const currentState = queue.lastRenderedState;// 上一次的state
+  const eagerState = lastRenderedReducer(currentState, action);//获取最新的state
 
-- 在初始化时，每一次申明useState就图上所示，会生成一对state/setter映射。
-接着每次渲染都会按照这个序列从数组最小下标遍历到最大值
-- 在前面代码（mountState）中，我们说会先返回一个hook对象，state值（memoizedState）和返回的setXXX都会关联到这个hook对象，因此在触发某一个setXXX方法的时候可以正确地设置memoizedState值
+  update.eagerState = eagerState; 
+  // 判断上一次的值和当前的值是否一样，是同一个值或同一个引用就return
+  if (is(eagerState, currentState)) { 
+      return
+    }
+    // 调度渲染当前fiber，scheduleUpdateOnFiber是react渲染更新的主要函数。
+  scheduleUpdateOnFiber(fiber);
+}
+```
 
-`queue.pending`永远指向最后一个更新，`pending.next`永远指向第一个更新
 
 ## 8.3 使用hooks会遇到的问题
 
