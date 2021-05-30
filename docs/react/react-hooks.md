@@ -692,7 +692,7 @@ function dispatchAction(fiber, queue, action) {
   }
   const pending = queue.pending;
   if (pending === null) {  // 证明第一次更新
-    update.next = update;
+    update.next = update;//让自己和自己构建成一个循环链表 环状链表
   } else { // 不是第一次更新
     update.next = pending.next;
     pending.next = update;
@@ -703,7 +703,7 @@ function dispatchAction(fiber, queue, action) {
   const eagerState = lastRenderedReducer(currentState, action);//获取最新的state
 
   update.eagerState = eagerState; 
-  // 判断上一次的值和当前的值是否一样，是同一个值或同一个引用就return
+  // 判断上一次的值和当前的值是否一样，是同一个值或同一个引用就return，不进行更新
   if (is(eagerState, currentState)) { 
       return
     }
@@ -711,7 +711,27 @@ function dispatchAction(fiber, queue, action) {
   scheduleUpdateOnFiber(fiber);
 }
 ```
+类组件更新调用`setState`,函数组件hooks更新调用`dispatchAction`,都会产生一个update对象，里面记录此处更新的信息；
+把update对象放在`queue.pending`上。
 
+为什么创建update对象？
+
+每次创建update对象，是希望形成一个环状链表；让`queue.pending`永远指向最后一个update对象,update对象中存储着更新的一些信息。我们看下面一个例子，setCount调用了3次，更新的时候只需更新最后一个就行；最后一个信息从哪拿？就是从`queue.pending`上拿，这就是创建update对象的作用。
+
+```js
+function work (){
+  const [count,setCount]=useState(0) 
+  function add () {
+    setCount(1)
+    setCount(2)
+    setCount(3)
+  }
+  return (
+    <button onClick={add}></button>
+  )
+
+}
+```
 
 ## 8.3 使用hooks会遇到的问题
 
