@@ -716,7 +716,7 @@ function dispatchAction(fiber, queue, action) {
 
 为什么创建update对象？
 
-每次创建update对象，是希望形成一个环状链表；让`queue.pending`永远指向最后一个update对象,update对象中存储着更新的一些信息。我们看下面一个例子，setCount调用了3次，更新的时候只需更新最后一个就行；最后一个信息从哪拿？就是从`queue.pending`上拿，这就是创建update对象的作用。
+每次创建update对象，是希望形成一个环状链表。我们看下面一个例子，三次setCount的update对象会暂时放在`queue.pending`上，在下一次函数组件执行的时候，三次update会被合并到baseQueue上，我们要获取最新的状态，会一次执行update上的每一个action，得到最新的state。
 
 ```js
 function work (){
@@ -729,9 +729,12 @@ function work (){
   return (
     <button onClick={add}></button>
   )
-
 }
 ```
+为什么不是直接执行最后一个setCount？
+
+如果`setCount((state)=>{state+1})`参数是函数，那么需要依赖state，下一个要依赖上一个的state；所以需要都执行一遍才能
+拿到准确的值。
 
 ## 8.3 使用hooks会遇到的问题
 
