@@ -335,7 +335,39 @@ js就是采用了这种机制，来解决单线程带来的问题。
 
 4. await后面的内容执行完后又执行宏任务`setTimeout`
 
-[推荐一篇Event Loop测试题](https://juejin.cn/post/6844904077537574919)
+####  :tomato: 代码示例4
+```js
+setTimeout(()=>{
+    console.log(1)
+    new Promise((r)=>{
+        r()
+    }).then(res=>{
+        console.log(2);
+        Promise.resolve().then(()=>{
+            console.log(3)
+        })
+    })
+})
+setTimeout(()=>{
+    console.log(4)
+    new Promise((r)=>{
+        r(1)
+    }).then(res=>{
+        console.log(5)
+    })
+})
+/*
+1
+2
+3
+4
+5
+*/
+```
+1. 先执行script代码，遇到第一个setTimeout，放到宏任务队列中我们叫它宏1，遇到第二个setTimeout，放到宏任务队列中我们叫它宏2。
+2. 检查微任务队列中有无任务，有就全部执行，本次宏任务下没有产生微任务，没有就拿出宏1进行执行，执行宏1打印`1`；然后遇到promise就把then的回调放到微任务队列；宏1执行完以后，就去检查微任务队列中有任务么，有就全部执行，所以我们就执行了2，在then的回调中又产生了微任务，所以我们又执行了3，<font color="red">记住一点，要把本次宏任务下所产生的微任务全部执行完才会执行下一个宏任务，记住是产生的，没有产生的不会执行。</font>
+3. 一轮宏任务执行完以后，再去执行下一个宏任务，就会去执行宏2，就打印了4，在检查有没有产生了微任务，如果微任务队列中有微任务就全部执行，有微任务所以打印了5。
+
 
 ### 3.2.2 node.js的Event Loop
 ####  :tomato: node.js架构
@@ -433,7 +465,13 @@ fs.readFile(__filename, _ => {
       }, 0);
       setImmediate(_ => {
           console.log("setImmediate");
+          process.nextTick(_=>{
+            console.log("nextTick2")
+          })
       });
+      process.nextTick(_=>{
+        console.log("nextTick1")
+      })
 }); 
 /*
   打印结果 nextTick1
@@ -445,6 +483,14 @@ fs.readFile(__filename, _ => {
  1. 首先`fs.readFile`的回调进入poll阶段，遇到`process.nextTick()`会暂停event loop，先打印其回调；
  2. 打印`process.nextTick()`回调之后，会进入`setimmediate`的check阶段，然后打印setImmediate，然后`process.nextTick()`又打印了nextTick2
  3. 在检测有没有到时间的定时器，然后进入timer阶段，打印了setTimeout
+
+[推荐一篇Event Loop测试题](https://juejin.cn/post/6844904077537574919)
+
+[什么是 Event Loop？](http://www.ruanyifeng.com/blog/2013/10/event_loop.html)
+
+[参考文章](https://segmentfault.com/a/1190000016278115ECUST2020MBA全日制中文2班Y41200009)
+
+[nodejs事件循环](https://nodejs.org/zh-cn/docs/guides/event-loop-timers-and-nexttick/)
 
 ## 3.3 异步编程方法-发布/订阅
 

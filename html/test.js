@@ -1,91 +1,73 @@
-
-
-// function Permutation(str) {
-//     const result = [];
-//     if (str) {
-//       queue = str.split('')
-//       PermutationCore(queue, result);
-//     }
-//     result.sort();
-//     return [... new Set(result)];
-//   }
-
-//   function PermutationCore(queue, result, temp = "", current = "") {
-//     current += temp;
-//     if (queue.length === 0) {
-//       result.push(current);
-//       return;
-//     }
-//     for (let i = 0; i < queue.length; i++) {
-//       temp = queue.shift();
-//       console.log(queue, '2'+result, '3'+temp, '4'+current)
-//       PermutationCore(queue, result, temp, current);
-//       queue.push(temp);
-//     }
-//   }
-// console.log('------',Permutation('abc'))
-
-const arr = [{
-    pohId:"AB",
-    section:"STAN3",
-    row:"B",
-    col:"2"
-},
-{
-    pohId:"AB",
-    section:"STAN2",
-    row:"A",
-    col:"21"
-},
-{
-    pohId:"AB",
-    section:"STAN3",
-    row:"A",
-    col:"5"
-},
-{
-    pohId:"AB",
-    section:"STAN3",
-    row:"A",
-    col:"4"
-},
-{
-    pohId:"AB",
-    section:"AAAAAA",
-    row:"A",
-    col:"88"
-},
-{
-    pohId:"Ac",
-    section:"STAN3",
-    row:"A",
-    col:"1"
-},
-{
-    pohId:"Ac",
-    section:"STAN4",
-    row:"A",
-    col:"2"
-}
-
-]
-
-// arr.sort(function(a,b){
-//     const aSort = `${a.col}`
-//     const bSort = `${a.col}`
-//     return a.col-b.col
-// });
-arr.sort(function(a,b){
-    const aSort = `${a.section}${a.pohId}${a.row}${b.col}`
-    const bSort = `${b.section}${b.pohId}${b.row}${a.col}`
-    // return  aSort.charCodeAt()-bSort.charCodeAt()
-    return aSort.localeCompare(bSort)
-});
-
-arr.sort(function(a,b){
-
-    return a.col.localeCompare(b.col)
-});
-
-console.log(arr);
+// console.log(1)
+//   setTimeout(() => {
+//     console.log(2)
+//     process.nextTick(() => {
+//       console.log(3)
+//     })
+//     new Promise((resolve) => {
+//       console.log(4)
+//       resolve()
+//     }).then(() => {
+//       console.log(5)
+//     })
+//   })
+//   new Promise((resolve) => {
+//     console.log(7)
+//     resolve()
+//   }).then(() => {
+//     console.log(8)
+//   })
+//   process.nextTick(() => {
+//     console.log(6)
+//   })
+//   setTimeout(() => {
+//     console.log(9)
+//     process.nextTick(() => {
+//       console.log(10)
+//     })
+//     new Promise((resolve) => {
+//       console.log(11)
+//       resolve()
+//     }).then(() => {
+//       console.log(12)
+//     })
+//   })
   
+
+// setTimeout(()=>{
+//     process.nextTick(()=>{
+//         console.log(6);
+//     })
+// console.log(1);
+// new Promise((r)=>{
+//     r()
+// }).then((res)=>{
+//     process.nextTick(()=>{
+//         console.log(5);
+//     })
+//     console.log(3);
+//     new Promise((r)=>{
+//         r()
+//     }).then((res)=>{
+//         console.log(4);
+//     })
+// })
+
+
+// })
+// setTimeout(()=>{
+//     console.log(2);
+// })
+
+setTimeout(_ => {
+    console.log("setTimeout");
+  }, 0);
+  setImmediate(_ => {
+      console.log("setImmediate");
+      process.nextTick(_=>{
+        console.log("nextTick2")
+      })
+  });
+  process.nextTick(_=>{
+    console.log("nextTick1")
+  })
