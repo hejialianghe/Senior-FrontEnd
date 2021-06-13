@@ -216,7 +216,6 @@ js就是采用了这种机制，来解决单线程带来的问题。
    2. MutationObserver:可以监听Dom结构变化的一个api
    3. postMessgae:window对象通信的一个方法
    4. Promise.then catch finally
-   5. process.nextTick
    
   ####  :tomato: Event Loop的运行过程
 
@@ -370,22 +369,20 @@ setTimeout(()=>{
 
 
 ### 3.2.2 node.js的Event Loop
-####  :tomato: node.js架构
+####  :tomato: node.js架构图
 
 ![](~@/asyncpro/nodeframework.png)
 <font color="red">**有3层组成**</font>
 1. 第一层：node-core是node.js api的核心库。
 2. 第二层：包装和暴露libuv和js的其他低级功能。
-3. 第三层：v8和libuv这个库属于第三层的东西，v8引擎是chrome开源的js引擎，也是js运行服务端的基础，libuv是第三方的库，是nodejs异步编程
-的基础，是node底层的io引擎，是c语言编写的事件驱动的库；负责node api的执行，它会将不通的任务分配给不同的线程，从而形成了Event Loop事件
-循环；它以异步的方式将任务的执行结果返回给v8引擎；那我们说node是非阻塞io单线程，实现这个非阻塞的原因就在与libuv，node.js的Event Loop都是这个库实现的。
+3. 第三层：v8和libuv这个库属于第三层的东西，v8引擎是chrome开源的js引擎，也是js运行服务端的基础，libuv是第三方的库，是nodejs异步编程的基础，是node底层的IO引擎，是c语言编写的事件驱动的库；负责node api的执行，它会将不通的任务分配给不同的线程，从而形成了Event Loop事件循环；它以异步的方式将任务的执行结果返回给v8引擎；那我们说node是非阻塞IO单线程，实现这个非阻塞的原因就在与libuv这个库，node.js的Event Loop都是这个库实现的。
 
 ####  :tomato: node.js的Event Loop
 
 ![](~@/asyncpro/nodeeventloop.png)
 <font color="red">**执行的几个阶段**</font>
-1. <font color="blue">**timers阶段：执行setTimeout和setInterval的回调**</font>
-2. pending callbacks：系统操作的回调
+1. <font color="blue">**timers阶段：执行timers的回调，也是执行setTimeout和setInterval的回调**</font>
+2. pending IO callbacks：系统操作的回调
 3. idle，pepare：内部使用
 4.  <font color="blue">**poll：等待新的I/O事件进来**</font>
 5. <font color="blue">**check：执行setImmediate回调**</font>
@@ -400,8 +397,13 @@ fifo队列将会被执行，当队列callback执行完或者执行的callbacks�
 ####  :tomato: poll阶段
 
 ![](~@/asyncpro/poll.png)
-1. 先判断poll队列是否空或受到限制，否的话执行poll队列的callback；循环执行，直到空为止；是的话执行下一步
-2. 等待callback加入poll阶段，在poll阶段空闲的时候，检查timer是否到时间
+
+Poll阶段主要有2个功能：
+
+1. 计算应该被block多久（等待IO的操作）
+2. 处理poll队列的事件
+    - . 先判断poll队列是否空或受到限制，否的话执行poll队列的callback；循环执行，直到空为止；或者到了限制。
+    - . 如果poll队列是空而且受到限制，检查`setImmedidate`有没有设置callback，如果有设置就进入check阶段；如果没有设置callback，就等待callback加入poll队列，如果这时候有callback加入到poll队列，那么这时又进入的poll队列；在poll阶段空闲的时候，Event loop会检查timer（定时器）是否到时间；假如到时间了，又🈶️对应的callback，那么它就会进去timer阶段；如果没到时间还是等待callback加入poll队列。
 
 ####  :tomato: 案例1
 
@@ -410,6 +412,7 @@ fifo队列将会被执行，当队列callback执行完或者执行的callbacks�
 const fs = require('fs');
 
 function someAsyncOperation(callback) {
+  // nodejs 一般没有加sync都是异步的
   fs.readFile(__dirname, callback);
 }
 
@@ -417,6 +420,7 @@ const timeoutScheduled = Date.now();
 
 setTimeout(() => {
   const delay = Date.now() - timeoutScheduled;
+  // 计算多延迟多少毫秒打印这一句
   console.log(`${delay}ms have passed since I was scheduled`);
 }, 100);
 
@@ -480,9 +484,24 @@ fs.readFile(__filename, _ => {
           setTimeout
 */
  ```
- 1. 首先`fs.readFile`的回调进入poll阶段，遇到`process.nextTick()`会暂停event loop，先打印其回调；
- 2. 打印`process.nextTick()`回调之后，会进入`setimmediate`的check阶段，然后打印setImmediate，然后`process.nextTick()`又打印了nextTick2
- 3. 在检测有没有到时间的定时器，然后进入timer阶段，打印了setTimeout
+ 1. 首先`fs.readFile`的回调加入poll队列，进入poll阶段，poll阶段会看`setimmediate`有没有设置callback，如果没有`process.nextTick()`，其实先打印`setimmediate`的回调，但是遇到`process.nextTick()`会暂停event loop，先打印其回调。
+ 2. 打印`process.nextTick()`回调之后，会进入`setimmediate`的check阶段，然后打印setImmediate，然后又遇到`process.nextTick()`先停下来，又打印了nextTick2。
+ 3. 在检测有没有到时的定时器，然后进入timer阶段，打印了setTimeout。
+
+#### setTimeout 对比 setImmediate
+
+- setTimeout(fn, 0)在Timers阶段执行，并且是在poll阶段进行判断是否达到指定的timer时间才会执行
+- setImmediate(fn)在Check阶段执行
+两者的执行顺序要根据当前的执行环境才能确定：
+
+如果两者都在主模块(main module)调用，那么执行先后取决于进程性能，顺序随机
+如果两者都不在主模块调用，即在一个I/O Circle中调用，那么setImmediate的回调永远先执行，因为会先到Check阶段
+
+#### setImmediate 对比 process.nextTick
+
+- setImmediate(fn)的回调任务会插入到宏队列Check Queue中
+- process.nextTick(fn)的回调任务会插入到微队列Next Tick Queue中
+- process.nextTick(fn)调用深度有限制，上限是1000，而setImmedaite则没有
 
 [推荐一篇Event Loop测试题](https://juejin.cn/post/6844904077537574919)
 

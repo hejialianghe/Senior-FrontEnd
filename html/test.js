@@ -59,15 +59,62 @@
 //     console.log(2);
 // })
 
-setTimeout(_ => {
-    console.log("setTimeout");
+// setTimeout(_ => {
+//     console.log("setTimeout");
+//   }, 0);
+//   setImmediate(_ => {
+//       console.log("setImmediate");
+//       process.nextTick(_=>{
+//         console.log("nextTick2")
+//       })
+//   });
+//   process.nextTick(_=>{
+//     console.log("nextTick1")
+//   })
+
+// setTimeout(()=>{
+//     console.log('timer1')
+
+//     Promise.resolve().then(function() {
+//         console.log('promise1')
+//     })
+// }, 0)
+
+// setTimeout(()=>{
+//     console.log('timer2')
+
+//     Promise.resolve().then(function() {
+//         console.log('promise2')
+//     })
+// }, 0)
+
+setTimeout(() => {          // callback1
+    console.log(111);
+    setTimeout(() => {        // callback2
+      console.log(222);
+    }, 0);
+    setImmediate(() => {      // callback3
+      console.log(333);
+    })
+    process.nextTick(() => {  // callback4
+      console.log(444);  
+    })
   }, 0);
-  setImmediate(_ => {
-      console.log("setImmediate");
-      process.nextTick(_=>{
-        console.log("nextTick2")
-      })
-  });
-  process.nextTick(_=>{
-    console.log("nextTick1")
+  
+  setImmediate(() => {        // callback5
+    console.log(555);
+    process.nextTick(() => {  // callback6
+      console.log(666);  
+    })
+  })
+  
+  setTimeout(() => {          // callback7              
+    console.log(777);
+    process.nextTick(() => {  // callback8
+      console.log(888);   
+    })
+  }, 0);
+  
+  process.nextTick(() => {    // callback9
+    console.log(999);  
   })
