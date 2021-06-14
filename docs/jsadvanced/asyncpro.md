@@ -432,7 +432,7 @@ someAsyncOperation(() => {
 });
  // 打印结果 202ms have passed since I was scheduled
  ```
- 1. 读文件进入`poll`阶段，然后进入会回调，读文件一般会需要几毫秒，我们这里用了2毫秒，在回调了我们使用了while循环；
+ 1. 读文件进入`poll`阶段，然后进入会回调，读文件一般会需要几毫秒，在回调了我们使用了while循环；
  延迟了200毫秒
  2. 执行完poll队列，现在是空闲状态，检查有没有到时间的定时器；然后有setTimeout，就执行了setTimeout的回调
 
@@ -488,11 +488,66 @@ fs.readFile(__filename, _ => {
  2. 打印`process.nextTick()`回调之后，会进入`setimmediate`的check阶段，然后打印setImmediate，然后又遇到`process.nextTick()`先停下来，又打印了nextTick2。
  3. 在检测有没有到时的定时器，然后进入timer阶段，打印了setTimeout。
 
+####  :tomato: 案例3
+```js
+console.log(1)
+  setTimeout(() => {
+    console.log(2)
+    process.nextTick(() => {
+      console.log(3)
+    })
+    new Promise((resolve) => {
+      console.log(4)
+      resolve()
+    }).then(() => {
+      console.log(5)
+    })
+  })
+
+  new Promise((resolve) => {
+    console.log(7)
+    resolve()
+  }).then(() => {
+    console.log(8)
+  })
+
+  process.nextTick(() => {
+    console.log(6)
+  })
+
+  setTimeout(() => {
+    console.log(9)
+    process.nextTick(() => {
+      console.log(10)
+    })
+    new Promise((resolve) => {
+      console.log(11)
+      resolve()
+    }).then(() => {
+      console.log(12)
+    })
+  })
+1
+7
+6
+8
+2
+4
+3
+5
+9
+11
+10
+12
+```
+ process.nextTick优先于其他微任务的执行
+
 #### setTimeout 对比 setImmediate
 
 - setTimeout(fn, 0)在Timers阶段执行，并且是在poll阶段进行判断是否达到指定的timer时间才会执行
 - setImmediate(fn)在Check阶段执行
-两者的执行顺序要根据当前的执行环境才能确定：
+
+<font color="red">**两者的执行顺序要根据当前的执行环境才能确定：**</font>
 
 如果两者都在主模块(main module)调用，那么执行先后取决于进程性能，顺序随机
 如果两者都不在主模块调用，即在一个I/O Circle中调用，那么setImmediate的回调永远先执行，因为会先到Check阶段
