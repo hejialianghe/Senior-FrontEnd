@@ -5,4 +5,4 @@ dist
 .DS_Store
 .gitee
 yarn.lock
-html
+html/

@@ -81,9 +81,9 @@ class ListItem extends Component {
        {/* 方法1*/}
         <span onclick={this.handleClick.bind(this,1)}>header<span> 
          {/* 方法2*/}
-        <span onclick={()=>this.handleClick.(1)}>header<span>  
+        <span onclick={()=>this.handleClick(1)}>header<span>  
           {/* 传递事件对象event*/}
-        <span onclick={(e)=>this.handleClick.(1,e)}>header<span>  
+        <span onclick={(e)=>this.handleClick(1,e)}>header<span>  
       <div>
     )
    }
@@ -113,7 +113,7 @@ class ListItem extends Component {
    render(){
     return (
       <div className='listItem'>
-        <span onclick={()=>this.props.onDelete.(this.state.conunt)}>header<span>  
+        <span onclick={()=>this.props.onDelete(this.state.conunt)}>header<span>  
       <div>
     )
    }
