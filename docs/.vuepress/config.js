@@ -159,7 +159,7 @@ module.exports = {
                 title: "项目实战",
                 collapsable: false,
                 children: [
-                  ["projectPractice/",'认识同构及原理'],
+                  ["projectPractice/isomorphism",'认识同构及原理'],
                   ["projectPractice/",'实现一个同步的demo'],
                   ["projectPractice/",'同构如何获取数据'],
                   ["projectPractice/",'Nextjs'],

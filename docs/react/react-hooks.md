@@ -98,7 +98,7 @@ const HooksTest = () => {
             const [count,setCount]=useState(()=>{
             return 2
         })  
-        setCount也可以传递一个函
+        setCount也可以传递一个函数
         这个函数第一个参数可以拿到上一次的值，
         在可以在函数里做一些操作
         setCount((preState)=>{
