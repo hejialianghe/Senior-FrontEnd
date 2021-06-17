@@ -1,45 +1,16 @@
-console.log(1)
-  setTimeout(() => {
-    console.log(2)
-    process.nextTick(() => {
-      console.log(3)
-    })
-    new Promise((resolve) => {
-      console.log(4)
-      resolve()
-    }).then(() => {
-      console.log(5)
-
-    })
-    Promise.resolve().then(()=>{
-      console.log('-------2')
-    })
-  })
-
-  new Promise((resolve) => {
-    console.log(7)
-    resolve()
-  }).then(() => {
-    console.log(8)
-  })
-
-  process.nextTick(() => {
-    console.log(6)
-  })
-
-
-  setTimeout(() => {
-    setTimeout(()=>{
-      console.log('-------')
-    })
-    console.log(9)
-    process.nextTick(() => {
-      console.log(10)
-    })
-    new Promise((resolve) => {
-      console.log(11)
-      resolve()
-    }).then(() => {
-      console.log(12)
-    })
-  })
+const sub = {
+  'firstname_1_1':"jl",
+  'lastname_2_1':"h"
+}
+const result = []
+for(item of Object.keys(sub)) {
+  const keys = item.split('_')
+  if(result[keys[1]]){
+    result[keys[1]]=[{
+      firstname:sub[fis]
+      lastname:
+    }]
+  }
+    const arr = []
+  console.log(result[keys[0]])
+}
