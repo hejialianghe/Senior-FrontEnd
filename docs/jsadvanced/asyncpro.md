@@ -1888,9 +1888,9 @@ onmessage = function (e) {
 ```bash
 npm install -g browser-sync # 下载
 
-browser-sync -s # 启动，注意启动服务要在index.html这个文件夹
+-browser-sync start --server # 启动，注意启动服务要在index.html这个文件夹
 ```
-
+xw
 启动完之后，访问http://localhost:3000/index.html
 
 源代码地址：Senior-FrontEnd/examples/jsadvanced/3.8/
@@ -2097,7 +2097,7 @@ self.addEventListener('install', function(event) {
 3. 启动一个服务
 
 ```bash
-browser-sync -s # 在3.9文件夹下
+browser-sync start --server # 在3.9文件夹下
 ```
 4. 打开地址：http://localhost:3000
 
