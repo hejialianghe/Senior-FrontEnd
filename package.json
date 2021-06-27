@@ -11,7 +11,7 @@
     "dev": "vuepress dev docs",
     "build": "vuepress build docs",
     "upload-server": "sh deploy.sh",
-    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -w -r 0"
+    "changelog": "auto-changelog --remote upstream --commit-limit false"
   },
   "keywords": [],
   "author": "hejialiang",
@@ -25,6 +25,8 @@
     "@sentry/browser": "^6.1.0",
     "@sentry/tracing": "^6.1.0",
     "@vuepress/plugin-nprogress": "^1.8.2",
+    "auto-changelog": "^2.3.0",
+    "changelog": "^1.4.2",
     "commander": "^6.1.0",
     "express": "^4.17.1",
     "lodash": "^4.17.15"
