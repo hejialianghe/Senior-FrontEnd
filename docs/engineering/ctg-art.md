@@ -1150,7 +1150,7 @@ Output用来指示Webpack将打包后的bundle文件放在什么位置
                 }
             ]
         },
-        Plugin:[
+        plugins:[
             // HtmlWebpackPlugin 为应用生成一个html文件，并且自动注入所有生成的js bundle，这是loader所做不到的
             new HtmlWebpackPlugin({template:'./src/index.html'})
         ]
