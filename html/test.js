@@ -1,7 +1,9 @@
 
-const a={
-  b:1
+async function sync (){
+  setInterval(async()=>{
+    await Promise.resolve(1)
+    console.log('----21')
+  },2000)
+   console.log('------')
 }
-const b=a
-b.b=4
-console.log(a)
+sync()
