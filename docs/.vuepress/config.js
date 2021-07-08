@@ -148,13 +148,15 @@ module.exports = {
               //     ["taro/principle",'taro原理介绍'],
               //   ]
               // },
-              // {
-              //   title: "算法",
-              //   collapsable: false,
-              //   children: [
-              //     ["algorithm/",'解题思路'],
-              //   ]
-              // },
+              {
+                title: "算法",
+                collapsable: false,
+                children: [
+                  ["algorithm/",'解题思路'],
+                  ["algorithm/sort",'排序算法专题'],
+                  ["algorithm/base",'真题'],
+                ]
+              },
               {
                 title: "项目实战",
                 collapsable: false,

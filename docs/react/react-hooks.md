@@ -129,7 +129,7 @@ const HooksTest = () => {
     useEffect(()=>{
         document.title = `You clicked ${count} times`;
         return ()=>{
-            clearIntercal(timer)
+            clearInterval(timer)
         }
     })
     /*
