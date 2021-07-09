@@ -296,8 +296,8 @@ require('components/lib/button/style/css')
 ```
 ### 2.5.2 生命周期
 
-- beforeCreate 最初调用触发，data和evnets都不能用
-- created data和evnets已经初始化好，data已经具有响应式；在这里可以发送请求
+- beforeCreate 最初调用触发，data和events都不能用
+- created data和events已经初始化好，data已经具有响应式；在这里可以发送请求
 - beforeMount 在模版编译之后，渲染之前触发，ssr中不可用，基本用不上这个hook
 - mounted 在渲染之后触发，并能访问组件中的DOM以及$ref,SSR中不可用
 - beforeUpdate 在数据变化后，模版改变前触发，切勿使用它监听数据变化
