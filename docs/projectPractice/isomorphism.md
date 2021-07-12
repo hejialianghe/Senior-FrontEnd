@@ -92,5 +92,103 @@ HTML->js->render的过程在服务端完成
 - 无刷新路由：继承SAP的优点
 - 同构：一套代码，两端运行
 
+#### SSR同构难点
+
+- 服务端开发：Node开发能力和掌握框架提供的服务端渲染技术
+- 性能和监控：服务端渲染性能，服务端异常监控和处理
+- 路由同构：如何同一套路由兼容Node环境和浏览器环境
+- 请求和cookie：如何兼容两端请求，服务端缓存请求用户身份以及cookie的转发
+- 状态数据共享：服务端store的如何共享给客户端
+- 构建和部署：两端js的构建，Node服务的部署和客户端js的部署
+
+## 2.3 React同构
+
+#### 两端渲染方法概述
+
+```js
+// client
+import ReactDOM from 'react-dom'
+// server
+import ReactDOMServer from 'react-dom/server'
+```
+ReactDOM 提供客户端渲染方法，将组件渲染为真实DOM
+
+ReactDOMServer 提供服务端渲染方法，这些方法将组件渲染成为静态标记
+
+### 2.3.1 React服务端渲染方法
+
+基本API
+
+```js
+// 都传入组件，返回string
+ ReactDOMServer.renderToStaticMarkup(element);
+
+ ReactDOMServer.renderToString(element)
+```
+
+1. renderToStaticMarkup（适用于纯静态页面）
+
+```js
+import ReactDOMServer from 'react-dom/server'
+const App= ()=>(<h1>Hello</h1>)
+const str = ReactDOMServer.renderToStaticMarkup(<App/>)
+console.log(str)
+// <h1>Hello<h1>
+```
+- 将React 元素渲染为HTML字符串
+- 不会在React 内部创建的额外DOM属性，例如：data-reactroot
+
+1. renderToString（适用于可交互页面）
+
+```js
+import ReactDOMServer from 'react-dom/server'
+const App= ()=>(<h1>Hello</h1>)
+const str = ReactDOMServer.renderToString(<App/>)
+console.log(str)
+// <h1 data-reactroot>Hello<h1>
+```
+- 将React 元素渲染为HTML字符串
+- 并在React 内部创建的额外DOM属性data-reactroot
+- 作用：告诉客户端复用页面提升性能，data-reactroot这个属性就是告诉客户端，服务端已经渲染过了，那么客户端直接可以复用这个组件，然后只绑定事件就可以了。
+
+### 2.3.2 React客户端渲染方法
+
+基本API
+
+```js
+// 两个渲染方法
+import ReactDOM from 'react-dom'
+// 1
+ReactDOM.render(
+    element,
+    container[,callback]
+)
+// 回调：在组件被渲染或更新之后被执行，react>15
+
+// 2
+ReactDOM.hydrate(
+    element,
+    container[,callback]
+)
+// 在ReactDOMServer渲染的容器中对HTML的内容进行hydrate操作。
+// React 会尝试在已有标记上绑定事件监听器
+```
+1. ReactDOM.render
+
+```js
+import ReactDOM from 'react-dom'
+const App= ()=>(<h1>Hello</h1>)
+const root = doucment.getElementById('root')
+ReactDOM.render(<App/>,root)
+```
+
+1. ReactDOM.hydrate
+
+```js
+import ReactDOM from 'react-dom'
+const App= ()=>(<h1>Hello</h1>)
+const root = doucment.getElementById('root')
+ReactDOM.render(<App/>,root)
+```
 
 
