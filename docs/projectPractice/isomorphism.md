@@ -120,7 +120,7 @@ ReactDOMServer 提供服务端渲染方法，这些方法将组件渲染成为�
 基本API
 
 ```js
-// 都传入组件，返回string
+// 参数都传入组件，返回string
  ReactDOMServer.renderToStaticMarkup(element);
 
  ReactDOMServer.renderToString(element)
@@ -189,6 +189,48 @@ import ReactDOM from 'react-dom'
 const App= ()=>(<h1>Hello</h1>)
 const root = doucment.getElementById('root')
 ReactDOM.render(<App/>,root)
+```
+#### React 两端渲染差异
+
+suppressHydrationWarning
+
+下面的案例就是在服务端渲染的时间，在客户端渲染的时候已经过去一段时间了，那怎样解决这个问题呢？
+
+单个元素的文本两端渲染有差异，可以使用`suppressHydrationWarning`这个属性来解决，文本差异可以解决，属性差异不能保证解决。
+```js
+// 组件
+const App=()=>{
+    <h1 suppressHydrationWarning>
+     {new Date().getTime()}
+    </h1>
+}
+// 服务端渲染
+ReactDOMServer.renderToString(<App/>)
+
+// 首次客户端渲染
+const root = document.getElementById('root')
+ReactDOM.hydrate(<App/>,root)
+```
+两端渲染
+
+当有大段文本差异，可以使用以下方法，`componentDidMount`这个钩子只会在客户端渲染的时候才会执行；在服务端的时候只会执行`constructor`;所以可以利用在componentDidMount钩子渲染差异内容。
+
+```js
+class App extends React.PureComponent{
+    constructor(props){
+        super(props)
+        this.state={mounted:false}
+    }
+    componentDidMount(){
+        this.setState({mounted:true})
+    }
+    return (
+        <div>
+            hello:
+            {mounted && <Todo>}
+        </div>
+    )
+}
 ```
 
 
