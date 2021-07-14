@@ -182,7 +182,9 @@ const root = doucment.getElementById('root')
 ReactDOM.render(<App/>,root)
 ```
 
-1. ReactDOM.hydrate
+2. ReactDOM.hydrate
+
+ReactDOM.hydrate配合ssr首次渲染，如果用render会重复渲染，hydrate只用于首次渲染，为服务端渲染的html绑定事件。
 
 ```js
 import ReactDOM from 'react-dom'
@@ -232,5 +234,12 @@ class App extends React.PureComponent{
     )
 }
 ```
+总结：
+react同构渲染的过程：
+
+1. 服务端用ReactDOM.`renderToString`渲染出html字符串
+2. 客户端用首次用ReactDOM.`hydrate`为其绑定事件
+3. 下次再次更新dom就用ReactDOM.`render`
+
 
 
