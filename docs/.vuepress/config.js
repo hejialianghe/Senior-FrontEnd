@@ -163,9 +163,7 @@ module.exports = {
                 children: [
                   ["projectPractice/isomorphism",'认识同构及原理'],
                   ["projectPractice/demo",'实现一个同构的demo'],
-                  ["projectPractice/",'同构如何获取数据'],
-                  ["projectPractice/",'Nextjs'],
-                  ["projectPractice/",'同构如何获取数据']
+                  ["projectPractice/",'Nextjs']
                 ]
               }
         ]
