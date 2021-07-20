@@ -349,5 +349,170 @@ module.exports = router
 
 ## 2.3 何时请求异步数据
 
+源码地址:/examples/react/simpleDemo3
+
 ### 2.3.1 客户端请求的时机和实现
 
+推荐：componentDidmount、useEffect中发送请求
+
+不推荐：componentWillmount、componentWillReceiveProps、componentWillUpdate
+
+#### 为什么不在componentWillmount请求数据？
+
+1. 执行完componentWillmount后，会立即执行render方法，这时候接口数据还没有返回，提前请求并没有减少render方法的调用
+2. 过期警告componentWillmount、componentWillReceiveProps、componentWillUpdate，在新版本的react将移除这些生命周期；
+在新的版本中将采用fiber架构：fiber架构将导致这些生命周期多次执行。
+
+<img width="500px" src="~@/react/fiber-line.png">
+
+同步：是一次性渲染全部组件
+
+异步：分片多次渲染，高优先级任务可以打断渲染（遇到点击，滚动这样的任务把它作为高优先级任务优先响应用户,浏览器空闲时间再次接着渲染，所以会导致上3个生命周期多次执行）
+
+### 2.3.2 服务端请求的时机和实现
+
+服务端不会执行componentDidmount、useEffect，所以服务端要在渲染组件之前要拿到数据
+
+axios发送请求(支持服务端和客户端)
+
+```bash
+yarn add axios
+```
+1. 新建apiRouter.js
+
+模拟一些接口，并返会一些数据
+
+```js
+const express = require('express')
+
+const router = express.Router();
+
+router.get("/home", function (req, res, next) {
+  res.json({ title: 'Home', desc: '这是home页面' })
+});
+
+router.get("/user", function (req, res, next) {
+  res.json({ name: '张三', age: '21', id: '1' })
+});
+
+module.exports = router
+```
+2. 改写server.js
+
+```diff
+require('@babel/register')({
+    presets:['@babel/preset-env','@babel/preset-react']
+})
+
+const express = require('express')
+const app = express()
+const serverRouter = require('./server/serverRouter')
+const apiRouter = require('./server/apiRouter')
+
+// api接口
++ app.use("/api/", apiRouter);
+// 用于加载静态资源
+app.use("/build", express.static('build'));
+// 服务端渲染
+app.use('/',serverRouter)
+
+app.listen(3003)
+```
+3. api.js
+
+请求数据的封装
+
+```js
+import axios from 'axios'
+
+const req = axios.create({
+  baseURL:'http://localhost:3003/api',
+});
+
+req.interceptors.response.use(function (response) {
+  return response.data;
+});
+
+// 请求首页
+export const fetchHome = () => req.get('/home')
+// 请求用户信息
+export const fetchUser = () => req.get('/user')
+```
+4. user组件
+
+```js
+import React,{useEffect} from 'react';
+import { fetchUser } from '../core/api'
+
+const User = ({staticContext}) => {
+  // staticContext 用于服务端渲染，staticContext是请求接口返回的值，具体可以看serverRouter.js
+  console.log('staticContext',staticContext)
+  // 客户端请求的时机，在服务端渲染的时候，useEffect并不会执行
+  useEffect(()=>{
+    fetchUser().then(data=>console.log('User data:',data))
+  },[])
+  return (
+    <main>
+      <h1>User</h1>
+      <button onClick={()=>{alert('user!')}}>click me</button>
+    </main>
+  )
+}
+
+User.getData = fetchUser
+export default User
+```
+5. serverRouter.js
+
+```js
+
+const express = require('express')
+import React from 'react'
+import ReactDOMServer from 'react-dom/server'
+import Document from '../components/documnet'
+import App from '../components/app'
+import { StaticRouter,matchPath } from 'react-router-dom'
+import routes from '../core/routes'
+const router = express.Router()
+
+router.get("*", async function (req, res, next) {
+  let data = {}
+  let getData = null
+
+  // 匹配当前路由，然后拿到当前要渲染组件的静态属性getData；getData就是请求的接口函数
+  routes.some(route => {
+    const match = matchPath(req.path, route);
+    if (match) {
+      getData = (route.component || {}).getData
+    }
+    return match
+  });
+  
+  if (typeof getData === 'function') {
+    try {
+      data = await getData()
+    } catch (error) { }
+  }
+  const appString = ReactDOMServer.renderToString(
+    <StaticRouter
+      location={req.url}
+      // context传的值，在组件中staticContext可以获取到对应的值
+      context={data}
+    >
+      <App />
+    </StaticRouter>)
+
+  const html = ReactDOMServer.renderToStaticMarkup(<Document data={data}>
+    {appString}
+  </Document>)
+
+  res.status(200).send(html);
+
+});
+
+module.exports = router
+```
+#### 总结：
+1. 源码地址:/examples/react/simpleDemo3
+2. 服务端渲染是在渲染组件之前请求数据，然后利用`context`把值传到对应组件，这样就渲染出了有数据的组件。
+3. 客户端渲染可以在`componentDidmount、useEffect`中请求数据进行客户端渲染。
