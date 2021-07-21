@@ -513,6 +513,153 @@ router.get("*", async function (req, res, next) {
 module.exports = router
 ```
 #### 总结：
-1. 源码地址:/examples/react/simpleDemo3
+1. 源码地址:/examples/react/simpleDemo-3
 2. 服务端渲染是在渲染组件之前请求数据，然后利用`context`把值传到对应组件，这样就渲染出了有数据的组件。
 3. 客户端渲染可以在`componentDidmount、useEffect`中请求数据进行客户端渲染。
+
+## 2.4 客户端复用服务端数据
+
+源码地址:/examples/react/simpleDemo-4
+
+#### 服务端怎样向客户端传递数据
+
+- 通过window全局变量
+
+#### 利用window全局变量传递数据
+
+1. 改写serverRouter.js
+
+```js
+  const html = ReactDOMServer.renderToStaticMarkup(<Document data={data}>
+    {appString}
+  </Document>)
+```
+2. 改写 doucment.js
+
+我们可以将传递过来的数据转换成JSON字符串，赋值给window.__APP_DATA；然后放到script标签中，在客户端就会执行以下代码。
+
+```diff
+import React from 'react'
+
+const Document = ({ children ,data}) => {
+  return (
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>simple-ssr</title>
+      </head>
+      <body>
+        <div id="root" dangerouslySetInnerHTML={{ __html: children }}></div>
++        <script
++         dangerouslySetInnerHTML={{
++          __html: `window.__APP_DATA__=${JSON.stringify(data)}`,
++         }}
++      />
+        <script src="/build/main.js"></script>
+      </body>
+    </html>
+  )
+}
+export default Document
+```
+3. 改写home.js
+
+```js
+import React, { useState } from 'react';
+import {fetchHome} from '../core/api'
+const Home = ({staticContext}) => {
+  console.log('staticContext',staticContext)
+  const getInitialData = () => {
+    // 服务端渲染拿到的数据
+    if (staticContext) {
+      return staticContext
+    }
+    // 客户端渲染，拿到服务端传递过来的数据
+    if (window.__APP_DATA__) {
+      return window.__APP_DATA__
+    }
+    return {}
+  }
+  const [data, setData] = useState(getInitialData())
+
+  return (
+    <main>
+      <div>{data.title}</div>
+      <div>{data.desc}</div>
+    </main>
+  )
+}
+Home.getData = fetchHome
+
+export default Home
+```
+#### 客户端路由跳转数据获取
+
+上面home.js的写法有一定问题？
+
+- home.js客户端渲染从`window.__APP_DATA__`上获取数据，如果home跳转到user，那么user.js数据从哪获取呢？不能从`window.__APP_DATA__`获取了，user.js需要不同的数据。
+
+- `window.__APP_DATA__` 只能应用于首屏获取数据。
+
+4. 新建useData.js
+
+useData.js 是封装的一个hooks,用于处理数据
+```js
+import { useState, useEffect } from 'react'
+
+const useData = (staticContext, initial, getData) => {
+
+  // 初始化数据
+  const getInitialData = () => {
+    //  server render
+    if (staticContext) {
+      return staticContext
+    }
+    // client first render
+    if (window.__APP_DATA__) {
+      return window.__APP_DATA__
+    }
+    return initial
+  }
+  const [data, setData] = useState(getInitialData())
+
+  useEffect(() => {
+    // 客户端首次执行完以后，把window.__APP_DATA__清除掉；下个路由就可以请求数据了
+    if (window.__APP_DATA__) {
+      window.__APP_DATA__ = undefined
+      return
+    }
+    if (typeof getData === 'function') {
+      console.log('spa render')
+      getData().then(res => setData(res)).catch()
+    }
+  }, [])
+
+  return [data, setData]
+
+}
+
+export default useData
+```
+
+4. 改写home.js
+
+```js
+import React, { useState } from 'react';
+import {fetchHome} from '../core/api'
+import useData from '../core/useData'
+
+const Home = ({staticContext}) => {
+  const [data, setData] = useData(staticContext, { title: '', desc: ''}, fetchHome)
+  return (
+    <main>
+      <h1>{data.title}</h1>
+      <p>{data.desc}</p>
+    </main>
+  )
+}
+Home.getData = fetchHome
+
+export default Home
+```
