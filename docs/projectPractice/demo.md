@@ -663,3 +663,13 @@ Home.getData = fetchHome
 
 export default Home
 ```
+
+package.json
+
+```json
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rm -rf build && webpack --config ./webpack.config.js",
+    "start": "npm run build && nodemon ./src/server.js"
+  },
+```
