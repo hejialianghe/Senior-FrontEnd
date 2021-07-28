@@ -741,6 +741,10 @@ function work (){
 如果`setCount((state)=>{state+1})`参数是函数，那么需要依赖state，下一个要依赖上一个的state；所以需要都执行一遍才能
 拿到准确的值。
 
+循环链表
+
+- 是一种链式存储结构，整个链表形成一个环
+- 它的特点是最后一个节点的指针指向头节点
 ## 8.3 使用hooks会遇到的问题
 
 [react hooks遇到的问题](https://zh-hans.reactjs.org/docs/hooks-faq.html)

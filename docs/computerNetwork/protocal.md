@@ -410,6 +410,9 @@ Content-length: 0 # content-length
    - 在服务器删除资源（幂等性），同一个url多次请求只删除一次
 - OPTIONS
    - 跨域时复杂请求
+     - 使用了 put/delete/connnect/trace/patch
+     - 人为设置了一些header字段
+     - content-type的值不属于：application/x-www-form-urlencoded、multipart/form-data、text/plain
 - TRACE 用于显示调试信息
    - 多数网站不支持，会泄露一些调试信息或者只有内部的时候才支持，它能帮助你追述整个http的链路，假如http发出去，它可能接收第一个不是网关；
    它可能是代理服务器，再通过负载均衡才到达你真实的服务器，这里面有一定的路径，trace可以帮助我们请求http协议的网址时协议调试信息

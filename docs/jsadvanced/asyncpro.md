@@ -990,7 +990,7 @@ console.log(iterator.next()) // { done: true, value: undefined }
   iterator.next() // {value:1,done:false}
   iterator.next(4) // {value:6,done:false}
   iterator.next(5)// {value:8,done:false}
-  iterator.next() // {value:undefined,done:false}
+  iterator.next() // {value:undefined,done:true}
  ```
  运行流程：
   1. 第一次next遇到yield会把yield后面跟的表达式的值作为返回对象的value，这个表达式是1，所以value是1
