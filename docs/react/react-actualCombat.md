@@ -250,7 +250,7 @@ nameWrapper.setName(123)
 
 [更好的理解 TS 泛型](https://medium.com/@rossbulat/typescript-generics-explained-15c6493b510f)
 
-## 7.3 React 组件性能优化
+## 7.3 React 性能优化
 
 ### 7.3.1 React 组件性能探寻
 
@@ -291,7 +291,7 @@ export default class Home extends Component {
 
 ### 7.3.2 组件性能优化
 
-#### PureComponent
+#### 1. PureComponent
 
 - class 组件优化工具
 
@@ -337,7 +337,7 @@ class Child extends React.PureComponent {
 }
 ```
 
-#### memo 
+#### 2. memo 
 
 - 函数组件优化工具
 
@@ -376,17 +376,403 @@ function areEqual(prevProps, nextProps) {
 }
 export default React.memo(Child)
 ```
-#### 原生事件、定时器的销毁
+#### 3 原生事件、定时器的销毁
 
 ![](~@/react/reactNature.png)
 
-#### Web Workers API 尝试
+#### 4.使用不变的数据结构
+
+数据不变性不是架构或设计模式，而是一种固执己见的代码编写方式。这迫使您考虑如何组织应用程序数据流。在我看来，数据不变性是围绕严格的单向数据流进行的实践。
+
+优势：
+ - 零副作用
+ - 不可变数据对象更易于创建、测试和使用
+ - 容易跟踪变化
+
+案例：
+
+```js
+class Imu extends Component { 
+
+    state = {
+       users: []
+   }
+
+   addNewUser = () =>{
+       const users = this.state.users;
+       users.push({
+           userName: "robin",
+           email: "email@email.com"
+       });
+       this.setState({users: users});
+   }
+}
+```
+上面这种情况，user和this.state.users是同一个引用，我们直接修改user，相当于直接修改了this.state.users；react状态应该是不可变的,因为setState()之后，能替换调你在之前所做的修改
+
+直接修改state带来的问题：
+
+我们利用shouldComponentUpdate来判断是否重新渲染组件，this.state.users和nextState.user是同一个引用，所以即使数组变化了,React也不会重新渲染UI
+
+```js
+ shouldComponentUpdate(nextProps, nextState) {
+    if (this.state.users !== nextState.users) {
+      return true;
+    }
+    return false;
+  }
+```
+如何避免此类问题
+
+```js
+  addNewUser = () => {
+       this.setState(state => ({
+         users: state.users.concat({
+           timeStamp: new Date(),
+           userName: "robin",
+           email: "email@email.com"
+         })
+       }));
+   };
+```
+可以考虑以下不可变的方法：
+
+数组：[].concat 或 [...params]
+
+对象：Object.assign({}, ...)或 es6{...params}
+
+可变数据结构的优化库:
+
+1. mmutable.js
+
+2. react-copy-write
+
+#### 5. 拆分文件
+
+随着不断的添加新功能和依赖项，不只不觉你的项目变的巨大，我们可以考虑分离第三方包；把您的应用程序代码和第三方库分离，
+通过拆分文件，您的浏览器可以并行下载资源，减少等待时间，[SplitChunksPlugin](https://webpack.js.org/plugins/split-chunks-plugin/)
+
+#### 6. 依赖优化
+
+在优化应用程序代码的时候，有必要检查你在程序中使用了多少库的代码，例如你使用了Moment.js;这个库包含了许多你不需要的国家化语言包，那么您可以考虑使用moment-locales-webpack-plugin为您的最终包删除未使用的语言包。
+
+lodash，你可以用lodash-webpack-plugin删除未使用的功能
+
+#### 7. React.Fragments 用于避免多余HTML元素
+
+在react中我们必须用一个根元素包裹子元素，我们可以用React.Fragment进行包裹，在渲染的时候它并不会渲染成真的HTML元素
+
+```js
+class Comments extends React.PureComponent{
+    render() {
+        return (
+            <React.Fragment>
+                <h1>Comment Title</h1>
+                <p>comments</p>
+                <p>comment time</p>
+            </React.Fragment>
+        );
+    } 
+}
+
+// or
+
+class Comments extends React.PureComponent{
+    render() {
+        return (
+            <>
+                <h1>Comment Title</h1>
+                <p>comments</p>
+                <p>comment time</p>
+            </>
+        );
+    } 
+}
+```
+#### 8. 避免在渲染函数中使用内联函数定义
+
+由于函数是 JavaScript ( {} !== {})中的对象，因此当 React 进行 diff 检查时，内联函数将始终diff失败。此外，如果在 JSX 属性中使用箭头函数，则会在每个渲染上创建该函数的新实例。这可能会为垃圾收集器带来大量工作。
+
+```js
+ class CommentList extends React.Component {
+    state = {
+        comments: [],
+        selectedCommentId: null
+    }
+
+    render(){
+        const { comments } = this.state;
+        return (
+           comments.map((comment)=>{
+               return <Comment onClick={(e)=>{
+                    this.setState({selectedCommentId:comment.commentId})
+               }} comment={comment} key={comment.id}/>
+           }) 
+        )
+    }
+}
+
+```
+您可以定义箭头函数，而不是为 props 定义内联函数。
+
+```js
+default class CommentList extends React.Component {
+    state = {
+        comments: [],
+        selectedCommentId: null
+    }
+
+    onCommentClick = (commentId)=>{
+        this.setState({selectedCommentId:commentId})
+    }
+
+    render(){
+        const { comments } = this.state;
+        return (
+           comments.map((comment)=>{
+               return <Comment onClick={this.onCommentClick} 
+                comment={comment} key={comment.id}/>
+           }) 
+        )
+    }
+}
+```
+
+#### 9. 使用防抖节流
+
+节流：在规定时间内去触发一次，在这个时间内无论你做多少行为，我只触发一次行为
+
+防抖：防止事件频繁触发，只在用户停止行为后，在延迟之后的时间触发
+
+可以使用lodash
+
+```js
+import debouce from 'lodash.debounce';
+
+class SearchComments extends React.Component {
+ constructor(props) {
+   super(props);
+   this.state = { searchQuery: “” };
+ }
+
+ setSearchQuery = debounce(e => {
+   this.setState({ searchQuery: e.target.value });
+ }, 1000);
+
+ render() {
+   return (
+     <div>
+       <h1>Search Comments</h1>
+       <input type="text" onChange={this.setSearchQuery} />
+     </div>
+   );
+ }
+}
+```
+#### 10. 避免使用 Index 作为 Map 的 Key
+
+```js
+{
+    comments.map((comment, index) => {
+        <Comment 
+            {..comment}
+            key={index} />
+    })
+}
+```
+使用index可能导致你的应用程序显示不正确，因为在diff的时候会使用到key；当你在删除、添加、移动列表的时候，key值相同的
+元素已经不是同一个元素了。
+
+在某些情况下可以使用index作为key
+
+- 列表和项目是静态的
+- 列表中的项目没有 ID，列表永远不会被重新排序或过滤
+- 列表是不可变的
+
+#### 11. 避免用props初始组件的状态
+
+```js
+class EditPanelComponent extends Component {
+    
+    constructor(props){
+        super(props);
+
+        this.state ={
+            isEditMode: false,
+            applyCoupon: props.applyCoupon
+        }
+    }
+
+    render(){
+        return <div>
+                    {this.state.applyCoupon && 
+                    <>Enter Coupon: <Input/></>}
+               </div>
+    }
+}
+```
+如果在没有刷新组件的情况下更改了 props，则新的 props 值将永远不会分配给状态的applyCoupon,因为constructor只会在初始化的时候调用。
+
+解决方法：可以componentWillReceiveProps，可以通过props来更新状态
+
+```js
+    
+    constructor(props){
+        super(props);
+
+        this.state ={
+            isEditMode: false,
+            applyCoupon: props.applyCoupon
+        }
+    }
+
+    componentWillReceiveProps(nextProps){
+        if (nextProps.applyCoupon !== this.props.applyCoupon) {
+            this.setState({ applyCoupon: nextProps.applyCoupon })
+        }
+    }
+
+    render(){
+        return <div>{this.props.applyCoupon && 
+          <>Enter Coupon: <Input/></>}</div>
+    }
+}
+
+```
+
+#### 12. webpack 使用mode
+
+webpack4 ,mode设置为`production`,webpack会使用内置优化
+
+```js
+ module.exports = {
+      mode: 'production'
+    };
+```
+
+
+#### 13. 在 DOM 元素上传播 props
+
+这样做会添加未知的html属性，这是没有必要的
+
+```js
+const CommentsText = props => {
+    return (
+      <div {...props}>
+        {props.text}
+      </div>
+    );
+  };
+```
+
+可以设置特定属性
+
+```js
+const CommentsText = props => {
+    return (
+      <div specificAttr={props.specificAttr}>
+        {props.text}
+      </div>
+    );
+};
+```
+
+#### 14. CSS 动画代替 JS 动画
+
+动画对于流畅和愉悦的用户体验来说是不可避免的。有很多方法可以实现网页动画。一般来说，我们可以通过三种方式创建动画：
+
+CSS 过渡
+
+CSS 动画
+
+JavaScript
+#### 15. CDN
+
+CDN 可以将静态内容传输的更快，从您的网站或移动应用程序更快。
+
+#### 16 Web Workers API 尝试
 
 - Web Workers 使用后，Web应用程序可以：
- - 在独立于主线程的后台线程中运行一个脚本；
- - 在独立线程中执行费时的处理人物，避免一些耗时的任务阻断用户体验
+    - 在独立于主线程的后台线程中运行一个脚本；
+    - 在独立线程中执行费时的任务，避免一些耗时的任务阻断用户体验
 
-- 通信机制 Web Worker执行完耗时任务后与主线程的通信--postMessage
+- 通信机制 Web Worker执行完耗时任务后与主线程的通信
+  - postMessage
+
+```js
+// sort.worker.js
+export default  function sort() {
+    
+    self.addEventListener('message', e =>{
+        if (!e) return;
+        let posts = e.data;
+        
+        for (let index = 0, len = posts.length - 1; index < len; index++) {
+            for (let count = index+1; count < posts.length; count++) {
+                if (posts[index].commentCount > posts[count].commentCount) {
+                    const temp = posts[index];
+                    posts[index] = users[count];
+                    posts[count] = temp;
+                }
+            }
+        }
+        postMessage(posts);
+    });
+}
+export default Posts extends React.Component{
+
+    constructor(props){
+        super(posts);
+    }
+    state = {
+        posts: this.props.posts
+    }
+    componentDidMount() {
+        this.worker = new Worker('sort.worker.js');
+        
+        this.worker.addEventListener('message', event => {
+            const sortedPosts = event.data;
+            this.setState({
+                posts: sortedPosts
+            })
+        });
+    }
+
+    doSortingByComment = () => {
+        if(this.state.posts && this.state.posts.length){
+            this.worker.postMessage(this.state.posts);
+        }
+    }
+    
+    render(){
+        const posts = this.state.posts;
+        return (
+            <React.Fragment>
+                <Button onClick={this.doSortingByComment}>
+                    Sort By Comments
+                </Button>
+                <PostList posts={posts}></PostList>
+            </React.Fragment>
+        )
+    }
+}
+
+```
+#### 17. 虚拟化长列表
+
+列表虚拟化或窗口化是一种在呈现长数据列表时提高性能的技术。这种技术在任何给定时间只渲染一小部分行，并且可以显着减少重新渲染组件所需的时间，以及创建的 DOM 节点的数量。
+
+有一些流行的 React 库，比如react-window和react-virtualized，它们提供了几个可重用的组件来显示列表、网格和表格数据。
+
+#### 18. 服务端渲染
+
+可以参考最后一章，项目实战，有服务端渲染代码
+
+#### 19. 在 Web 服务器上启用 Gzip 压缩
+
+#### 总结
+
+建议先进行基准测试和测量性能。您可以考虑使用 Chrome 时间轴分析和可视化组件。可以查看哪些组件被卸载、安装、更新，以及它们相对于彼此所花费的时间。它将帮助您开始性能优化之旅。
 
 ### 7.3.3 扩展资料
 
