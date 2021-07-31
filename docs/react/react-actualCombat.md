@@ -353,6 +353,35 @@ function Child({seconds}){
 };
 export default React.memo(Child)
 ```
+不要以为子组件用React.memo就万事大吉了
+
+```js
+function Father({seconds}){
+    /*
+     我们向子组件传递函数，但是函数组件里的函数在每次更新的情况下，函数是重新创建的
+     那么子组件每次发现传递函数变化了，也会进行更新，那么你用React.memo进行优化就没有作用了
+     怎么解决呢？可以用useCallback进行包裹
+    */
+
+    //优化前
+    function change() {}
+
+    // 优化后
+    const change  = useCallback(()=>{
+
+    },[])
+    return (
+        <Child change={change}></Child>
+    )
+};
+
+function Child({seconds}){
+    return (
+        <div>I am update every {seconds} seconds</div>
+    )
+};
+export default React.memo(Child)
+```
 ::: warning
 React.memo()可接受2个参数，第一个参数为纯函数的组件，第二个参数用于对比props控制是否刷新，与shouldComponentUpdate()功能类似。[2]
 
@@ -374,7 +403,7 @@ function areEqual(prevProps, nextProps) {
     }
 
 }
-export default React.memo(Child)
+export default React.memo(Child,areEqual)
 ```
 #### 3 原生事件、定时器的销毁
 
@@ -770,6 +799,17 @@ export default Posts extends React.Component{
 
 #### 19. 在 Web 服务器上启用 Gzip 压缩
 
+#### 20. useMemo进行缓存大量计算数据，useCallback 进行缓存函数，避免重复创建
+
+在hooks章节有讲解
+
+```js
+const [state]=useState()
+function  compute () {
+
+}
+
+```
 #### 总结
 
 建议先进行基准测试和测量性能。您可以考虑使用 Chrome 时间轴分析和可视化组件。可以查看哪些组件被卸载、安装、更新，以及它们相对于彼此所花费的时间。它将帮助您开始性能优化之旅。
