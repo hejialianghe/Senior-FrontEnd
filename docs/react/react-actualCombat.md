@@ -810,6 +810,31 @@ function  compute () {
 }
 
 ```
+
+#### 21. 惰性初始化
+
+优化前：
+
+```js
+function table(props) {
+    const [state,setState]=useState(createRows(props.count))
+}
+// 上面这种写法，会导致，每次组件更新都要调用createRows，相当于下面的写法
+const values = createRows(props.count)
+const [state,setState]=useState(values)
+
+```
+优化后：
+
+```js
+function table(props) {
+    const [state,setState]=useState(()=>{
+       return createRows(props.count)
+    })
+}
+```
+
+
 #### 总结
 
 建议先进行基准测试和测量性能。您可以考虑使用 Chrome 时间轴分析和可视化组件。可以查看哪些组件被卸载、安装、更新，以及它们相对于彼此所花费的时间。它将帮助您开始性能优化之旅。
