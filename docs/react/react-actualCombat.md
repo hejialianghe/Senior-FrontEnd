@@ -802,15 +802,6 @@ export default Posts extends React.Component{
 #### 20. useMemo进行缓存大量计算数据，useCallback 进行缓存函数，避免重复创建
 
 在hooks章节有讲解
-
-```js
-const [state]=useState()
-function  compute () {
-
-}
-
-```
-
 #### 21. 惰性初始化
 
 优化前：
