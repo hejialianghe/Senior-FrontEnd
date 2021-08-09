@@ -831,6 +831,7 @@ function updateReducer(reducer, initialArg){
     let hook = updateWorkInProgressHook(); // 构建新的链表
     const queue = hook.queue;//hook自己的更新队列
 
+    // lastRenderedReducer用于得到最新的值
     queue.lastRenderedReducer = reducer;
 
     // currentHook是更新阶段的hook对象，记录了当前这个hook的memoizedState、queue、next等信息
@@ -848,7 +849,8 @@ function updateReducer(reducer, initialArg){
             const action = update.action;//action对象{type:'ADD'}
             newState = reducer(newState,action);//要使用update计算新状态
             update = update.next;
-        }while(update !== null && update !== first);   
+        }while(update !== null && update !== first);
+
         queue.pending = null;//更新过了可以清空更新环形链表
         hook.memoizedState =  newState;//让新的hook对象的memoizedState等于计算的新状态    
         queue.lastRenderedState = newState;//把新状态也赋值给lastRenderedState一份
@@ -864,17 +866,19 @@ updateWorkInProgressHook
 function updateWorkInProgressHook(){
 
     let nextCurrentHook;
-   //currentHook为null，说明执行的是第一个hook
+   //currentHook为null，说明执行的是第一个hook；currentHook就是老的hooks对象
     if(currentHook === null){
-       let current = currentlyRenderingFiber.alternate;//alternate属性 对应的是老的fiBer
+      
+      let current = currentlyRenderingFiber.alternate;//alternate属性 对应的是老的fiBer
       if (current !== null) {
-        // 老的fiber也就是上一次的fiber，memoizedState对应的是链表的第一个节点
+        // 老的fiber的memoizedState对应的是链表的第一个节点
         nextCurrentHook = current.memoizedState;
       } else {
         nextCurrentHook = null;
       }
 
     }else{
+      // 不是第一个hooks，那么指向下一个 hooks
         nextCurrentHook=currentHook.next;
     }
 
