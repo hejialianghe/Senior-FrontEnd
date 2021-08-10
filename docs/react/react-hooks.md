@@ -554,10 +554,8 @@ export function renderWithHooks(
   secondArg,
   ) {
 
-  /*
-    让currentlyRenderingFiber 指向 正在构建的hooks，
-    等更新的时候可以从currentlyRenderingFiber获取当前工作的Fiber
-  */
+   // currentlyRenderingFiber指向本次要构建的fiber（workInProgress）
+   // 要区分一下workInProgress和workInProgressHook，不要搞混了
     currentlyRenderingFiber = workInProgress; 
 
    //在执行组件方法之前，要清空hook链表 因为你肯定要创建新的hook链表，要把新的信息挂载到这2个属性上
@@ -841,13 +839,13 @@ function updateReducer(reducer, initialArg){
     const pendingQueue  = queue.pending;
 
     if(pendingQueue!==null){
-        //根据老的状态和更新队列里的更新对象计算新的状态
+      
         let first = pendingQueue.next;//第一个更新对象
-        let newState = current.memoizedState;//得到老状态
+        let newState = current.memoizedState;//拿到老状态
         let update = first;
         do{
-            const action = update.action;//action对象{type:'ADD'}
-            newState = reducer(newState,action);//要使用update计算新状态
+            const action = update.action;//action：就是传的参数，例如setState('参数')
+            newState = reducer(newState,action);//计算新状态，因为如果传的是函数，要依赖老状态
             update = update.next;
         }while(update !== null && update !== first);
 
@@ -868,7 +866,7 @@ function updateWorkInProgressHook(){
     let nextCurrentHook;
    //currentHook为null，说明执行的是第一个hook；currentHook就是老的hooks对象
     if(currentHook === null){
-      
+       // current:老的fiber、workInProgress:正在构建的fiber
       let current = currentlyRenderingFiber.alternate;//alternate属性 对应的是老的fiBer
       if (current !== null) {
         // 老的fiber的memoizedState对应的是链表的第一个节点
@@ -876,7 +874,6 @@ function updateWorkInProgressHook(){
       } else {
         nextCurrentHook = null;
       }
-
     }else{
       // 不是第一个hooks，那么指向下一个 hooks
         nextCurrentHook=currentHook.next;
