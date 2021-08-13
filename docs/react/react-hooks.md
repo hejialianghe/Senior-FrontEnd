@@ -897,8 +897,139 @@ function updateWorkInProgressHook(){
     return workInProgressHook;
 }
 ```
+### 8.2.3 useEffect
+#### :tomato: mount阶段 <Badge text="重要" ></Badge>
+
+1.  mountEffect
+
+```js
+/**
+ * @param {function} create - 回调函数
+ * @param {Array} deps - 依赖数组
+ * 
+*/
+function mountEffect(
+  create,
+  deps,
+) {
+  //  如果在代码中看见 __DEV__，可以不用关心，开发环境才会执行里面的代码，生产会tree shaking
+  if (__DEV__) {} 
+
+    return mountEffectImpl(
+      PassiveEffect | PassiveStaticEffect,
+      HookPassive,
+      create,
+      deps,
+    );
+  
+}
+```
+
+2. mountEffectImpl
+
+```js
+function mountEffectImpl(fiberFlags, hookFlags, create, deps): void {
+  const hook = mountWorkInProgressHook(); // 构建单向链表
+  const nextDeps = deps === undefined ? null : deps;
+  currentlyRenderingFiber.flags |= fiberFlags;
+  /*
+    每个hooks都会创建个hook对象，memoizedState在useState中保存的是state
+    在useEffect中保存的effect对象
+  */
+  hook.memoizedState = pushEffect(
+    HookHasEffect | hookFlags,
+    create,
+    undefined,
+    nextDeps,
+  );
+}
+```
+
+3. pushEffect
+
+```js
+
+function createFunctionComponentUpdateQueue() {
+  return {
+    lastEffect: null,
+  };
+}
+function pushEffect(tag, create, destroy, deps) {
+
+  // 创建effect对象
+  const effect = {
+    tag,
+    create,
+    destroy,
+    deps,
+    next:null
+  };
+
+  let componentUpdateQueue = currentlyRenderingFiber.updateQueue;
+  // 第一个useEffect对象
+  if (componentUpdateQueue === null) {
+  // componentUpdateQueue : {lastEffect:null}
+    componentUpdateQueue = createFunctionComponentUpdateQueue();
+
+    currentlyRenderingFiber.updateQueue =  componentUpdateQueue
+      // effect 赋值给effect.next；它们指向了内存中同一个地址
+      // componentUpdateQueue.lastEffect指向effect 也就是componentUpdateQueue.updateQueue.lastEffect指向了 Effect
+    componentUpdateQueue.lastEffect = effect.next = effect;
+  } else { // 存在多个Effect
+    
+    // componentUpdateQueue.lastEffect 就是上一个Effect对象
+      const lastEffect = componentUpdateQueue.lastEffect; //effect2
+      const firstEffect = lastEffect.next; // effect1
+      lastEffect.next = effect;
+      effect.next = firstEffect;
+      componentUpdateQueue.lastEffect = effect;
+    }
+
+  }
+  return effect;
+}
+// componentUpdateQueue.lastEffect 永远指向最新的
+```
+![](~@/react/effect.png)
+
+```js
+useEffect(()=>{consoe.log(1)},[])
+useEffect(()=>{consoe.log(2)},[])
+useEffect(()=>{consoe.log(3)},[])
+// 执行第一个effect
+const effect1={
+  create:()=>{consoe.log(1)},
+  deps:[]
+  next:effect1
+}
 
 
+// 执行第二个effect
+const effect1={
+  create:()=>{consoe.log(1)},
+  deps:[]
+  next:effect2
+}
+
+const effect2={
+  create:()=>{consoe.log(1)},
+  deps:[]
+  next:effect1
+}
+
+// 执行第三个effect
+const effect2={
+  create:()=>{consoe.log(1),
+  deps:[]
+  next:effect3
+}
+const effect3={
+  create:()=>{consoe.log(1),
+  deps:[]
+  next:effect1
+}
+
+```
 ## 8.3 使用hooks会遇到的问题
 
 [react hooks遇到的问题](https://zh-hans.reactjs.org/docs/hooks-faq.html)
