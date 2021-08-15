@@ -425,7 +425,9 @@ hooks导出部分在`react/packages/react/src/ReactHooks.js`，虽然在react导
 
 ![](~@/react/hooksupdate.png)
 
-最后一个更新会指向向第一个，形成一个环
+- 是一种链式存储结构，整个链表形成一个环
+- 它的特点是最后一个节点的指针指向头节点
+
 
 读源码，我们逐个击破的方式:
 
@@ -433,9 +435,14 @@ hooks导出部分在`react/packages/react/src/ReactHooks.js`，虽然在react导
 
 2. useEffect
 
-### 8.2.2 useState
+3. useRef
 
-hooks不是一个新api也不是一个黑魔法，就是单纯的一个数组，看下面的例子hooks api返回一个数组，一个是当前值，一个是设置当前值的函数。
+4. useCallback
+
+5. useMemo
+
+
+`hooks不是一个新api也不是一个黑魔法，就是单纯的一个数组，看下面的例子hooks api返回一个数组，一个是当前值，一个是设置当前值的函数。`
 
 #### hooks中的useState
 
@@ -514,9 +521,13 @@ export default ReactCurrentDispatcher;
 
 源码出处：`react/packages/react-reconciler/src/ReactFiberHooks.new.js`
 
-1. renderWithHooks
+ renderWithHooks
 
-为什么从renderWithhooks讲起？因为这个函数是调用函数组件的主要函数。
+- 为什么从renderWithhooks讲起？
+
+因为`renderWithhooks`是调用函数组件的主要函数，所有的函数组件执行，都会执行这个方法。
+
+下面我说的`hooks`代表组件中的hooks，例如：useState；`hook对象`是每次执行`hooks`所创建的对象
 
 ```js
 // 挂载和更新页面的时候，用的是不同的hooks，hooks在不同的阶段有不同的实现
@@ -561,6 +572,7 @@ export function renderWithHooks(
    //在执行组件方法之前，要清空hook链表 因为你肯定要创建新的hook链表，要把新的信息挂载到这2个属性上
    //在函数组件中 memoizedState以链表的形式存放hook信息，如果在class组件中，memoizedState存放state信息
     workInProgress.memoizedState = null;
+   // updateQueue存 effect对象，阅读完useEffect源码就会明白
     workInProgress.updateQueue = null;
 
     // current === null || current.memoizedState === null 说明是mount阶段，否则是update阶段
@@ -582,16 +594,12 @@ export function renderWithHooks(
 
     currentlyRenderingFiber = null;//渲染结束 后把currentlyRenderingFiber清空
     workInProgressHook = null;
-    // 指向当前调度的hooks节点
+    // 指向当前调度的hooks节点,主要用于update阶段
     currentHook = null;
 
     return children;
 }
 ```
-current：初始化阶段为null，当第一次渲染之后会产生一个fiber树，最终会换成真实的dom树
-
-workInProgress：正在构建的fiber树，更新过程中会从current赋值给workInProgress，更新完毕后将当前的
-workInProgress树赋值给current。
 
 ```js
 // 不在函数内写的hooks指向的函数
@@ -610,9 +618,38 @@ function throwInvalidHookError() {
   );
 }
 ```
-#### :tomato: mount阶段 <Badge text="重要" ></Badge>
+renderWithHooks主要做的事情：
 
-2.  mountState
+  1. 判断是mount阶段还是update阶段给ReactCurrentDispatcher.current赋值。
+  2. 执行组件函数，执行hooks。
+  3. 清空在执行hooks所赋值的全局对象，下一次更新函数需要再次用到。
+
+
+
+- 有几个memoizedState，需要注意：
+
+  1. `currentlyRenderingFiber.memoizedState` 是存整个链表，就是每次执行hooks就会创建hook对象，多个hooks所形成的链表。
+  2. `hook.memoizedState` 用于存当前执行的hooks的一些信息。
+
+- workInProgress和workInProgressHook：
+
+  1. `workInProgress` 正在构建的fiber
+  2. `workInProgressHook` 正在构建的hook对象
+
+- currentHook和workInProgressHook
+
+  1. `currentHook`主要用于更新阶段，在mount阶段创建了hook对象，在更新阶段我们需要取出来，需要复用上一次存的信息，`currentHook`就是正在执行的这个hooks上一次存的信息。
+  2. `workInProgressHook`正在创建的hook对象，在mount和update阶段都会创建。
+
+
+- current：初始化阶段为null，当第一次渲染之后会产生一个fiber树，最终会换成真实的dom树
+
+- workInProgress：正在构建的fiber树，更新过程中会从current赋值给workInProgress，更新完毕后将当前的
+workInProgress树赋值给current。
+
+### 8.2.2 useState
+#### :tomato: mount阶段 <Badge text="重要" ></Badge>
+#### 1. mountState
 
 初次挂载的时候，useState对应的函数是mountState
 
@@ -639,8 +676,8 @@ function mountState(
   const queue = (hook.queue = {
     pending: null, // 存放update对象
     dispatch: null,  // 放hooks更新函数
-    lastRenderedReducer: basicStateReducer, //用于得到最新的 state
-    lastRenderedState: initialState, // // 最后一次得到的 state
+    lastRenderedReducer: basicStateReducer, //它是一个函数， 用于得到最新的 state
+    lastRenderedState: initialState,  // 最后一次得到的 state
   });
 
 /*  
@@ -657,7 +694,11 @@ function mountState(
   return [hook.memoizedState, dispatch];
 }
 ```
-3. mountWorkInProgressHook
+mountState主要做的事情：
+
+1. 创建hook对象，在上面存上hooks信息，下次更新的时候可以从对象上获取。
+2. 返回一个数组，包括初始化的值和更新函数
+#### 2. mountWorkInProgressHook
 
 构建hooks单向链表，将组件中的hooks函数以链表的形式串连起来，并赋值给workInProgress的memoizedState；
 
@@ -665,8 +706,10 @@ function mountState(
 ```js
 function work (){
   const [name,setName]=useState('h') // hooks1
-  const [age,setAge]=useState(20) // hooks2
-  const [gender,setGender]=useState('男') // hooks3
+  const age=useRef(20) // hooks2
+   useEffect(()=>{
+
+   },[]) // hooks3
 }
  // 构建单向链表
  currentlyRenderingFiber.memoizedState={
@@ -674,7 +717,7 @@ function work (){
    next:{
       memoizedState:'20',
       next:{
-          memoizedState:'男',
+          memoizedState:effect,
           next:null
       }
    }
@@ -691,9 +734,9 @@ function work (){
 function mountWorkInProgressHook() {
   //创建一个hooks对象
   const hook  = { 
-    memoizedState: null, // 自己的状态，useState中保存state信息，useEffect中保存Effect对象，useMemo中保存缓存的值和依赖；useRef保存的是ref对象
-    baseState: null, //useState和useReducer中保存最新的更新队列
-    baseQueue: null,
+    memoizedState: null, // useState中保存state信息，useEffect中保存Effect对象，useMemo中保存缓存的值和依赖；useRef保存的是ref对象
+    baseState: null, // useState和useReducer中保存最新的state
+    baseQueue: null,// useState和useReducer中保存最新的更新队列
     queue: null, // 自己的更新队列，形成环状链表
     next: null, // 下一个更新，就是我们下的页面中下一个hooks
   };
@@ -702,7 +745,7 @@ function mountWorkInProgressHook() {
       //说明这是我们的第一个hook
         currentlyRenderingFiber.memoizedState = workInProgressHook = hook;
     } else {
-      // 说明第一个往后的hook
+       // 说明函数组件中不止一个hooks
         workInProgressHook = workInProgressHook.next = hook;
     }
     return workInProgressHook;
@@ -716,23 +759,23 @@ function mountWorkInProgressHook() {
       //说明这是我们的第一个hook
         currentlyRenderingFiber.memoizedState = workInProgressHook = hook;
     } else {
-      // 说明第一个往后的hook
+      // 说明函数组件中不止一个hooks
         workInProgressHook = workInProgressHook.next = hook;
     }
 
 ```
 
-1. 第一次我们创建了hook对象，在堆内存中开辟了一块空间， `currentlyRenderingFiber.memoizedState`、`workInProgressHook都指向了这个值，对象是引用类型值；我们称这个值为hooks1吧。
+1. 第一次我们创建了hook对象，在堆内存中开辟了一块空间， `currentlyRenderingFiber.memoizedState`、`workInProgressHook`都指向了这个值，对象是引用类型值；我们称这个值为hooks1吧。
 
 currentlyRenderingFiber.memoizedState = hooks1
 
-2. 第二次我们再次创建了hook对象，在堆内存中又开辟了一块空间，我们称这个值为hooks2吧，`workInProgressHook.next`指向了hooks2，也就是hooks1.next指向了hook2；因为当前的`workInProgressHook`和hooks指向同一个地址，只要有一个修改内存里的值，其他变量只要引用该值了，也会随之发生变化；最后又把hooks2又赋值给`workInProgressHook`，那么`workInProgressHook`又指向了hooks2
+2. 第二次我们再次创建了hook对象，在堆内存中又开辟了一块空间，我们称这个值为hooks2吧，`workInProgressHook.next`指向了hooks2，也就是hooks1.next指向了hook2；因为当前的`workInProgressHook`和hooks1指向同一个地址，只要有一个修改内存里的值，其他变量只要引用该值了，也会随之发生变化；最后又把hooks2又赋值给`workInProgressHook`，那么`workInProgressHook`又指向了hooks2。
 
 hooks1.next= hooks2
 
 workInProgressHook=hooks2
 
-3. 第三次我们再次创建了hook对象，在堆内存中又开辟了一块空间，我们称这个值为hooks3吧，hooks3又赋值给了`workInProgressHook.next`，现在的workInProgressHook和hooks2指向是同一个地址，那么我改变`workInProgressHook`的next就是改变hooks2的next。
+3. 第三次我们再次创建了hook对象，在堆内存中又开辟了一块空间，我们称这个值为hooks3吧，hooks3又赋值给了`workInProgressHook.next`，现在的workInProgressHook和hooks2指向是同一个地址，那么我改变`workInProgressHook.next`就是改变hooks2的next。
 
 hooks2.next= hooks3
 
@@ -740,13 +783,13 @@ workInProgressHook=hooks3
 
 workInProgressHook始终和最新hook对象指向同一个地址，这样就方便修改上一个hook对象的next
 
-4. dispatchAction
+#### 3. dispatchAction
 
 ```js
 /**
  * @param {*} fiber 当前正在使用的fiber
  * @param {*} queue 队列的初始对象
- * @param {*} action 更新函数
+ * @param {*} action 更新函数或者要更新的值
  * 
  */
 function dispatchAction(fiber, queue, action) {
@@ -759,7 +802,7 @@ function dispatchAction(fiber, queue, action) {
   }
   const pending = queue.pending;
   if (pending === null) {  // 证明第一次更新
-    update.next = update;//让自己和自己构建成一个循环链表 环状链表
+    update.next = update;//让自己和自己构建成一个环状链表
   } else { // 不是第一次更新
     update.next = pending.next;
     pending.next = update;
@@ -803,14 +846,9 @@ function work (){
 如果`setCount((state)=>{state+1})`参数是函数，那么需要依赖state，下一个要依赖上一个的state；所以需要都执行一遍才能
 拿到准确的值。
 
-循环链表
-
-- 是一种链式存储结构，整个链表形成一个环
-- 它的特点是最后一个节点的指针指向头节点
-
 #### :tomato: update阶段 <Badge text="重要" ></Badge>
 
-updateState
+#### 1.updateState
 
 ```js
 function basicStateReducer(state, action) {
@@ -827,12 +865,12 @@ function updateState(
 
 function updateReducer(reducer, initialArg){
     let hook = updateWorkInProgressHook(); // 构建新的链表
-    const queue = hook.queue;//hook自己的更新队列
+    const queue = hook.queue;//hooks自己的更新队列
 
-    // lastRenderedReducer用于得到最新的值
+    // lastRenderedReducer用于得到最新state，它是一个函数
     queue.lastRenderedReducer = reducer;
 
-    // currentHook是更新阶段的hook对象，记录了当前这个hook的memoizedState、queue、next等信息
+    // currentHook记录了当前这个hooks上一次存在链表上的memoizedState、queue、next等信息
     const current = currentHook;
 
    // pendingQueue就是更新队列的最后一个update对象
@@ -858,13 +896,13 @@ function updateReducer(reducer, initialArg){
 }
 
 ```
-updateWorkInProgressHook
+#### 2. updateWorkInProgressHook
 
 ```js
 function updateWorkInProgressHook(){
 
     let nextCurrentHook;
-   //currentHook为null，说明执行的是第一个hook；currentHook就是老的hooks对象
+   //currentHook为null，说明执行的是第一个hooks；currentHook就是老的hook对象
     if(currentHook === null){
        // current:老的fiber、workInProgress:正在构建的fiber
       let current = currentlyRenderingFiber.alternate;//alternate属性 对应的是老的fiBer
@@ -888,6 +926,7 @@ function updateWorkInProgressHook(){
         next:null
     }
 
+// 创建新链表
     if(workInProgressHook === null){
         currentlyRenderingFiber.memoizedState = workInProgressHook = newHook;
     }else{
@@ -899,8 +938,7 @@ function updateWorkInProgressHook(){
 ```
 ### 8.2.3 useEffect
 #### :tomato: mount阶段 <Badge text="重要" ></Badge>
-
-1.  mountEffect
+#### 1.  mountEffect
 
 ```js
 /**
@@ -925,10 +963,10 @@ function mountEffect(
 }
 ```
 
-2. mountEffectImpl
+#### 2. mountEffectImpl
 
 ```js
-function mountEffectImpl(fiberFlags, hookFlags, create, deps): void {
+function mountEffectImpl(fiberFlags, hookFlags, create, deps) {
   const hook = mountWorkInProgressHook(); // 构建单向链表
   const nextDeps = deps === undefined ? null : deps;
   currentlyRenderingFiber.flags |= fiberFlags;
@@ -945,7 +983,9 @@ function mountEffectImpl(fiberFlags, hookFlags, create, deps): void {
 }
 ```
 
-3. pushEffect
+#### 3. pushEffect
+
+pushEffect 创建effec对象，并形成环状链表存值与updateQueue上
 
 ```js
 
@@ -966,7 +1006,7 @@ function pushEffect(tag, create, destroy, deps) {
   };
 
   let componentUpdateQueue = currentlyRenderingFiber.updateQueue;
-  // 第一个useEffect对象
+  // 第一个useEffect
   if (componentUpdateQueue === null) {
   // componentUpdateQueue : {lastEffect:null}
     componentUpdateQueue = createFunctionComponentUpdateQueue();
@@ -975,11 +1015,11 @@ function pushEffect(tag, create, destroy, deps) {
       // effect 赋值给effect.next；它们指向了内存中同一个地址
       // componentUpdateQueue.lastEffect指向effect 也就是componentUpdateQueue.updateQueue.lastEffect指向了 Effect
     componentUpdateQueue.lastEffect = effect.next = effect;
-  } else { // 存在多个Effect
+  } else { // 存在多个useEffect
     
     // componentUpdateQueue.lastEffect 就是上一个Effect对象
-      const lastEffect = componentUpdateQueue.lastEffect; //effect2
-      const firstEffect = lastEffect.next; // effect1
+      const lastEffect = componentUpdateQueue.lastEffect; 
+      const firstEffect = lastEffect.next; 
       lastEffect.next = effect;
       effect.next = firstEffect;
       componentUpdateQueue.lastEffect = effect;
@@ -1026,13 +1066,217 @@ const effect2={
 const effect3={
   create:()=>{consoe.log(1),
   deps:[]
-  next:effect1
+  next:effect1  // effect1指向的是effect2
 }
 
 ```
+#### :tomato: update阶段 <Badge text="重要" ></Badge>
+
+#### 1. updateEffect
+
+```js
+function updateEffect(
+  create,
+  deps,
+) {
+
+  return updateEffectImpl(PassiveEffect, HookPassive, create, deps);
+}
+```
+#### 2. updateEffectImpl
+
+```js
+function areHookInputsEqual(
+  nextDeps,
+  prevDeps,
+) {
+
+  for (let i = 0; i < prevDeps.length && i < nextDeps.length; i++) {
+    if (is(nextDeps[i], prevDeps[i])) {
+      continue;
+    }
+    return false;
+  }
+  return true;
+}
+
+function updateEffectImpl(fiberFlags, hookFlags, create, deps) {
+// updateWorkInProgressHook可以往上看，就是创建新的hook对象，不过会复用上一次存的一些信息
+  const hook = updateWorkInProgressHook();
+
+  const nextDeps = deps === undefined ? null : deps;
+  let destroy = undefined;
+
+// currentHook 可以说是老的hook
+  if (currentHook !== null) {
+    // 拿到上一次存的effect对象
+    const prevEffect = currentHook.memoizedState;
+    destroy = prevEffect.destroy;
+    if (nextDeps !== null) {
+      const prevDeps = prevEffect.deps;
+      // 对比依赖对象，是否发生更新，没有更新就复用nextDeps
+      if (areHookInputsEqual(nextDeps, prevDeps)) {
+        pushEffect(hookFlags, create, destroy, nextDeps);
+        return;
+      }
+    }
+  }
+
+  currentlyRenderingFiber.flags |= fiberFlags;
+// deps里发生更新，就创建新的effect对象
+  hook.memoizedState = pushEffect(
+    HookHasEffect | hookFlags,
+    create,
+    destroy,
+    nextDeps,
+  );
+}
+
+```
+### 8.2.3 useRef
+####  mountRef (mount阶段)
+
+看起来很简单，就是把initialValue 赋值给hook.memoizedState，
+所以说只要弄懂useState、useEffect ，其他的看一眼就明白
+
+```js
+/**
+ * @param {any} initialValue - 初始化值
+ * 
+*/
+function mountRef(initialValue) {
+  const hook = mountWorkInProgressHook();
+  const ref =  initialValue;
+  hook.memoizedState = ref;
+  return ref;
+}
+```
+#### updateRef (update阶段)
+
+拿到上一次的值并返回
+
+```js
+/**
+ * @param {any} initialValue - 初始化值
+ * 
+*/
+function updateRef(initialValue) {
+  const hook = mountWorkInProgressHook();
+  const ref =  initialValue;
+  hook.memoizedState = ref;
+  return ref;
+}
+```
+
+### 8.2.4 useCallback
+#### mountCallback (mount阶段)
+
+把函数和依赖数组存到hook.memoizedState，并返回函数
+
+```js
+/**
+ * @param {function} callback - 函数
+ * @param {Array} deps - 依赖数组
+ * @return {function} callback
+*/
+
+function mountCallback(callback, deps) {
+  const hook = mountWorkInProgressHook();
+  const nextDeps = deps === undefined ? null : deps;
+  hook.memoizedState = [callback, nextDeps];
+  return callback;
+}
+```
+#### updateCallback  (update阶段)
+对比依赖是否变化，变化就返回最新的函数，没有变化就返回上一个函数
+
+```js
+/**
+ * @param {function} callback - 函数
+ * @param {Array} deps - 依赖数组
+ * @return {function} callback
+ * 
+*/
+function updateCallback(callback, deps) {
+  const hook = updateWorkInProgressHook();
+  const nextDeps = deps === undefined ? null : deps;
+  // prevState：[callback, nextDeps]
+  const prevState = hook.memoizedState;
+  if (prevState !== null) {
+    if (nextDeps !== null) {
+
+      const prevDeps = prevState[1];
+      if (areHookInputsEqual(nextDeps, prevDeps)) {
+        return prevState[0];
+      }
+    }
+  }
+  hook.memoizedState = [callback, nextDeps];
+  return callback;
+}
+```
+
+### 8.2.5 useMemo
+####  mountMemo (mount阶段)
+
+ 调用传入函数拿到返回值，把值和依赖数组存到hook.memoizedState，并返回值
+
+```js
+/**
+ * @param {function} nextCreate - 函数
+ * @param {Array} deps - 依赖数组
+ * @return {any} nextValue
+ * 
+*/
+
+function mountMemo(
+  nextCreate,
+  deps,
+) {
+  const hook = mountWorkInProgressHook();
+  const nextDeps = deps === undefined ? null : deps;
+  const nextValue = nextCreate();
+  hook.memoizedState = [nextValue, nextDeps];
+  return nextValue;
+}
+```
+####  updateMemo (update阶段)
+对比依赖是否变化，变化就返回最新的值，没有变化就返回上一个值
+
+```js
+/**
+ * @param {function} callback - 函数
+ * @param {Array} deps - 依赖数组
+ * @return {any} nextValue
+ * 
+*/
+
+function updateMemo(
+  nextCreate,
+  deps,
+) {
+  const hook = updateWorkInProgressHook();
+  const nextDeps = deps === undefined ? null : deps;
+  const prevState = hook.memoizedState;
+  if (prevState !== null) {
+    // Assume these are defined. If they're not, areHookInputsEqual will warn.
+    if (nextDeps !== null) {
+      const prevDeps = prevState[1];
+      if (areHookInputsEqual(nextDeps, prevDeps)) {
+        return prevState[0];
+      }
+    }
+  }
+  const nextValue = nextCreate();
+  hook.memoizedState = [nextValue, nextDeps];
+  return nextValue;
+}
+```
+
 ## 8.3 使用hooks会遇到的问题
 
 [react hooks遇到的问题](https://zh-hans.reactjs.org/docs/hooks-faq.html)
+
 [React Hooks完全上手指南](https://zhuanlan.zhihu.com/p/92211533)
 
 在工程中必须引入lint插件，并开启相应规则，避免踩坑。
