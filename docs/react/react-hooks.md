@@ -405,7 +405,7 @@ react-hooks的诞生，也不是说它能够完全代替class声明的组件，�
 ### 8.2.1 前言
 
 ::: warning
-阅读以下内容之前先了解一下，[hooks出现的动机](https://zh-hans.reactjs.org/docs/hooks-intro.html#motivation),同时也要熟悉hooks的用法，可以参考上一篇文章
+阅读以下内容之前先了解一下，[hooks出现的动机](https://zh-hans.reactjs.org/docs/hooks-intro.html#motivation),同时也要熟悉hooks的用法，可以参考上一篇文章；看完`useState`、`useEffect`源码，我相信你已经基本掌握了hooks；其它的很简单。
 :::
 
 废话不多说，我首先克隆一份代码下来
