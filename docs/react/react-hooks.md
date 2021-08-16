@@ -946,6 +946,10 @@ function updateWorkInProgressHook(){
  * @param {Array} deps - 依赖数组
  * 
 */
+
+ const PassiveEffect = 0b000000001000000000; // useEffect
+ const PassiveStaticEffect = 0b001000000000000000;
+
 function mountEffect(
   create,
   deps,
@@ -954,7 +958,7 @@ function mountEffect(
   if (__DEV__) {} 
 
     return mountEffectImpl(
-      PassiveEffect | PassiveStaticEffect,
+      PassiveEffect | PassiveStaticEffect, // 按位操作
       HookPassive,
       create,
       deps,
@@ -966,6 +970,12 @@ function mountEffect(
 #### 2. mountEffectImpl
 
 ```js
+
+// 位操作 ：| 、&
+
+const HookHasEffect= 0b001;
+ hookFlags = 0b100;
+
 function mountEffectImpl(fiberFlags, hookFlags, create, deps) {
   const hook = mountWorkInProgressHook(); // 构建单向链表
   const nextDeps = deps === undefined ? null : deps;
