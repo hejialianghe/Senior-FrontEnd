@@ -16,15 +16,24 @@
  ![](~@/jsasvanced/function.png)
 
  ```javascript
- // 我们直接打印fn会出现一段字符串
- console.log(fn)
-  f fn() {
+ function fn () {
       var t=10;
       var f=10;
       console.log(i+j)
   }
-  // 加上括号才执行里面的代码
-  fn() // 20
+ // 我们直接打印fn会出现一段字符串
+ console.log(fn)
+ /*
+  打印结果
+   f fn() {
+      var t=10;
+      var f=10;
+      console.log(i+j)
+  }
+ */
+
+ // 加上括号才执行里面的代码
+ fn() // 20
   ```
  
 ### 2.1.2 垃圾回收
@@ -222,48 +231,49 @@
 
  1. 案例1:对一个数组每项加+1
    ``` javascript
-        // 初级程序员
-        let arr =[1,2,3,4]
-        let newArr=[]
-        for (var i=0;i<arr.length; i++){
-          newArr.push(arr[i]+1)
-        }
-        console.log(newArr) //[2, 3, 4, 5]
+  // 初级程序员
+  let arr = [1, 2, 3, 4];
+  let newArr = [];
+  for (var i = 0; i < arr.length; i++) {
+    newArr.push(arr[i] + 1);
+  }
+  console.log(newArr); //[2, 3, 4, 5]
+
   ```
   ``` javascript
-      // 函数式编程
-        let arr =[1,2,3,4]
-        let newArr =(arr,fn)=>{
-            let res=[]
-          for (var i=0;i<arr.length; i++){
-            res.push(fn(arr[i]))
-           }
-           return res
-        }
-        let add= item=>item+1 //每项加1
-        let multi=item=>item*5 //每项乘5
-        let sum =newArr(arr,add)
-        let product =newArr(arr,multi)
-        console.log(sum,product); // [2, 3, 4, 5] [5, 10, 15, 20]
+  // 函数式编程
+  let arr = [1, 2, 3, 4];
+  let newArr = (arr, fn) => {
+    let res = [];
+    for (var i = 0; i < arr.length; i++) {
+      res.push(fn(arr[i]));
+    }
+    return res;
+  };
+  let add = (item) => item + 1; //每项加1
+  let multi = (item) => item * 5; //每项乘5
+  let sum = newArr(arr, add);
+  let product = newArr(arr, multi);
+  console.log(sum, product); // [2, 3, 4, 5] [5, 10, 15, 20]
   ```
   ### 2.3.2 纯函数
  含义：如果函数的调用参数相同，则永远返回相同的结果。它不依赖于程序执行期间函数外部任何状态或数据的变化，必须只依赖于其输入的参数(相同的输入，必须得到相同的输出)。
 
    ``` javascript
-        // 纯函数
-        const calculatePrice=（price，discount）=> price * discount
-        let price = calculatePrice（200，0，8）
-        console.log(price)
+   // 纯函数
+   const calculatePrice=（price，discount）=> price * discount
+   let price = calculatePrice（200，0，8）
+   console.log(price)
   ```
 
   ``` javascript
-        // 不纯函数
-        const calculatePrice=（price，discount）=>{
-          const dt= new Date().toISOString()
+ // 不纯函数
+  const calculatePrice=（price，discount）=>{
+        const dt= new Date().toISOString()
           console.log(`${dt}:${something}`)
           return something
-        }
-        foo('hello')
+   }
+  foo('hello')
   ```
   ### 2.3.3 函数副作用
   - 当调用函数时，除了返回函数值外，还对注调用函数产生附加的影响
