@@ -98,4 +98,3 @@
    console.log(insertionSort(arr)) // [ 1, 2, 3, 4, 5, 5 ]
   ```
   总结：现在可以用sort排序，可以看v8的源码去了解它[点击我](https://github.com/v8/v8/blob/master/third_party/v8/builtins/array-sort.tq)
-  
