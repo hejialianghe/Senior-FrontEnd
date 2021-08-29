@@ -153,6 +153,7 @@ module.exports = {
                 collapsable: false,
                 children: [
                   ["algorithm/",'解题思路'],
+                  ["algorithm/complexity",'复杂度'],
                   ["algorithm/sort",'排序算法专题'],
                   ["algorithm/base",'真题'],
                 ]
