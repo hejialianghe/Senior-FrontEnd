@@ -12,4 +12,3 @@ for (let i =1;i<arr.length;i++){
     arr[preIndex+1]=current
 }
 
-console.log('--------',arr)
