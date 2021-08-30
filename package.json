@@ -16,9 +16,18 @@
   "keywords": [],
   "author": "hejialiang",
   "license": "MIT",
+  "gitHooks": {
+    "pre-commit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.{md}": [
+      "prettier --write"
+    ]
+  },
   "devDependencies": {
     "@vuepress/plugin-active-header-links": "^1.8.2",
     "@vuepress/plugin-back-to-top": "^1.8.2",
+    "lint-staged": "^11.1.2",
     "vuepress": "^1.2.0"
   },
   "dependencies": {
