@@ -9,7 +9,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "vuepress dev docs",
-    "prettier": "prettier -w .",
+    "prettier": "prettier -w '**/*.{js,md,json}'",
     "build": "vuepress build docs",
     "upload-server": "sh deploy.sh",
     "changelog": "auto-changelog --remote upstream --commit-limit false"
@@ -21,7 +21,7 @@
     "pre-commit": "lint-staged"
   },
   "lint-staged": {
-    "*.{md}": [
+    "*.{md,js}": [
       "prettier --write"
     ]
   },
