@@ -62,7 +62,7 @@ type | commit 类型
 | docs  | 文档修改 |
 | style  | 代码格式修改，注意不是css修改 |
 | test  | 测试用例修改|
-| chore  | 其他修改，比如构建流出，依赖管理 |
+| chore  | 其他修改，比如构建，依赖管理 |
 
 scope | commit影响的范围
 比如：route、component、utils、build.....
