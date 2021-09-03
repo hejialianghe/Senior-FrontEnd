@@ -3,7 +3,7 @@
 
 ### 2.1.1 使用express启动Node服务器
 
-源码地址:/examples/react/simpleDemo
+[源码地址](https://github.com/hejialianghe/Senior-FrontEnd/tree/master/examples/react/simpleDemo)
 
 ```js
 const express = require('express')
@@ -118,7 +118,7 @@ app.listen(3001)
 
 ### 2.1.3 有交互事件的同构渲染
 
-源码地址:/examples/react/simpleDemo
+[源码地址](https://github.com/hejialianghe/Senior-FrontEnd/tree/master/examples/react/simpleDemo)
 
 1. 新建app.js
 
@@ -226,7 +226,7 @@ nodemon ./src/server.js 启动服务，可以看见页面用了ssr渲染，又�
 
 ## 2.2 实现SPA同构渲染
 
-源码地址:/examples/react/simpleDemo2
+[源码地址](https://github.com/hejialianghe/Senior-FrontEnd/tree/master/examples/react/simpleDemo-2)
 
 - react-router 基本的客户端路由实现
 - 理解无状态组件
@@ -350,8 +350,7 @@ module.exports = router
 
 ## 2.3 何时请求异步数据
 
-源码地址:/examples/react/simpleDemo3
-
+[源码地址](https://github.com/hejialianghe/Senior-FrontEnd/tree/master/examples/react/simpleDemo-3)
 ### 2.3.1 客户端请求的时机和实现
 
 推荐：componentDidmount、useEffect中发送请求
@@ -515,14 +514,13 @@ router.get("*", async function (req, res, next) {
 module.exports = router
 ```
 #### 总结：
-1. 源码地址:/examples/react/simpleDemo-3
-2. 服务端渲染是在渲染组件之前请求数据，然后利用`context`把值传到对应组件，这样就渲染出了有数据的组件。
-3. 客户端渲染可以在`componentDidmount、useEffect`中请求数据进行客户端渲染。
+
+1. 服务端渲染是在渲染组件之前请求数据，然后利用`context`把值传到对应组件，这样就渲染出了有数据的组件。
+2. 客户端渲染可以在`componentDidmount、useEffect`中请求数据进行客户端渲染。
 
 ## 2.4 客户端复用服务端数据
 
-源码地址:/examples/react/simpleDemo-4
-
+[源码地址](https://github.com/hejialianghe/Senior-FrontEnd/tree/master/examples/react/simpleDemo-4)
 #### 服务端怎样向客户端传递数据
 
 - 通过window全局变量
@@ -675,4 +673,3 @@ package.json
     "start": "npm run build && nodemon ./src/server.js"
   },
 ```
-[项目地址](https://github.com/hejialianghe/Senior-FrontEnd/tree/master/examples/react/simpleDemo-4)
