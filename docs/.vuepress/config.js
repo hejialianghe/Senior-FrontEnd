@@ -149,11 +149,12 @@ module.exports = {
               //   ]
               // },
               {
-                title: "算法",
+                title: "数据结构与算法",
                 collapsable: false,
                 children: [
-                  ["algorithm/",'解题思路'],
                   ["algorithm/complexity",'复杂度'],
+                  ["algorithm/dataStructure",'数据结构'],
+                  ["algorithm/thinking",'解题思路'],
                   ["algorithm/sort",'排序算法专题'],
                   ["algorithm/base",'真题'],
                 ]
