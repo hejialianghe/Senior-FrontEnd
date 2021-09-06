@@ -1,4 +1,4 @@
-const api=require('./api')
-module.exports=(app)=>{
-    app.use(api)
+const api = require('./api')
+module.exports = (app) => {
+  app.use(api)
 }

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Route, Switch, NavLink } from 'react-router-dom';
+import { Route, Switch, NavLink } from 'react-router-dom'
 import routes from '../core/routes.js'
 
 const App = () => {
@@ -15,8 +15,8 @@ const App = () => {
       </ul>
 
       <Switch>
-        {routes.map(route => (
-          <Route key={route.path}  {...route} />
+        {routes.map((route) => (
+          <Route key={route.path} {...route} />
         ))}
       </Switch>
     </div>

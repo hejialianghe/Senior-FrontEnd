@@ -65,11 +65,10 @@ console.log(bubbleSort2(arr)) // [ 1, 2, 3, 4, 5, 5 ]
 
 #### 个人理解：
 
-先把第2元素存起来，然后跟第1个的元素进行比较，如果小于第1个元素，那么第1个元素往后挪一个位置；第二个元素放在第一个元素的位置上，如果大于前面的数值，就不用动。
+先把第 2 元素存起来，然后跟第 1 个的元素进行比较，如果小于第 1 个元素，那么第 1 个元素往后挪一个位置；第二个元素放在第一个元素的位置上，如果大于前面的数值，就不用动。
 
-在把第 3 个元素存起来，跟第2个的元素进行比较，如果符合规则（小于前面的元素），第2个元素往后挪一位。
-存起来的元素在跟第1个元素比较，如果符合规则，第1个元素就往后挪一位，这时候前面没有元素可比，就把第3个元素放在第1个元素的位置上。需要注意的是如果不符合规则了，就是存的元素比比较元素大的时候，就不用往前比较了，可以插入当前的位置；在比较的过程中，被比较的元素在比较中符合规则就需要往后挪一位，这是给存起来的元素腾位置。
-
+在把第 3 个元素存起来，跟第 2 个的元素进行比较，如果符合规则（小于前面的元素），第 2 个元素往后挪一位。
+存起来的元素在跟第 1 个元素比较，如果符合规则，第 1 个元素就往后挪一位，这时候前面没有元素可比，就把第 3 个元素放在第 1 个元素的位置上。需要注意的是如果不符合规则了，就是存的元素比比较元素大的时候，就不用往前比较了，可以插入当前的位置；在比较的过程中，被比较的元素在比较中符合规则就需要往后挪一位，这是给存起来的元素腾位置。
 
 以此慢慢递进完成排序。
 
@@ -107,34 +106,35 @@ function insertionSort(src) {
 }
 console.log(insertionSort(arr)) // [ 1, 2, 3, 4, 5, 5 ]
 ```
+
 ## 3.3 选择排序
 
 个人理解：`寻找最小值`，第一次枚举会找到当前数组的最小的一个值，放在首位；就是首位跟最小值交换位置。
 第二次枚举会找到数组第二小值，然后第二位置的值跟第二小值交换位置，以此内推。
 由此可见每次枚举完，左边是排序好的，右边是待排序的。
+
 #### 菜鸟教程给出生动的展示图：[点击我](https://www.runoob.com/w3cnote/selection-sort.html)
 
 ```js
 function selectionSort(arr) {
-  
-    var len = arr.length;
-    var minIndex, temp;
-    for (var i = 0; i < len - 1; i++) {
-        minIndex = i;
-        for (var j = i + 1; j < len; j++) {
-            if (arr[j] < arr[minIndex]) {     // 寻找最小的数
-                minIndex = j;                 // 将最小数的索引保存
-            }
-        }
-        temp = arr[i];
-        arr[i] = arr[minIndex];
-        arr[minIndex] = temp;
-  
+  var len = arr.length
+  var minIndex, temp
+  for (var i = 0; i < len - 1; i++) {
+    minIndex = i
+    for (var j = i + 1; j < len; j++) {
+      if (arr[j] < arr[minIndex]) {
+        // 寻找最小的数
+        minIndex = j // 将最小数的索引保存
+      }
     }
-    return arr;
+    temp = arr[i]
+    arr[i] = arr[minIndex]
+    arr[minIndex] = temp
+  }
+  return arr
 }
-
 ```
+
 ## 3.4 快速排序
 
 个人理解：快速排序主要采用分治法，`定义基准值`；左边所有都比基准值小，右边所有的都比基准值大；然后左右两边在定义基准值再次重复上次动作。
@@ -142,50 +142,48 @@ function selectionSort(arr) {
 #### 菜鸟教程给出生动的展示图：[点击我](https://www.runoob.com/w3cnote/quick-sort-2.html)
 
 ```js
-
 function quickSort(arr, left = 0, right = arr.length - 1) {
   // 定义递归边界，若数组只有一个元素，则没有排序必要
-  if(arr.length > 1) {
-      // lineIndex表示下一次划分左右子数组的索引位
-      const lineIndex = partition(arr, left, right)
-      // 如果左边子数组的长度不小于1，则递归快排这个子数组
-      if(left < lineIndex-1) {
-        // 左子数组以 lineIndex-1 为右边界
-        quickSort(arr, left, lineIndex-1)
-      }
-      // 如果右边子数组的长度不小于1，则递归快排这个子数组
-      if(lineIndex<right) {
-        // 右子数组以 lineIndex 为左边界
-        quickSort(arr, lineIndex, right)
-      }
+  if (arr.length > 1) {
+    // lineIndex表示下一次划分左右子数组的索引位
+    const lineIndex = partition(arr, left, right)
+    // 如果左边子数组的长度不小于1，则递归快排这个子数组
+    if (left < lineIndex - 1) {
+      // 左子数组以 lineIndex-1 为右边界
+      quickSort(arr, left, lineIndex - 1)
+    }
+    // 如果右边子数组的长度不小于1，则递归快排这个子数组
+    if (lineIndex < right) {
+      // 右子数组以 lineIndex 为左边界
+      quickSort(arr, lineIndex, right)
+    }
   }
   return arr
 }
 // 以基准值为轴心，划分左右子数组的过程
 function partition(arr, left, right) {
   // 基准值默认取中间位置的元素
-  let pivotValue = arr[Math.floor(left + (right-left)/2)]
+  let pivotValue = arr[Math.floor(left + (right - left) / 2)]
   // 初始化左右指针
   let i = left
   let j = right
   // 当左右指针不越界时，循环执行以下逻辑
-  while(i<=j) {
-      // 左指针所指元素若小于基准值，则右移左指针
-      while(arr[i] < pivotValue) {
-          i++
-      }
-      // 右指针所指元素大于基准值，则左移右指针
-      while(arr[j] > pivotValue) {
-          j--
-      }
+  while (i <= j) {
+    // 左指针所指元素若小于基准值，则右移左指针
+    while (arr[i] < pivotValue) {
+      i++
+    }
+    // 右指针所指元素大于基准值，则左移右指针
+    while (arr[j] > pivotValue) {
+      j--
+    }
 
-      // 若i<=j，则意味着基准值左边存在较大元素或右边存在较小元素，交换两个元素确保左右两侧有序
-      if(i<=j) {
-          swap(arr, i, j)
-          i++
-          j--
-      }
-
+    // 若i<=j，则意味着基准值左边存在较大元素或右边存在较小元素，交换两个元素确保左右两侧有序
+    if (i <= j) {
+      swap(arr, i, j)
+      i++
+      j--
+    }
   }
   // 返回左指针索引作为下一次划分左右子数组的依据
   return i
@@ -193,10 +191,8 @@ function partition(arr, left, right) {
 
 // 快速排序中使用 swap 的地方比较多，我们提取成一个独立的函数
 function swap(arr, i, j) {
-  [arr[i], arr[j]] = [arr[j], arr[i]]
+  ;[arr[i], arr[j]] = [arr[j], arr[i]]
 }
-
 ```
-
 
 总结：现在可以用 sort 排序，可以看 v8 的源码去了解它[点击我](https://github.com/v8/v8/blob/master/third_party/v8/builtins/array-sort.tq)

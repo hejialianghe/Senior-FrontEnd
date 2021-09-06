@@ -1,4 +1,4 @@
-let  add =(a,b) => a+b
-module.exports= {
-    add
+let add = (a, b) => a + b
+module.exports = {
+  add,
 }

@@ -1,6 +1,6 @@
-## 2.1 搭建React环境
+## 2.1 搭建 React 环境
 
-安装nodejs+vscode，用nvm去管理node版本
+安装 nodejs+vscode，用 nvm 去管理 node 版本
 
 ### 2.1.1 create-react-app
 
@@ -8,11 +8,12 @@
 
 创建一个项目：npx create-react-app my-app
 
-建一个ts项目：npx create-react-app my-app --typescript
+建一个 ts 项目：npx create-react-app my-app --typescript
 
-终端输入：`yarn eject` （慎用，会把潜藏的react-script弹射到应用层，此操作不可逆）
+终端输入：`yarn eject` （慎用，会把潜藏的 react-script 弹射到应用层，此操作不可逆）
 
 文档目录
+
 ```bash
 my-app/
   README.md
@@ -31,20 +32,21 @@ my-app/
     index.js
     logo.svg
 ```
+
 ### 2.1.2 开始前的配置
 
-####  安装第三方插件
+#### 安装第三方插件
 
-在vscode商店里下载
+在 vscode 商店里下载
 
-- simple react  快速生成react模版，可以看插件具体文档
+- simple react 快速生成 react 模版，可以看插件具体文档
 
   编辑器中输入`cc`生成类组件，`sfc`生成函数示组件
 
-- prettier     格式化代码
+- prettier 格式化代码
 
 ```js
-  module.exports = {
+module.exports = {
   // 一行最多 100 字符
   printWidth: 100,
   // 使用 2 个空格缩进
@@ -81,15 +83,16 @@ my-app/
   // 换行符使用 lf
   // endOfLine: 'lf',
   // 在对象，数组括号与文字之间加空格 "{ foo: bar }"
-  bracketSpacing: true
+  bracketSpacing: true,
 }
 ```
 
-- 配置vscode编辑配置文件
+- 配置 vscode 编辑配置文件
 
 可以配置针对该项目的配置文件，在根目录创建.vscode/settings.json
 
-settings.json配置信息
+settings.json 配置信息
+
 ```js
 {
   "eslint.autoFixOnSave": true, //eslint保存格式化
@@ -116,12 +119,11 @@ settings.json配置信息
 
 [codesandbox](https://codesandbox.io/)
 
+## 2.2 组件和 JSX
 
-## 2.2 组件和JSX
+### 2.2.1 编写 react 元素
 
-### 2.2.1 编写react元素
-
-react 元素就是一个javascript对象
+react 元素就是一个 javascript 对象
 
 ```js{2}
 const element=<h1>hello react</h1>
@@ -141,133 +143,136 @@ type: "h1"
 
 ### 2.2.2 jsx
 
-jsx是javascript的语法扩展，使用xml标记的方式直接声明界面
+jsx 是 javascript 的语法扩展，使用 xml 标记的方式直接声明界面
 
-#### jsx是什么
+#### jsx 是什么
 
 - 不是模版引擎语言
 
-模版引擎语言Angular和vue中template的语法，js模版的作用就是输入模版的字符串+数据，经过渲染得到渲染过的字符串；jsx不是这样的模版引擎，它是带语法糖的ATX，其实是抽象的语法树，语法糖放到了构建阶段，所以运行的时候不需要解析。
+模版引擎语言 Angular 和 vue 中 template 的语法，js 模版的作用就是输入模版的字符串+数据，经过渲染得到渲染过的字符串；jsx 不是这样的模版引擎，它是带语法糖的 ATX，其实是抽象的语法树，语法糖放到了构建阶段，所以运行的时候不需要解析。
 
-- 声明示方式创建UI，处理UI逻辑
+- 声明示方式创建 UI，处理 UI 逻辑
 
-- 遵循javascript语法，无学习门槛
+- 遵循 javascript 语法，无学习门槛
 
-#### react通过babel将jsx转换浏览器识别的语言
+#### react 通过 babel 将 jsx 转换浏览器识别的语言
 
 [bable](https://www.babeljs.cn/repl)
 
 ```js
-const ele=<div className="root">
-         <p>hello</p>
-      </div>
+const ele = (
+  <div className="root">
+    <p>hello</p>
+  </div>
+)
 
-  // 转换后
-var ele = /*#__PURE__*/React.createElement("div", {
-  className: "root"
-}, /*#__PURE__*/React.createElement("p", null, "hello"));
+// 转换后
+var ele = /*#__PURE__*/ React.createElement(
+  'div',
+  {
+    className: 'root',
+  },
+  /*#__PURE__*/ React.createElement('p', null, 'hello')
+)
 // 通过createElement创建元素
 ```
-react通过层层嵌套的方法，把我们输入的语句转换成浏览器识别的代码，这就是`jsx`背后的原理
+
+react 通过层层嵌套的方法，把我们输入的语句转换成浏览器识别的代码，这就是`jsx`背后的原理
 
 #### jsx 规则
 
-- 在jsx中潜入表达式，用`{}`包裹
-- 大写开头作为定义组件，小写tag作为原生的dom节点
-- jsx标签可以有特定属性和子元素
-- jsx只能有一个根元素
+- 在 jsx 中潜入表达式，用`{}`包裹
+- 大写开头作为定义组件，小写 tag 作为原生的 dom 节点
+- jsx 标签可以有特定属性和子元素
+- jsx 只能有一个根元素
 
 #### jsx 实践
 
 ```jsx
-  class main extends Components {
-    constructor(props){
-      super(props)
-       this.state={
-        name:"zs",
-        age:12
-      }
-    }
-    addage(){
-      return this.state.age+12
-    }
-    render(){
-      const flag=true
-      const list = [1, 2, 3]
-      return (
-        // jsx需要一个根元素
-        <div className="main">
-          <p>{this.state.name}</p>
-          <p>{this.state.age>18?'成年':'未成年'}</p>
-          <p>{this.addage.call(this)}</p>
-            {/* 三元表达式判断显示元素 */}
-          {
-            flag?
-          <p>元素1</p>
-             :
-          <p>元素1</p>
-          }
-          {/* 只能用map循环 */}
-          {list.map((item) => {
-            return <div key='item'>{item}</div>
-          })}
-        </div>
-      )
+class main extends Components {
+  constructor(props) {
+    super(props)
+    this.state = {
+      name: 'zs',
+      age: 12,
     }
   }
+  addage() {
+    return this.state.age + 12
+  }
+  render() {
+    const flag = true
+    const list = [1, 2, 3]
+    return (
+      // jsx需要一个根元素
+      <div className="main">
+        <p>{this.state.name}</p>
+        <p>{this.state.age > 18 ? '成年' : '未成年'}</p>
+        <p>{this.addage.call(this)}</p>
+        {/* 三元表达式判断显示元素 */}
+        {flag ? <p>元素1</p> : <p>元素1</p>}
+        {/* 只能用map循环 */}
+        {list.map((item) => {
+          return <div key="item">{item}</div>
+        })}
+      </div>
+    )
+  }
+}
 ```
-jsx需要一个根元素包裹，因为jsx是通过babel进行转译，其实就是通过`React.createElement()`，它的第一个参数需要一个元素，如果出现2个就无法识别了
+
+jsx 需要一个根元素包裹，因为 jsx 是通过 babel 进行转译，其实就是通过`React.createElement()`，它的第一个参数需要一个元素，如果出现 2 个就无法识别了
 
 #### Fragments
 
-用Fragments替换根元素，而且此标签不渲染到页面中
+用 Fragments 替换根元素，而且此标签不渲染到页面中
 
 ```jsx
-  class main extends Components {
-    render(){
-      return (
-        <React.Fragment>
-          <p>{this.state.name}</p>
-          <p>{this.state.age>18?'成年':'未成年'}</p>
-          <p>{this.addage()}</p>
-       </React.Fragment>
-      )
-    }
+class main extends Components {
+  render() {
+    return (
+      <React.Fragment>
+        <p>{this.state.name}</p>
+        <p>{this.state.age > 18 ? '成年' : '未成年'}</p>
+        <p>{this.addage()}</p>
+      </React.Fragment>
+    )
   }
-  // 或者用react提供的简洁方法
-    class main extends Components {
-    render(){
-      return (
-        <>
-          <p>{this.state.name}</p>
-          <p>{this.state.age>18?'成年':'未成年'}</p>
-          <p>{this.addage()}</p>
-       </>
-      )
-    }
+}
+// 或者用react提供的简洁方法
+class main extends Components {
+  render() {
+    return (
+      <>
+        <p>{this.state.name}</p>
+        <p>{this.state.age > 18 ? '成年' : '未成年'}</p>
+        <p>{this.addage()}</p>
+      </>
+    )
   }
+}
 ```
-为什么使用Fragments
+
+为什么使用 Fragments
 
 - 可以包含并列的子元素
-- 编写表格组件，包裹子元素让html生效
+- 编写表格组件，包裹子元素让 html 生效
 
 ### 2.2.3 拓展学习资料
 
-[Babel和ATS 抽象语法树1](https://juejin.im/post/5ab9f2f3f265da239b4174f0)
+[Babel 和 ATS 抽象语法树 1](https://juejin.im/post/5ab9f2f3f265da239b4174f0)
 
-[Babel和ATS 抽象语法树2](https://github.com/barretlee/babel-plugin-ast)
+[Babel 和 ATS 抽象语法树 2](https://github.com/barretlee/babel-plugin-ast)
 
 ## 2.3 props、列表渲染、条件渲染
 
-什么是props？
+什么是 props？
 
-当react元素作为自定义组件，将jsx所接受的属性转换成单个对象传递给组件，这个对象被称为“props”（就是父组件传递给子组件的对象）
+当 react 元素作为自定义组件，将 jsx 所接受的属性转换成单个对象传递给组件，这个对象被称为“props”（就是父组件传递给子组件的对象）
 
-- props是组件的固有属性
-- 不可在组件内部对props进行修改
-- 更新props：需要通过父组件重新传入新的props，更新子组件（单向数据流）
-
+- props 是组件的固有属性
+- 不可在组件内部对 props 进行修改
+- 更新 props：需要通过父组件重新传入新的 props，更新子组件（单向数据流）
 
 ### 2.3.1 示例
 
@@ -278,23 +283,24 @@ const listData={name:'react'}
     return (
       <div>
         {/* 传递数据listData*/}
-        <ListItem data={listData}></ListItem> 
+        <ListItem data={listData}></ListItem>
       <div>
     )
   }
 ```
+
 ```jsx
   // 子组件
   class ListItem extends Component {
    constructor(props){
      super(props) //子类中调用父类构造函数
    }
-    render() { 
-        return ( 
+    render() {
+        return (
             <div>
              <div>
              {/* 通过props拿到值 */}
-              {this.props.data.name}  
+              {this.props.data.name}
             <div>
           <div>
          );
@@ -305,10 +311,11 @@ const listData={name:'react'}
 #### 函数示组件
 
 - 函数组件也叫无状态组件
-- 组件内部没有this
+- 组件内部没有 this
 - 没有声明周期
 
 改写如下
+
 ```jsx
   // 子组件
   funtion ListItem (props){
@@ -316,12 +323,13 @@ const listData={name:'react'}
       <div>
         <div>
           {/* 通过props拿到值 */}
-         {props.data.name}  
+         {props.data.name}
         <div>
       <div>
     )
   }
 ```
+
 当前组件如果是纯展示组件，可以用函数组件，函数组件是一个纯函数，用函数组件可以得到性能的提升
 
 ### 2.3.2 列表渲染
@@ -369,7 +377,7 @@ const listData=[{name:'react',id:1},{name:'vue',id:2}]
       <div className='listItem'>
         {/* 使用三目运算符*/}
         <div className={`thend-grid`${this.props.data.name==='react'?'-blue':'-green'}}>
-         {this.props.data.name==='react'?'jsx':'template'}  
+         {this.props.data.name==='react'?'jsx':'template'}
         <div>
           {/*使用函数做条件判断*/}
         {this.renderList.call(this)}
@@ -379,7 +387,7 @@ const listData=[{name:'react',id:1},{name:'vue',id:2}]
     )
    }
   }
-  
+
 ```
 
 ### 2.3.4 拓展学习资料
@@ -396,10 +404,10 @@ const listData=[{name:'react',id:1},{name:'vue',id:2}]
   <div style={{fontSize:18;color:red}}></div>
 ```
 
-### 2.4.2 引入css样式表
+### 2.4.2 引入 css 样式表
 
 ```jsx
-     src/   
+     src/
         components/
           ListItem/
             index.jsx
@@ -410,12 +418,12 @@ const listData=[{name:'react',id:1},{name:'vue',id:2}]
     }
 
  //在ListItem导入
-    import './index.css' 
+    import './index.css'
     class ListItem extends Component {
      constructor(props){
      super(props) //子类中调用父类构造函数
    }
- 
+
    render(){
     return (
       <div className='listItem'>
@@ -425,16 +433,17 @@ const listData=[{name:'react',id:1},{name:'vue',id:2}]
    }
   }
 ```
-上面的在index.css写法，里面的样式是全局样式，会造成全局污染，可以用css module解决
+
+上面的在 index.css 写法，里面的样式是全局样式，会造成全局污染，可以用 css module 解决
 
 #### css module
 
-- 不使用选择器，使用class名定义样式
-- 不层叠class，使用一个class定义样式
-- 用过compose来组合
+- 不使用选择器，使用 class 名定义样式
+- 不层叠 class，使用一个 class 定义样式
+- 用过 compose 来组合
 
 ```jsx
-       src/   
+       src/
         components/
           ListItem/
             index.jsx
@@ -445,12 +454,12 @@ const listData=[{name:'react',id:1},{name:'vue',id:2}]
     }
 
  //在ListItem导入对象
-    import style from 'index.module.css' 
+    import style from 'index.module.css'
     class ListItem extends Component {
      constructor(props){
      super(props) //子类中调用父类构造函数
    }
- 
+
    render(){
     return (
       <div className='listItem'>
@@ -461,15 +470,15 @@ const listData=[{name:'react',id:1},{name:'vue',id:2}]
   }
 ```
 
-### 2.4.3 css管理进阶
+### 2.4.3 css 管理进阶
 
-css管理工具
+css 管理工具
 
 - Styled-component
 - Classnames
 
 ```jsx
-       src/   
+       src/
         components/
           ListItem/
             index.jsx
@@ -483,7 +492,7 @@ css管理工具
     }
 
  //在ListItem导入对象
-    import style from 'index.module.css' 
+    import style from 'index.module.css'
     import classnames from 'classnames/bind'
     const cls=classnames.bind(style)
 
@@ -492,7 +501,7 @@ css管理工具
      constructor(props){
      super(props) //子类中调用父类构造函数
    }
- 
+
    render(){
      const flag=true
      const _cn=cn({
@@ -515,6 +524,6 @@ css管理工具
 
 [css module](http://www.ruanyifeng.com/blog/2016/06/css_modules.html)
 
-[styled   component](https://www.styled-components.com/)
+[styled component](https://www.styled-components.com/)
 
-[在React中使用css预编译](https://juejin.im/post/5c3d67066fb9a049f06a8323   )
+[在 React 中使用 css 预编译](https://juejin.im/post/5c3d67066fb9a049f06a8323)

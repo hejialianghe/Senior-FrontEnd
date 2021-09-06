@@ -1,12 +1,12 @@
 import axios from 'axios'
 
 const req = axios.create({
-  baseURL:'http://localhost:3003/api',
-});
+  baseURL: 'http://localhost:3003/api',
+})
 
 req.interceptors.response.use(function (response) {
-  return response.data;
-});
+  return response.data
+})
 
 // 请求首页
 export const fetchHome = () => req.get('/home')

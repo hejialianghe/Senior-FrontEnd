@@ -1,7 +1,5 @@
-
-function add (){
-    console.log('hello work');
+function add() {
+  console.log('hello work')
 }
 
-module.exports=add
-
+module.exports = add

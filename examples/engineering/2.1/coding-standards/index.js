@@ -1,4 +1,2 @@
-class A {
- 
-}
+class A {}
 new A()

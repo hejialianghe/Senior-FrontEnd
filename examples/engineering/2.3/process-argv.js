@@ -1,3 +1,3 @@
-process.argv.forEach((val,index)=>{
-    console.log(`${index}:${val}`)
+process.argv.forEach((val, index) => {
+  console.log(`${index}:${val}`)
 })

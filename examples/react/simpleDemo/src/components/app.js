@@ -1,9 +1,7 @@
-import React from 'react';
+import React from 'react'
 
 const App = () => {
-    return (<div onClick={() => alert('hello')}>
-        client
-    </div> );
+  return <div onClick={() => alert('hello')}>client</div>
 }
- 
-export default App;
+
+export default App

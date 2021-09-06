@@ -1,12 +1,12 @@
 ## 8.1 真机远程代码调试
 
-### 8.1.1 ios真机设备调试
+### 8.1.1 ios 真机设备调试
 
 1. 在手机是上开启网页检查器
 
 设置-> safari 浏览器 -> 高级 -> 网页检测器
 
-2. 开启Safari上的Develop功能
+2. 开启 Safari 上的 Develop 功能
 
 菜单 -> Preferences（偏好设置） -> Advanced（高级）
 
@@ -16,25 +16,25 @@
 
 - 信任电脑
 
-4. 打开devTool
+4. 打开 devTool
 
-Develop -> 你的ios设备 -> 要调试的页面
+Develop -> 你的 ios 设备 -> 要调试的页面
 
 ![](~@/engineering/connect.png)
 
-### 8.1.2 Android真机设备调试
+### 8.1.2 Android 真机设备调试
 
-1. 在手机上开启USB调试功能
+1. 在手机上开启 USB 调试功能
 
-设置-> 开发者选项 -> USB调试
+设置-> 开发者选项 -> USB 调试
 
 2. 使用数据线连接手机和开发主机
 
-- 允许USB调试
+- 允许 USB 调试
 
-3. 打开Chrome DevTools
+3. 打开 Chrome DevTools
 
-- 在地址栏输入chrome://inspect
+- 在地址栏输入 chrome://inspect
 - 确保开启了 Discover USB devices
 
 ![](~@/engineering/andconnect.png)
@@ -42,17 +42,18 @@ Develop -> 你的ios设备 -> 要调试的页面
 ## 8.2 无线调试工具-Weinre
 
 - 无需数据线
-- pc和移动都可以调试
+- pc 和移动都可以调试
 
 1. 环境准备与安装
 
-- 环境：任何node.js 环境
+- 环境：任何 node.js 环境
 - 安装：`npm install -g weinre`
 
 ```bash
  weinre -h  #获取帮助信息
  weinre --boundHost=-all- --httpPort=1000 # 启动，boundHost为all是允许本机所有有效ip访问，默认端口8080
 ```
+
 - 浏览打开：ip:1000 或 http://localhost:1000/
 
 ![](~@/engineering/weinre.png)
@@ -68,56 +69,56 @@ Develop -> 你的ios设备 -> 要调试的页面
 
 3. 调试
 
-调试移动手机的页面需要手机访问局域网内的页面服务（例如react开启了3000端口的服务，那么手机访问ip+3000）
+调试移动手机的页面需要手机访问局域网内的页面服务（例如 react 开启了 3000 端口的服务，那么手机访问 ip+3000）
 
 ![](~@/engineering/weinreremote.png)
 
 扩展
 
-[weinre官网](https://people.apache.org/~pmuellr/weinre/docs/latest/Home.html)
+[weinre 官网](https://people.apache.org/~pmuellr/weinre/docs/latest/Home.html)
 
-##  8.3 在移动端调试
+## 8.3 在移动端调试
 
-主流的移动端devTool
+主流的移动端 devTool
 
 - vConsole
 - eruda
 
 扩展资料
 
-[vConsole项目主页](https://github.com/Tencent/vConsole)
+[vConsole 项目主页](https://github.com/Tencent/vConsole)
 
-[eruda项目主页](https://github.com/liriliri/eruda)
+[eruda 项目主页](https://github.com/liriliri/eruda)
 
-[创建一个vConsole 插件](https://github.com/Tencent/vConsole/blob/dev/doc/plugin_building_a_plugin.md)
+[创建一个 vConsole 插件](https://github.com/Tencent/vConsole/blob/dev/doc/plugin_building_a_plugin.md)
 
-
-##  8.4 使用代理服务器进行调试（charles）
+## 8.4 使用代理服务器进行调试（charles）
 
 ### 8.4.1 常见的代理服务器
 
 - Fiddler
+
   - C#编写
-  - 正式版仅支持Windows
+  - 正式版仅支持 Windows
   - 请求展示：时间顺序
-  - 支持解析HTTPS请求
+  - 支持解析 HTTPS 请求
   - 免费
 
 - Charles
-  - java编写
+  - java 编写
   - 多平台支持
   - 请求展示：树状结构
-  - 不支持直接解析HTTPS请求
-  -  付费获得更好体验
+  - 不支持直接解析 HTTPS 请求
+  - 付费获得更好体验
 
-### 8.4.2 HTTP抓包
+### 8.4.2 HTTP 抓包
 
 1. 移动端配置（配置代理）
 
-点击手机连接的Wi-Fi->HTTP代理->配置代理
+点击手机连接的 Wi-Fi->HTTP 代理->配置代理
 
-- 服务器：填入电脑的ip地址(可以在charles查看 help->Local IP Address)
-- 端口：默认是8888
+- 服务器：填入电脑的 ip 地址(可以在 charles 查看 help->Local IP Address)
+- 端口：默认是 8888
 
 2. 开始抓包
 
@@ -125,72 +126,73 @@ Develop -> 你的ios设备 -> 要调试的页面
 
 ![](~@/engineering/charles1.png)
 
-### 8.4.3 HTTPS抓包
+### 8.4.3 HTTPS 抓包
 
-charles不能直接抓包https，所以我们还需要进行以下操作
+charles 不能直接抓包 https，所以我们还需要进行以下操作
 
 1. 移动端配置代理
 
- 与上面http配置完全相同<font color="red">**（切记！！！这一步一定要做，只有配置了代理服务，才能下载证书，因为这是你电脑上charles给你颁发的，你换了电脑还需要另一个电脑给你颁发）**</font>
+与上面 http 配置完全相同<font color="red">**（切记！！！这一步一定要做，只有配置了代理服务，才能下载证书，因为这是你电脑上 charles 给你颁发的，你换了电脑还需要另一个电脑给你颁发）**</font>
 
 2. 添加要解析的域名列表
 
-- 菜单栏Proxy-> SSL Proxying Settings
-- 在Host一栏设置要解析的域名，也可以*表示所有的HTTPS都做解析,port:443；点击ok后重启charles。
+- 菜单栏 Proxy-> SSL Proxying Settings
+- 在 Host 一栏设置要解析的域名，也可以\*表示所有的 HTTPS 都做解析,port:443；点击 ok 后重启 charles。
 
 ![](~@/engineering/charles2.png)
 
-<font color="red">**设置后重启charles**</font>
+<font color="red">**设置后重启 charles**</font>
 
-3. 信任Charles根证书
+3. 信任 Charles 根证书
 
 - 在移动端用浏览器访问`https:chls.pro/ssl`下载证书描述文件
   - 安卓：直接安装即可
   - IOS：
-       1. 在设置-通用-描述文件与设置管理中安装证书，
-       2. 然后开启 设置-通用-关于本机-针对根证书启用完全信任
+    1.  在设置-通用-描述文件与设置管理中安装证书，
+    2.  然后开启 设置-通用-关于本机-针对根证书启用完全信任
 
-<font color="red">**（当你访问上面chls网站时，电脑上charles会有一个弹窗询问你是否允许给手机安装证书，你要点同意（allow））**</font>
+<font color="red">**（当你访问上面 chls 网站时，电脑上 charles 会有一个弹窗询问你是否允许给手机安装证书，你要点同意（allow））**</font>
 
 :tomato: HTTPS 协议
 
-- https = http + sll（secure  sockets layer）
+- https = http + sll（secure sockets layer）
 
-发送一个HTTPS请求的过程简单来说客户端是向服务端索取一个公钥放在客户端，公钥的载体就是数字证书；客户端通过公钥加密，服务端通过私钥解密。
+发送一个 HTTPS 请求的过程简单来说客户端是向服务端索取一个公钥放在客户端，公钥的载体就是数字证书；客户端通过公钥加密，服务端通过私钥解密。
 
-:tomato: charles 代理HTTPS请求的机制
+:tomato: charles 代理 HTTPS 请求的机制
 
-charles做客户端和服务端的中介，代理了https请求；charles会动态为每个服务器生成由charles根证书签发的数字证书；当请求产生时客户端收到的不是
-服务端的原始证书而是charles签发的证书，原始证书是保存在charles上的；客户端与服务端的通信是由charles公钥加密的，而charles与原始服务器的通信是
-由服务端的原始证书加密的，charles通过自己的私钥解密，所以我们能通过charles看见未加密的数据。
+charles 做客户端和服务端的中介，代理了 https 请求；charles 会动态为每个服务器生成由 charles 根证书签发的数字证书；当请求产生时客户端收到的不是
+服务端的原始证书而是 charles 签发的证书，原始证书是保存在 charles 上的；客户端与服务端的通信是由 charles 公钥加密的，而 charles 与原始服务器的通信是
+由服务端的原始证书加密的，charles 通过自己的私钥解密，所以我们能通过 charles 看见未加密的数据。
 
-:tomato:  可能出现的问题
+:tomato: 可能出现的问题
 
 1. 开启后电脑浏览器无法打开网页
 
-关掉charles的External Proxy setting：点击顶部Proxy-> 去掉勾选 External Proxy Settings
+关掉 charles 的 External Proxy setting：点击顶部 Proxy-> 去掉勾选 External Proxy Settings
 
 2. 开启后手机浏览器无法打开网页
-   -  要保证电脑和手机同一个Wi-Fi,手机上填的代理服务器ip不要填错了，可以查看charles：Help/Local IP Address；端口一般是8888
-   -  打开https的网站，会提醒不是安全连接，说明你证书没有安装正确，或者没有信任
-   -  一般就上诉2个问题，也可以重启试试
 
-3. 关闭charles后 无法联网
+   - 要保证电脑和手机同一个 Wi-Fi,手机上填的代理服务器 ip 不要填错了，可以查看 charles：Help/Local IP Address；端口一般是 8888
+   - 打开 https 的网站，会提醒不是安全连接，说明你证书没有安装正确，或者没有信任
+   - 一般就上诉 2 个问题，也可以重启试试
 
-  打开网络偏好设置-> 高级 -> 代理 -> 检测网页代理和安全网页代理是否开启（不需要开启，你关闭charles后就没有代理服务器了，记得手机也取消代理配置）
+3. 关闭 charles 后 无法联网
 
-4. 抓取手机端的返回的是unknow
+打开网络偏好设置-> 高级 -> 代理 -> 检测网页代理和安全网页代理是否开启（不需要开启，你关闭 charles 后就没有代理服务器了，记得手机也取消代理配置）
+
+4. 抓取手机端的返回的是 unknow
 
 - 确保证书在手机端被信任
 
--  safari浏览器访问`https:chls.pro/ssl`下载证书描述文件时候，确保配置了http代理（ip:8888），
-如果换电脑需要再次下载证书，可以在描述文件中查看证书，charles通用名称中会包含你电脑系统的名称
+- safari 浏览器访问`https:chls.pro/ssl`下载证书描述文件时候，确保配置了 http 代理（ip:8888），
+  如果换电脑需要再次下载证书，可以在描述文件中查看证书，charles 通用名称中会包含你电脑系统的名称
 
-### 8.4.4 Map请求重定向
+### 8.4.4 Map 请求重定向
 
 :tomato: Map Local / Map Remote
 
-- 生产环境代码打包压缩后不利于debug
+- 生产环境代码打包压缩后不利于 debug
 - 调试时不方便频繁发布
 - `Map Local`：将某请求重定向至本地某个文件
 - `Map Remote`：将某请求重定向至另一个请求
@@ -206,29 +208,29 @@ charles做客户端和服务端的中介，代理了https请求；charles会动�
 
 ![](~@/engineering/maplocal.png)
 
-Map Local可以替换任意charles能抓包到的文件，甚至可以将api请求替换成本地的json文件，做接口的一个mock，
+Map Local 可以替换任意 charles 能抓包到的文件，甚至可以将 api 请求替换成本地的 json 文件，做接口的一个 mock，
 其实就是一个文件的代理功能。
 
-如果想取消Map Local / Map Remote：charles顶部tools-> Map Local / Map Remote -> 不勾选enable map local/Remote-> ok
+如果想取消 Map Local / Map Remote：charles 顶部 tools-> Map Local / Map Remote -> 不勾选 enable map local/Remote-> ok
 
 ### 8.4.5 Rewrite 修改请求内容
 
-:tomato: Rewrite功能
+:tomato: Rewrite 功能
 
 - 可作用于：request & reponses
-- 可修改：header、host、path、url、params、body等
+- 可修改：header、host、path、url、params、body 等
 - 采用新增、替换的形式
 
 :tomato: 案例
 
-向生产环境页面注入vConsole脚本
+向生产环境页面注入 vConsole 脚本
 
-1. 顶部tools-> Rewrite 
+1. 顶部 tools-> Rewrite
 
-添加匹配location
+添加匹配 location
 ![](~@/engineering/rewrite1.png)
 
-添加rewrite规则
+添加 rewrite 规则
 
 ![](~@/engineering/rewrite2.png)
 
@@ -240,13 +242,13 @@ Map Local可以替换任意charles能抓包到的文件，甚至可以将api请�
 
 #### 什么叫内网穿透
 
--  NAT（Network Address Translation）穿透 
+- NAT（Network Address Translation）穿透
 - 从公网访问内网
 - 在公网访问部署在本地服务器上的服务
 - ngrok & localtunnel
-  - 生成唯一可在公网访问的url，该url会在代理本地运行的web服务请求
+  - 生成唯一可在公网访问的 url，该 url 会在代理本地运行的 web 服务请求
 
-### 8.5.2 localtunnel的使用
+### 8.5.2 localtunnel 的使用
 
 1. 安装
 
@@ -263,19 +265,21 @@ Map Local可以替换任意charles能抓包到的文件，甚至可以将api请�
     # 启动成功后 your url is: https://mayi.tunnel.svrx.io
     # 访问地址 https://mayi.tunnel.svrx.io
 ```
-### 8.5.3 部署你的localtunnel服务
 
-- localtunnel默认服务在外国，不稳定，访问速度慢
-- 自己部署lt服务的机器需要满足：
-  1. 支持DNS泛域名解析，比如：mydomain.com 和 *.mydomain.com
-  2. Localtunnel服务端能监听任何非root权限的TCP端口
+### 8.5.3 部署你的 localtunnel 服务
 
-1. 配置dns解析
-    添加两个A类记录 
-    -  mydomain.com
-    - *.mydomain.com
+- localtunnel 默认服务在外国，不稳定，访问速度慢
+- 自己部署 lt 服务的机器需要满足：
+  1. 支持 DNS 泛域名解析，比如：mydomain.com 和 \*.mydomain.com
+  2. Localtunnel 服务端能监听任何非 root 权限的 TCP 端口
 
-2. 启动localtunnel server
+1. 配置 dns 解析
+   添加两个 A 类记录
+
+   - mydomain.com
+   - \*.mydomain.com
+
+2. 启动 localtunnel server
 
 ```bash
     git clone git://github.com/defunctzombie/localtunnel-server.git
@@ -284,7 +288,8 @@ Map Local可以替换任意charles能抓包到的文件，甚至可以将api请�
     bin/server --port 1234
     bin/server --port 1234 --domain sub.mydomain.com
 ```
-3. 在localtunnel客户端使用部署的host
+
+3. 在 localtunnel 客户端使用部署的 host
 
 ```bash
     lt --host http://sub.mydomain.com:1234  --port 8000
@@ -294,7 +299,7 @@ Map Local可以替换任意charles能抓包到的文件，甚至可以将api请�
 
 #### 特点
 
-- “生成随机数据，拦截Ajax请求“
+- “生成随机数据，拦截 Ajax 请求“
 
 - 业务代码物侵入
 
@@ -320,7 +325,8 @@ const data = Mock.mock({
 // 输出结果
 console.log(JSON.stringify(data,null,4))
 ```
-:tomato: mockjs的语法
+
+:tomato: mockjs 的语法
 
 ```js
 // name 是属性名，rule是规则 ，value是属性值；属性名和规则之间是用|分割的
@@ -335,31 +341,39 @@ console.log(JSON.stringify(data,null,4))
 6. 'name|count.dcount':  value
 7. 'name|+step': value
 ```
+
 - 属性值决定了规则的初始值和类型
 - 生成规则的含义需要依赖属性值的类型才能确定
 
 1. 属性值是字符串
 
-- 将value字符串重复min-max次
+- 将 value 字符串重复 min-max 次
+
 ```js
 // 1. 'name|min-max': value  生成的数量是随机的
 {'repeater|1-5': 'hi!'} -> { repeater: 'hi!hi!hi!'}
 ```
-- 将value字符串重复count次
+
+- 将 value 字符串重复 count 次
+
 ```js
 // 2. 'name|count': value
 {'repeater|2': 'hi!'} -> {repeater: 'hi!hi!'}
 ```
+
 2. 属性值是数字
 
-- 随机生成min-max 范围内的一个数字
+- 随机生成 min-max 范围内的一个数字
+
 ```js
  // 1. 'name|min-max': value
  // 现在value是数字，属性值决定了初始值，1和50也可以换成其他数字；不影响结果
  {'age|1-30': 1} -> { age: 22 }
  {'age|1-30': 50} -> { age:15 }
 ```
-- 随机生成一个小数，整数部分值在min-max范围内，小数部分位数在dmin-dmax之间
+
+- 随机生成一个小数，整数部分值在 min-max 范围内，小数部分位数在 dmin-dmax 之间
+
 ```js
 // 'name|min-max.dmin-dmax':vlaue
 { 'price|1-30.2-3': 1} -> { price: 20.28}
@@ -368,24 +382,28 @@ console.log(JSON.stringify(data,null,4))
 
 3. 属性值是布尔值
 
-- 随机生成一个布尔值，其中value和!value的比例为min-max
-  -  value 概率 = min / (min+max)
-  -  !value 概率 = max / (min + max)
+- 随机生成一个布尔值，其中 value 和!value 的比例为 min-max
+  - value 概率 = min / (min+max)
+  - !value 概率 = max / (min + max)
 
 ```js
   // 'name|min-max':vlaue
   { 'active|1-1': true } -> { active: true }
   { 'active|1-1': true } -> { active: true }
 ```
+
 4. 属性值是对象
 
-- 从value中随机min-max个属性
+- 从 value 中随机 min-max 个属性
+
 ```js
   // 'name|min-max': vaule
   { 'user|1-2': { name: 'jack', age: 2 }} -> { user: { age:2}}
   { 'use|1-2': { name: 'jack', age: 2 }} -> { user: { name: 'jack', age:2 }}
 ```
-- 从value中随机取count个属性
+
+- 从 value 中随机取 count 个属性
+
 ```js
 // 从value中随机取count个属性
 // ‘name|count’: value
@@ -394,11 +412,14 @@ console.log(JSON.stringify(data,null,4))
 
 4. 属性值是数组
 
-- 从value列表中随机获取1个元素
+- 从 value 列表中随机获取 1 个元素
+
 ```js
 { 'fruit|1': ['apple','banana']} -> { fruit: 'banana' }
 ```
-- 将value列表内的值重复min-max次
+
+- 将 value 列表内的值重复 min-max 次
+
 ```js
 { 'list|1-2': ['a']} -> { list: ['a']}
 { 'list|1-2': ['a']} -> { list: ['a','a']}
@@ -406,29 +427,31 @@ console.log(JSON.stringify(data,null,4))
 
 5. 属性值是其它类型
 
-- 生成值为function执行结果
+- 生成值为 function 执行结果
 
 ```js
 // function
 { age: ()=> 1 } -> { age:1 }
 ```
+
 - 随机生成符合正则表达式的字符串
+
 ```js
 // reExp
 { age: /1[0-9]/ } -> { age: '19' }
 ```
 
-### 8.6.2 Mock.js的常用方法
+### 8.6.2 Mock.js 的常用方法
 
 1. Mock.mock()
 
 - Mock.mock(rurl?,rtype?,template|function(options))
-  - rurl： 要拦截的请求url，支持正则
-  - rtype：要拦截的请求类型，如POST、GET、DELETE等
+  - rurl： 要拦截的请求 url，支持正则
+  - rtype：要拦截的请求类型，如 POST、GET、DELETE 等
   - template：数据模版，支持对象、字符串
   - function(options): 生成相应数据的方法，options：{ url,type,body }
 
-:tomato: 使用mock()方法拦截请求
+:tomato: 使用 mock()方法拦截请求
 
 ```js
 //  在入口文件中引入mockjs，对 ‘api/activity‘进行拦截
@@ -439,33 +462,36 @@ if(process.env.NODE_ENV !== 'production')
       code: 200,
       data: {
         'isLegal|2-1':false
-      } 
+      }
     })
   }
 ```
+
 2. Mock.Random
 
 - 工具类
+
 ```js
-const { Random }  =  Mock;
+const { Random } = Mock
 Random.email()
 // => "n.abc.@miller.io"
 Random.image()
 // => http://dummyimage.com/336x330
 ```
+
 :tomato: Mock.Random 支持的方法
 
-| type  |  Method  | 
-| :---: | :--------: | 
-|  Basic  | boolean、natural、integer、float、character、string、range、date、time、datetime、now|
-| Image| image、dateImage |
-| Color | color | 
-| Text | paragraph、sentence、word、title、cparagraph | 
-| Name | first、last、name、cfirst、clast、cname | 
-| Web | url、domain、email、ip、tld | 
-| Address | area、region | 
-| Helper | capitalize、upper、lower、pick、shuffle | 
-| Miscellaneous| guid、id | 
+|     type      |                                        Method                                         |
+| :-----------: | :-----------------------------------------------------------------------------------: |
+|     Basic     | boolean、natural、integer、float、character、string、range、date、time、datetime、now |
+|     Image     |                                   image、dateImage                                    |
+|     Color     |                                         color                                         |
+|     Text      |                     paragraph、sentence、word、title、cparagraph                      |
+|     Name      |                        first、last、name、cfirst、clast、cname                        |
+|      Web      |                              url、domain、email、ip、tld                              |
+|    Address    |                                     area、region                                      |
+|    Helper     |                        capitalize、upper、lower、pick、shuffle                        |
+| Miscellaneous |                                       guid、id                                        |
 
 :tomato: Mock.Random 与模版语法
 
@@ -493,51 +519,53 @@ console.log(users)
 }
 // 10个相同的对象
 ```
+
 由于用`Random`生成的都是一样的，这可能不是我们想要的，我们想要每一个对象里的数据都不一样，那就看下面的占位符。
 
 :tomato: Mock.js 的占位符
 
 - 占位符
- - 使用最广泛
- - @占位符
- - @占位符（参数、[,参数]）
- - 只是在属性值字符串中占个位置，并不出现在最终的属性值中
- - 实际采用Random中的方法计算
+- 使用最广泛
+- @占位符
+- @占位符（参数、[,参数]）
+- 只是在属性值字符串中占个位置，并不出现在最终的属性值中
+- 实际采用 Random 中的方法计算
 
- ```js
+```js
 const Mock =  require('mockjs');
 
 const { Random } = Mock
 const user = Mock.mock({
-  code: '200',
-  'list|10': [{
-    name: '@first @last',
-    avatar: '@image'
-  }]
+ code: '200',
+ 'list|10': [{
+   name: '@first @last',
+   avatar: '@image'
+ }]
 })
 
 console.log(users)
 
 {
-  code: 200,
-  list: [
-    { name:'Carol Brown', avatar: 'http://dummyimage.com/3335x220'},
-    { name:'Angela Lopez', avatar: 'http://dummyimage.com/378x600'}
-    .....
-  ]
+ code: 200,
+ list: [
+   { name:'Carol Brown', avatar: 'http://dummyimage.com/3335x220'},
+   { name:'Angela Lopez', avatar: 'http://dummyimage.com/378x600'}
+   .....
+ ]
 }
 // 10个不同的对象
 ```
+
 ## 8.7 RestFul API 快速模拟
 
-### 8.7.1 复杂的接口mock场景
+### 8.7.1 复杂的接口 mock 场景
 
 #### RESTful API
 
 - REpresentational State Transfer 表现层
-- 资源是由URI来指定：/songs(代表歌曲)  /playlist/12（代表第12个playlist）
-- 对资源的操作包括增删改查：POST、DELETE、PUT和GET方法
-- 是一套API设计理论，约束规范、增强可读性、便于开发
+- 资源是由 URI 来指定：/songs(代表歌曲) /playlist/12（代表第 12 个 playlist）
+- 对资源的操作包括增删改查：POST、DELETE、PUT 和 GET 方法
+- 是一套 API 设计理论，约束规范、增强可读性、便于开发
 
 #### RESTful 规范
 
@@ -567,9 +595,10 @@ HTTP 状态码：
 4xx：客户端错误
 5xx：服务端错误
 ```
-- 如何mock对同一个资源的增删改查
-- 在前端运行、可以存储数据的server
-- JSON-Server ：零开发，快速模拟RESTful API
+
+- 如何 mock 对同一个资源的增删改查
+- 在前端运行、可以存储数据的 server
+- JSON-Server ：零开发，快速模拟 RESTful API
 
 ### 8.7.2 JSON-server 的安装和用法
 
@@ -590,6 +619,7 @@ npm install -g json-server
 // start server
 json-server --watch db.json
 ```
+
 运行成功输出的日志
 
 ```js
@@ -611,9 +641,10 @@ json-server --watch db.json
 GET /songs 200 8.036 ms - 43
 GET /songs 304 3.381 ms - -
 ```
-GET http://localhost:3000/songs/1 会返回 { "id":1,"name":"Baby"} 根据songs/1路由1进行筛选
 
-POST、PUT、PATCH、DELETE 操作会改变db.json文件的内容
+GET http://localhost:3000/songs/1 会返回 { "id":1,"name":"Baby"} 根据 songs/1 路由 1 进行筛选
+
+POST、PUT、PATCH、DELETE 操作会改变 db.json 文件的内容
 
 :tomato: Routes 规则-过滤
 
@@ -632,6 +663,7 @@ GET /songs?artist=张学友
 GET /songs?artist=张学友&arttist=李荣浩
 GET /comments?author.id=1
 ```
+
 :tomato: Routes 规则-翻页与排序
 
 ```js
@@ -646,12 +678,13 @@ GET /songs?_sort=id&_order=asc
 // 多字段排序
 GET /songs/_sort=id,name&_order=desc,asc
 ```
+
 :tomato: Routes 规则-查询
 
 ```js
 // operators:
 // _gte _lte _ne 大约小于等于
-GET /users?age_gte=10&age_lte=20 
+GET /users?age_gte=10&age_lte=20
 GET /users?age_ne=18
 
 // _like 支持正则
@@ -660,6 +693,7 @@ GET /songs?name_like=爱
 // q 全局搜索
 GET /songs?q=喜欢
 ```
+
 :tomato: 自定义 routes
 
 - 更贴近后端接口
@@ -669,7 +703,7 @@ GET /songs?q=喜欢
 // 左边是实际访问的路径，右边是资源的路径
 {
   "/api/*": "/$1",
-  "/:resource/:id/show": "/:resource/:id", 
+  "/:resource/:id/show": "/:resource/:id",
   "/posts/:category": "/posts?category=:cagegory",
   "/articles\\?id=:id": "/posts/:id"
 }
@@ -681,6 +715,7 @@ GET /songs?q=喜欢
 /posts/javascript // -> posts?category=javascript
 /articles?id=1 // -> /posts/1
 ```
+
 :tomato: 添加 middleware
 
 - 统一定制个性化请求
@@ -694,9 +729,10 @@ module.exports= (req, res ,next) => {
 // 启动
 json-server db.json --middlewares ./my-middleware.js
 ```
-### 8.7.3 生成随机数据 
 
-当数据量过大时候，我们不能手写庞大数据量的db.json,json-server也支持js对象。
+### 8.7.3 生成随机数据
+
+当数据量过大时候，我们不能手写庞大数据量的 db.json,json-server 也支持 js 对象。
 
 快速生成随机数据-Mock.js
 
@@ -715,54 +751,60 @@ module.exports= () => {
 // 启动
 json-server index.js --middlewares ./my-middleware.js
 ```
-### 8.7.4 JSON-Server的基本使用
 
-搭配Mock.js 生成随机数据接口
+### 8.7.4 JSON-Server 的基本使用
+
+搭配 Mock.js 生成随机数据接口
 
 :tomato: 查询歌单列表
 
-新建文件index.js
+新建文件 index.js
+
 ```js
 const Mock = require('mockjs')
 
-module.exports= ()=> {
-    const data = Mock.mock({
-        'playlists|100': [{
-            'id|+1':1,
-            'name': '@title',
-            'cover': '@image'
-        }]
-    })
-    return data
+module.exports = () => {
+  const data = Mock.mock({
+    'playlists|100': [
+      {
+        'id|+1': 1,
+        name: '@title',
+        cover: '@image',
+      },
+    ],
+  })
+  return data
 }
 ```
-新建routes.json
+
+新建 routes.json
 
 ```json
 // /api/music/ 下面所有的请求转发到去掉这个前缀的下面
 // $1 表示任意的字符
 {
-    "/api/music/*": "/$1"
+  "/api/music/*": "/$1"
 }
 ```
+
 启动 `json-server index.js --routes routes.json`
 
-访问 `http://localhost:3000/api/music/playlists`可以获得100条数据
+访问 `http://localhost:3000/api/music/playlists`可以获得 100 条数据
 
 :tomato: 查询分页的歌单
 
-修改routes.json
+修改 routes.json
 
 ```json
 {
-    "/api/music/*": "/$1",
-    "/playlists\\?limit=:limit&offset=:offset": "/playlists?_start=:offset&_limit=:limit"
+  "/api/music/*": "/$1",
+  "/playlists\\?limit=:limit&offset=:offset": "/playlists?_start=:offset&_limit=:limit"
 }
 ```
 
 启动 `json-server index.js --routes routes.json`
 
-访问 `http://localhost:3000/api/music/playlists?limit=10&offset=20`从20开始返回10条数据
+访问 `http://localhost:3000/api/music/playlists?limit=10&offset=20`从 20 开始返回 10 条数据
 
 :tomato: 新增一个歌单
 
@@ -770,23 +812,27 @@ module.exports= ()=> {
 // 用curl模拟一下请求 参数{"name":"夜曲","cover":"xxxx"}
 curl localhost:3000/api/music/playlists -X POST -d '{"name":"夜曲","cover":"xxxx"}' -H 'Content-Type: application/json'
 ```
+
 :tomato: 修改一个歌单
 
 ```js
 curl localhost:3000/api/music/playlists/101 -X PUT -d '{"id":101,"name":"月半小夜曲","cover":"xxxx"}' -H 'Content-Type: application/json'
 ```
+
 :tomato: 删除一个歌单
 
 ```js
 curl localhost:3000/api/music/playlists/101 -X DELETE  -H 'Content-Type: application/json'
 ```
-以上也可以用postman模拟请求
 
-#### 给所有的响应头添加header
+以上也可以用 postman 模拟请求
 
-新建middleware.js
+#### 给所有的响应头添加 header
+
+新建 middleware.js
 
 ```js
 json-server index.js --routes routes.json --middleware middleware.js
 ```
+
 源码地址：/examples/engineering/8.6

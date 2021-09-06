@@ -1,4 +1,4 @@
-## 1.1 玩转npm scripts
+## 1.1 玩转 npm scripts
 
 #### 常用命令
 
@@ -6,27 +6,28 @@
 - npm run ：run script
 - npm install ：安装依赖
 - npm update ：升级依赖
-- npm bin：查看bin文件目录
+- npm bin：查看 bin 文件目录
 - npm link ：将工程软连接到全局
 - npm publish ：发布包
 - npm deprecate ：废弃包
 
-### 1.1.1  内部变量
+### 1.1.1 内部变量
 
-问题：输出the package is xxx@x.x.x(输出package里的一些信息)
+问题：输出 the package is xxx@x.x.x(输出 package 里的一些信息)
 
-答案：$npm_package_*
+答案：$npm*package*\*
 
 ```bash
     $npm_package_name # 输出package里的name
     $npm_package_version # 输出package里的name
     $npm_package_config_var1 # 输出package里的config里的var1
 ```
-当我们npm run 执行脚本的时候，npm读取package转换为shell变量，所以我们才能在脚本中拿到这些变量
 
-### 1.1.2  npm scripts -参数
+当我们 npm run 执行脚本的时候，npm 读取 package 转换为 shell 变量，所以我们才能在脚本中拿到这些变量
 
-问题：如何对npm scripts二次包装多的命令传参
+### 1.1.2 npm scripts -参数
+
+问题：如何对 npm scripts 二次包装多的命令传参
 
 答案：利用`--透传参数`
 
@@ -39,10 +40,10 @@
 }
 ```
 
-### 1.1.3  npm scripts -脚本钩子
+### 1.1.3 npm scripts -脚本钩子
 
-- 脚本钩子类似于hook，当事件触发时，对应的钩子逻辑也被触发，git hook、web hook等
-- 部分npm内置脚本钩子如下：
+- 脚本钩子类似于 hook，当事件触发时，对应的钩子逻辑也被触发，git hook、web hook 等
+- 部分 npm 内置脚本钩子如下：
 
 ```bash
     preinstall # 用户执行npm install命令时候，先执行脚本
@@ -54,7 +55,8 @@
     pretest # 运行npm test命令前执行
     posttest # 运行npm test命令后执行
 ```
-- 规律：pre-* 和 post-*
+
+- 规律：pre-_ 和 post-_
 
 除了内置脚本钩子，我们也可以按照规则自定义添加钩子
 
@@ -69,47 +71,48 @@
     packageInfo.version=targetVersion
     ...
 ```
+
 ### 1.1.4 思考
 
 1. 为什么脚本第一行需要有`#!usr/bin/env node`
 
-`#!`是一个特殊的标示符，后面跟的是解释脚本的路径，说明这个文件可以当作脚本来运行，`usr/bin/env/ node` 表示通过env来运行node，env将会从环境变量中查找node工具
+`#!`是一个特殊的标示符，后面跟的是解释脚本的路径，说明这个文件可以当作脚本来运行，`usr/bin/env/ node` 表示通过 env 来运行 node，env 将会从环境变量中查找 node 工具
 
-2. 如果想在一条script里顺序执行两个命令，应该怎么写？
+2. 如果想在一条 script 里顺序执行两个命令，应该怎么写？
 
 用`;`隔开
 
-3. 如果想在一条script里并行执行两个命令？
+3. 如果想在一条 script 里并行执行两个命令？
 
 用`&&`隔开
 
-## 1.2 bash简洁和快速入门
+## 1.2 bash 简洁和快速入门
 
-#### shell是什么？
+#### shell 是什么？
 
-1. shell 不仅仅是命令行，也可以是GUI
+1. shell 不仅仅是命令行，也可以是 GUI
 2. Shell 是操作系统和用户交互的“接口”
-3. 一般来说，我们说的Shell都是Unix Shell，可以任务是CLI
+3. 一般来说，我们说的 Shell 都是 Unix Shell，可以任务是 CLI
 
 #### 命令（Command）是什么？
 
 1. 命令的本质是一个程序
 2. 这些程序具有发起系统调用（System call）的能力
-3. 编写shell脚本，其实是在编排这些程序的执行
-4. 除此之外，还有shell语法解释器负责解释一行行的Shell语句
+3. 编写 shell 脚本，其实是在编排这些程序的执行
+4. 除此之外，还有 shell 语法解释器负责解释一行行的 Shell 语句
 
-#### Shell解释器
+#### Shell 解释器
 
 1. bash (linux/Unix)
-2. sh   (linux/Unix)
-3. zsh  （linux/Unix)
-4. cmd  （windows）
+2. sh (linux/Unix)
+3. zsh （linux/Unix)
+4. cmd （windows）
 5. PowerShell （windows）
 6. WSL (Windows Subsysstem of linux)
 
-### 1.2.1 常用的bash命令
+### 1.2.1 常用的 bash 命令
 
-#### 其实我们平时已经使用了很多bash命令
+#### 其实我们平时已经使用了很多 bash 命令
 
 ```bash
     cd ./xxx
@@ -120,16 +123,17 @@
     kill 3790 # 杀掉进程
 ```
 
-<font color="red">**没有什么是-h解决不了的，如果有就用man**</font>
+<font color="red">**没有什么是-h 解决不了的，如果有就用 man**</font>
 
-有时候命令太多，参数太多，我们不能全部记得，我们可以man去查看一个命令的用法
+有时候命令太多，参数太多，我们不能全部记得，我们可以 man 去查看一个命令的用法
 
 ```bash
    #例如
     man ps
    # 退出，按字母q
-    q 
+    q
 ```
+
 #### 文件新建
 
 - touch(新建文件)
@@ -146,11 +150,12 @@
 
 #### 文件删除
 
-- rmdir 
+- rmdir
 
 ```bash
  rmdir ./project
 ```
+
 - rm
 
 ```bash
@@ -158,9 +163,10 @@
  rm -r ./project # 递归删除
  rm -rf ./project # 强制递归删除
 ```
+
 #### 文件删移动
 
-- mv 
+- mv
 
 ```bash
  mv ./source.txt ./target
@@ -189,11 +195,11 @@ cat、head、tail
 
 - nano
 
-GNU nano是linux上最简单的文本编辑器，操作简单，功能也比较初级，对于一些临时和简单的文件编辑操作，我们可以直接使用nano就好
+GNU nano 是 linux 上最简单的文本编辑器，操作简单，功能也比较初级，对于一些临时和简单的文件编辑操作，我们可以直接使用 nano 就好
 
 - vi/vim
 
-vi是linux上的一款功能强大的编辑器，vim更是vi的加强版。vim和emacs都是cli世界中的编辑器王者，如果能够熟练使用，效率完全不输于现代的GUI编辑器（如vscode），但是由于使用比较复杂，内容超出了本节的范围
+vi 是 linux 上的一款功能强大的编辑器，vim 更是 vi 的加强版。vim 和 emacs 都是 cli 世界中的编辑器王者，如果能够熟练使用，效率完全不输于现代的 GUI 编辑器（如 vscode），但是由于使用比较复杂，内容超出了本节的范围
 
 #### 进程相关
 
@@ -224,10 +230,10 @@ kill 45934 # SIGTERM信号
 kill -9 45934 # SIGKILL信号，强杀进程
 ```
 
-kill命令实际上并不是在“kill”，本质是向进程发送信号。例如：kill-s SIGUSR1 34534 实际上可以调试
-Nodejs应用，因为Nodejs会在收到SIGUSR1时进入调试模式
+kill 命令实际上并不是在“kill”，本质是向进程发送信号。例如：kill-s SIGUSR1 34534 实际上可以调试
+Nodejs 应用，因为 Nodejs 会在收到 SIGUSR1 时进入调试模式
 
-优雅退出的原理就是监听SIGTERM信号，并递归退出子进程
+优雅退出的原理就是监听 SIGTERM 信号，并递归退出子进程
 
 #### 其他
 
@@ -236,6 +242,7 @@ Nodejs应用，因为Nodejs会在收到SIGUSR1时进入调试模式
 ```bash
   lsof -i | grep LISTEN  # 找到所有正在被监听的端口
 ```
+
 - awk
 
 ```bash
@@ -245,21 +252,23 @@ Nodejs应用，因为Nodejs会在收到SIGUSR1时进入调试模式
 
 <font color="red">**以上命令用法并不重要，知道怎么找到命令的方法才重要，特别记忆的知识，都是你暂时用不到的，我们应该把精力放在学习思想和方法上**</font>
 
-### 1.2.2 bash编程-变量
+### 1.2.2 bash 编程-变量
 
 - 全局变量
 
 ```bash
 # 无需关键字，等号2变不要有空格
-  COURES=ENGINEERING 
+  COURES=ENGINEERING
  export  COURES=ENGINEERING # 导出
 ```
+
 - 局部变量
 
 ```bash
 # 用户函数内,作用域的概念
- local  COURES=ENGINEERING 
+ local  COURES=ENGINEERING
 ```
+
 - 环境变量
 
 ```bash
@@ -279,7 +288,8 @@ MAIL：指当前用户的邮件存放系统
 echo $SHELL
 # 结果：/bin/bash
 ```
-我们常说把某个命令加入环境变量中，其实就是加入$PATH环境变量
+
+我们常说把某个命令加入环境变量中，其实就是加入$PATH 环境变量
 
 - 基本类型
 
@@ -296,9 +306,9 @@ ANARRAY=(1 2 3 4)
 ANARRAY[1]=0
 ```
 
-### 1.2.3 bash编程-运算
+### 1.2.3 bash 编程-运算
 
--  组合
+- 组合
 
 ```bash
 ASTRING=abd
@@ -310,6 +320,7 @@ eacho $STR # The starts abd
 SEQ=(1 $ANUMBER 3 4 5)
 echo $SEQ # 1 2 3 4 5
 ```
+
 - 数学运算符
 
 ```bash
@@ -318,13 +329,14 @@ ANUMBER=$(6-2）
 ANUMBER=$(6*2）
 ANUMBER=$(6/2）
 ```
-### 1.2.4 bash编程-条件语句
+
+### 1.2.4 bash 编程-条件语句
 
 - if then
 
 ```bash
 if conditicon1
-then 
+then
    command1
 elif conditicon1
 then command2
@@ -347,6 +359,7 @@ case $VAR in
   ;;
   asac
 ```
+
 - 比较符
 
 ```bash
@@ -364,9 +377,9 @@ file1 -nt file2 # 检查file1是否比file2新
 file1 -ot file2 # 检查file1是否比file2旧
 ```
 
-### 1.2.5 bash编程-循环语句 
+### 1.2.5 bash 编程-循环语句
 
-- for循环
+- for 循环
 
 ```bash
 for index in 1 2 3 4 5; do
@@ -375,7 +388,8 @@ done
 for((i=0;i<5;i++));do
 echo $i
 ```
-- while循环
+
+- while 循环
 
 ```bash
 while (($i<=10))do
@@ -383,9 +397,9 @@ echo $i
 done
 ```
 
-### 1.2.6 bash编程-循环语句 
+### 1.2.6 bash 编程-循环语句
 
- - 函数的定义
+- 函数的定义
 
 ```bash
 function custom()
@@ -399,7 +413,7 @@ function custom()
       echo “$prefix $1”
     fi
     return 0
-      
+
 }
 # 在函数体中，可以使用$n来获取第n个实参
 ```
@@ -411,8 +425,9 @@ custom # unknown 调用
 custom abc # input is abc 调用并传入abc
 echo  $? # 0 $?拿到上一次函数调用的结果
 ```
-shell中运行的每一个命令都使用退出状态码（exit status）来告诉shell它完成了处理，退出状态码是一个0-255
-之间的整数值，在命令结束运行时由命令传给shell，可以在命令执行完毕后立即使用$?捕获。
+
+shell 中运行的每一个命令都使用退出状态码（exit status）来告诉 shell 它完成了处理，退出状态码是一个 0-255
+之间的整数值，在命令结束运行时由命令传给 shell，可以在命令执行完毕后立即使用$?捕获。
 
 - 其他特殊变量
 
@@ -426,11 +441,11 @@ shell中运行的每一个命令都使用退出状态码（exit status）来告�
  $? 显示最后命令的退出状态，0表示没有错误，其他任何值表明有错误
 ```
 
-### 1.2.7 bash编程-重定向
+### 1.2.7 bash 编程-重定向
 
 - 什么是重定向
 
-  - 重定向，全称I/O重定向，默认情况下，Bash程序从终端接受输入，并在终端打印输出（标准输入，标准输出）
+  - 重定向，全称 I/O 重定向，默认情况下，Bash 程序从终端接受输入，并在终端打印输出（标准输入，标准输出）
   - 如果你想改变输入的来源，或是输出的目的地，那么就需要使用“重定向”
 
 - 怎么用？只要记住四个符号
@@ -446,7 +461,7 @@ shell中运行的每一个命令都使用退出状态码（exit status）来告�
     command >> file # 将输出以追加的方式重定向到file
 ```
 
-案例：把ls输出到终端的信息输出到一个文件中
+案例：把 ls 输出到终端的信息输出到一个文件中
 
 ```bash
 ls # 可以查看当前文件的文件信息
@@ -454,9 +469,10 @@ ls > ls.log # 在当前文件夹下生成了一个ls.log文件，文件里的内
 ls -al > ls.log # 把ls -al 输出的详细信息输入到ls.log文件中，这种做法会覆盖上一次文件里的内容，我们可以使用>>追加的方式
 ls >> ls.log # 会把ls输出的信息放到ls -al 输出信息的后面
 ```
-### 1.2.8 bash编程-交互式程序
 
-- echo和read
+### 1.2.8 bash 编程-交互式程序
+
+- echo 和 read
 
 ```bash
 echo “xxx” # 打印并换行
@@ -464,6 +480,7 @@ echo -n “xxx” # 打印且不换行
 read var # 读取输入，存变量var
 read -n 1 var # 读取输入的一个字符，存入变量var
 ```
+
 案例：可以在终端输入以下命令进行体验
 
 ```bash
@@ -475,33 +492,37 @@ echo "$firstname $secondname";
 
 # 询问你firstname 和 secondname，当你输入后，最后会打印你输出的内容
 ```
+
 ### 1.2.9 扩展学习资料
-这是一本全面而详细的介绍Linux操作系统的好书，适合对Linux操作系统有兴趣和需要熟悉Linux环境的同学。
 
-[《鸟哥的Linux私房菜（基础学习篇）》](http://cn.linux.vbird.org/)
+这是一本全面而详细的介绍 Linux 操作系统的好书，适合对 Linux 操作系统有兴趣和需要熟悉 Linux 环境的同学。
 
-这是一本深入浅出的介绍Linux命令和Shell脚本编写的优秀技术书，目前豆瓣评分9.3分。如果你想深入和熟练的掌握Shell编程，希望你不要错过它。
+[《鸟哥的 Linux 私房菜（基础学习篇）》](http://cn.linux.vbird.org/)
 
-[《The Linux Command Line》](http://linuxcommand.org/tlcl.php  )
+这是一本深入浅出的介绍 Linux 命令和 Shell 脚本编写的优秀技术书，目前豆瓣评分 9.3 分。如果你想深入和熟练的掌握 Shell 编程，希望你不要错过它。
 
-## 1.3 浅谈Node CLI
+[《The Linux Command Line》](http://linuxcommand.org/tlcl.php)
 
-#### 从process.argv说起
+## 1.3 浅谈 Node CLI
 
-`process`是node的进程模块，process有个argv属性来获取node进程获取命令行参数
+#### 从 process.argv 说起
+
+`process`是 node 的进程模块，process 有个 argv 属性来获取 node 进程获取命令行参数
 
 代码
 
 ```js
-process.argv.forEach((val,index)=>{
+process.argv.forEach((val, index) => {
   console.log(`${index}:${val}`)
 })
 ```
+
 执行
 
 ```js
 node process-argv.js one two three
 ```
+
 结果
 
 ```js
@@ -511,12 +532,11 @@ node process-argv.js one two three
 3:two
 ```
 
-process.argv 属性返回一个数组，其中包含当启动Node.js进程时传入的命令行参数。
+process.argv 属性返回一个数组，其中包含当启动 Node.js 进程时传入的命令行参数。
 
-第一个元素是process.execPath,第二个元素将是正在执行javascript文件的路径，其余元素将是任何其他命令行参数。
+第一个元素是 process.execPath,第二个元素将是正在执行 javascript 文件的路径，其余元素将是任何其他命令行参数。
 
-
-### 1.3.1 commander（更方便的cli参数处理，作者tj）
+### 1.3.1 commander（更方便的 cli 参数处理，作者 tj）
 
 1. 链式调用
 
@@ -526,20 +546,23 @@ process.argv 属性返回一个数组，其中包含当启动Node.js进程时传
 
 ```js
 #!/usr/bin/env node
-const program=require('commander')
+const program = require('commander')
 program
-     .name('better-clone')// cli 的名字
-     .version('0.0.1') // 版本
-     .option('-v,--verbose','verposity that can be increased') // -v 简写 --verbose全称 后面是描述
+  .name('better-clone') // cli 的名字
+  .version('0.0.1') // 版本
+  .option('-v,--verbose', 'verposity that can be increased') // -v 简写 --verbose全称 后面是描述
 
 // 给program添加子命令，可以用command这个方法
 program
-   .command('clone <source> [destination]') // clone 是子命令，source是必填参数，destination 是选填参数
-   .option('-d,--depths <level>','git clone depths') 
-   .description('cloe a repository into a newly created directory')
-   .action((source,destination,cmdObj)=>{ // cmdObj存放所有option的键值对
-        console.log(`start cloning from ${source} to ${destination} with depth ${cmdObj.depths}`);
-   })
+  .command('clone <source> [destination]') // clone 是子命令，source是必填参数，destination 是选填参数
+  .option('-d,--depths <level>', 'git clone depths')
+  .description('cloe a repository into a newly created directory')
+  .action((source, destination, cmdObj) => {
+    // cmdObj存放所有option的键值对
+    console.log(
+      `start cloning from ${source} to ${destination} with depth ${cmdObj.depths}`
+    )
+  })
 
 program.parse(process.argv) // 从process.argv中取得命令行参数
 
@@ -547,15 +570,15 @@ program.parse(process.argv) // 从process.argv中取得命令行参数
 // 输出：start cloning from ./src to ./to with depth 2
 ```
 
-### 1.3.2  cli交互-inquirer.js（更友好的输入）
+### 1.3.2 cli 交互-inquirer.js（更友好的输入）
 
-- 灵活的CLI交互方式
+- 灵活的 CLI 交互方式
 
 input、number、confirm、list、rawlist、expand、checkbox、password、Editor......
 
-- 磨平平台差异 
+- 磨平平台差异
 
-兼容Windows/OSX/Linux上的主流终端，不用关心平台底层的实现细节
+兼容 Windows/OSX/Linux 上的主流终端，不用关心平台底层的实现细节
 
 ```js
 const inquirer = require('inquirer')
@@ -563,71 +586,73 @@ inquirer
   .prompt([
     /* Pass your questions in here */
     { type: 'input', name: 'username', message: "What's ur name?" },
-    { 
-        type: 'checkbox', 
-        name: 'gender', 
-        message: "What's ur gender?", 
-        choices: [ 'male', 'female' ]
+    {
+      type: 'checkbox',
+      name: 'gender',
+      message: "What's ur gender?",
+      choices: ['male', 'female'],
     },
-    { 
-        type: 'number', 
-        name: 'age', 
-        message: 'How old are u?',
-        validate: input => Number.isNaN(Number(input)) 
-            ? 'Number Required!' : true 
-        },
-    { 
-        type: 'password', 
-        name: 'secret', 
-        message: 'Tell me a secret.', 
-        mask: 'x' 
-    }
+    {
+      type: 'number',
+      name: 'age',
+      message: 'How old are u?',
+      validate: (input) =>
+        Number.isNaN(Number(input)) ? 'Number Required!' : true,
+    },
+    {
+      type: 'password',
+      name: 'secret',
+      message: 'Tell me a secret.',
+      mask: 'x',
+    },
   ])
-  .then(answers => {
+  .then((answers) => {
     console.log(`Answers are:\n ${JSON.stringify(answers)}`)
   })
-  .catch(error => {
+  .catch((error) => {
     if (error.isTtyError) {
       // Prompt couldn't be rendered in the current environment
     } else {
       // Something else when wrong
     }
   })
-// 运行  node inquirer.js 
+// 运行  node inquirer.js
 // 提供输入、选择
 // 能拿到命令中用户输入的和选择的参数
 ```
-### 1.3.3 cli交互（chalk）-更友好的输出
+
+### 1.3.3 cli 交互（chalk）-更友好的输出
 
 - 非常简单的用法
 
 ```js
-const chalk=require('chalk')
-const log=console.log
-const chalk=require('chalk')
-const log=console.log
+const chalk = require('chalk')
+const log = console.log
+const chalk = require('chalk')
+const log = console.log
 
-log(chalk.blue('\nhello')+'world'+chalk.red('!\n'))
+log(chalk.blue('\nhello') + 'world' + chalk.red('!\n'))
 
 log(chalk.blue.bgRed.bold('Hello world!\n'))
 
-log(chalk.blue('Hello','word','Foo','bar','biz','baz\n'))
+log(chalk.blue('Hello', 'word', 'Foo', 'bar', 'biz', 'baz\n'))
 
-log(chalk.red('Hello',chalk.underline.bgBlue('word')+'!\n'))
+log(chalk.red('Hello', chalk.underline.bgBlue('word') + '!\n'))
 ```
-chalk为什么能输出颜色？ANSI Escape Code
+
+chalk 为什么能输出颜色？ANSI Escape Code
 
 ### 1.3.4 调用其他程序(shell.js 、execa)
 
-- CLI程序的复用
+- CLI 程序的复用
 
-不用再重复发明git/npm/yarn 等
+不用再重复发明 git/npm/yarn 等
 
-- 异步的进行某些操作，尤其是CPU Bound操作
+- 异步的进行某些操作，尤其是 CPU Bound 操作
 
-让网络请求、后台的密集计算等影响前台CLI程序与用户的使用
+让网络请求、后台的密集计算等影响前台 CLI 程序与用户的使用
 
-- Node通过child_process模块赋予了我们创造子进程的能力
+- Node 通过 child_process 模块赋予了我们创造子进程的能力
 
 cp.exec 、 cp.spawn
 
@@ -651,82 +676,79 @@ if(shell.exec('git commit -am "Auto-commit"').code !==0){
   shell.exit(1)
 }
 ```
-- 对bash命令提供了跨平台的封装
+
+- 对 bash 命令提供了跨平台的封装
 - 可以同步的获得命令结果
 
 #### execa （调用其他程序）
 
 ```js
-const execa =require('execa');
-(async ()=>{
-  const {stdout}=await execa()
+const execa = require('execa')
+;(async () => {
+  const { stdout } = await execa()
   console.log(stdout)
 })()
 ```
 
 ```js
-const execa =require('execa');
-execa('echo',['unicorns']).stdout.pipe(process.stdout)
+const execa = require('execa')
+execa('echo', ['unicorns']).stdout.pipe(process.stdout)
 ```
-- 结果promise化
-- 跨平台支持Shebang
+
+- 结果 promise 化
+- 跨平台支持 Shebang
 - 获取进程结束信号
 - 优雅退出
-- 更好的windows支持
+- 更好的 windows 支持
 
-### 1.3.5 拆解CLI设计-以脚手架为例
+### 1.3.5 拆解 CLI 设计-以脚手架为例
 
 - 需求描述
 
-设计一个脚手架CLI，根据命令选择不同的模版，按指定的参数在指定的路径生成一个样板工程
+设计一个脚手架 CLI，根据命令选择不同的模版，按指定的参数在指定的路径生成一个样板工程
 
 - 拆解需求
 
 1. 参数的输入，结果的输出
-  commanderjs、inquirer、chalk
+   commanderjs、inquirer、chalk
 
 2. 模版在哪里维护
    git 仓库维护模版
 
 3. 如何让获取模版
-   git clone，使用execa或shelljs调用
+   git clone，使用 execa 或 shelljs 调用
 
 4. 如何根据模版
 
-  模版引擎，例如handlebars
+模版引擎，例如 handlebars
 
 ### 1.3.5 脚手架似乎是有套路的
 
-如果想快速开发脚手架，那就用脚手架的框架Plop、yeoman-generator；脚手架一系列封装。
+如果想快速开发脚手架，那就用脚手架的框架 Plop、yeoman-generator；脚手架一系列封装。
 
 ### 1.3.6 革命性的脚手架-Schemetics
 
-- 配合schematics-utilities 可以做到语法级别的样板代码生成
+- 配合 schematics-utilities 可以做到语法级别的样板代码生成
 
 - 可以引入虚拟文件系统，可以保证写入原子性
 
-- 支持多个Schematics之间的组合和管道
+- 支持多个 Schematics 之间的组合和管道
 
 - 文档还不完善
 
-### 扩展阅读 
+### 扩展阅读
 
 - ink
 
-用React开发CLI应用
+用 React 开发 CLI 应用
 
-. 专注于CLI的视图层
-. 利用React的平台无关性（更换renderer）
+. 专注于 CLI 的视图层
+. 利用 React 的平台无关性（更换 renderer）
 
 - oclif
 
-从工程角度封装CLI开发的复杂性
+从工程角度封装 CLI 开发的复杂性
 
-1. 提供Plugin机制，便于扩展
+1. 提供 Plugin 机制，便于扩展
 2. 提供预定义的生命周期
 3. 更紧凑的工程结构
-
-
-
-
-

@@ -1,7 +1,6 @@
-
 ## 2.1 实现一个简单的同构渲染页面
 
-### 2.1.1 使用express启动Node服务器
+### 2.1.1 使用 express 启动 Node 服务器
 
 [源码地址](https://github.com/hejialianghe/Senior-FrontEnd/tree/master/examples/react/simpleDemo)
 
@@ -10,17 +9,18 @@ const express = require('express')
 
 const app = express()
 
-app.get('/',(req,res)=>{
-    res.send('hello world')
+app.get('/', (req, res) => {
+  res.send('hello world')
 })
 
 app.listen(3001)
 ```
+
 启动服务：nodemon ./server.js
 
-### 2.1.2 在服务端使用React组件和API渲染
+### 2.1.2 在服务端使用 React 组件和 API 渲染
 
-####  1. 新建document.js 文件
+#### 1. 新建 document.js 文件
 
 ```js
 import React from 'react'
@@ -37,24 +37,26 @@ const Document = () => {
 }
 export default Document
 ```
+
 #### 2. server.js
 
 ```js
 const express = require('express')
-const ReactDOMserver=require('react-dom/server')
+const ReactDOMserver = require('react-dom/server')
 const Document = require('./documnet')
 const app = express()
 
 // renderToStaticMarkup 适用于纯静态页面
-const html = ReactDOMserver.renderToStaticMarkup(<Document/>)
+const html = ReactDOMserver.renderToStaticMarkup(<Document />)
 
-app.get('/',(req,res)=>{
-    res.send(html)
+app.get('/', (req, res) => {
+  res.send(html)
 })
 
 app.listen(3001)
 ```
-运行server.js 文件发现报以下错误，这是因为不支持jsx语法
+
+运行 server.js 文件发现报以下错误，这是因为不支持 jsx 语法
 
 ```bash
 const html = ReactDOMserver.renderToStaticMarkup(<Document/>)
@@ -68,13 +70,14 @@ SyntaxError: Unexpected token '<'
     at Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:60:12)
     at internal/main/run_main_module.js:17:47
 ```
-解决Node jsx报错
 
--  安装babel yarn add @babel/core @babel/register @babel/preset-env @babel/preset-react -D
--  babel有效范围，当前引入babel的文件无效
--  拆分router 把expres的router拆分独立文件，在router中执行React服务端渲染API
+解决 Node jsx 报错
 
-####  3. 新建 serverRouter.js
+- 安装 babel yarn add @babel/core @babel/register @babel/preset-env @babel/preset-react -D
+- babel 有效范围，当前引入 babel 的文件无效
+- 拆分 router 把 expres 的 router 拆分独立文件，在 router 中执行 React 服务端渲染 API
+
+#### 3. 新建 serverRouter.js
 
 ```js
 const express = require('express')
@@ -83,58 +86,59 @@ import ReactDOMserver from 'react-dom/server'
 import Document from './documnet'
 const router = express.Router()
 
-const html = ReactDOMserver.renderToStaticMarkup(<Document/>)
+const html = ReactDOMserver.renderToStaticMarkup(<Document />)
 
-router.get('/',(req,res)=>{
-    res.send(html)
+router.get('/', (req, res) => {
+  res.send(html)
 })
-module.exports=router
+module.exports = router
 ```
-####  4. 改写 server.js
+
+#### 4. 改写 server.js
 
 ```js
 require('@babel/register')({
-    presets:['@babel/preset-env','@babel/preset-react']
+  presets: ['@babel/preset-env', '@babel/preset-react'],
 })
 
 const express = require('express')
 
 const app = express()
 const serverRouter = require('./serverRouter')
-app.use('/',serverRouter)
+app.use('/', serverRouter)
 
 app.listen(3001)
 ```
-启动服务，打开http://localhost:3001/ 可以看见react渲染出来的内容`hello ssr`
 
-虽然服务端返回了字符串，显示了内容，但是没有任何交互事件，也就是没有加载js
+启动服务，打开 http://localhost:3001/ 可以看见 react 渲染出来的内容`hello ssr`
+
+虽然服务端返回了字符串，显示了内容，但是没有任何交互事件，也就是没有加载 js
 
 :::warning 为什么在服务端不能绑定事件？
-1. 服务端没有dom，不能绑定事件
+
+1. 服务端没有 dom，不能绑定事件
 2. 服务端返回的是字符串
-3. 服务端没有script
-4. 浏览器只加载了html，没有加载任何script去加载执行js
-:::
+3. 服务端没有 script
+4. 浏览器只加载了 html，没有加载任何 script 去加载执行 js
+   :::
 
 ### 2.1.3 有交互事件的同构渲染
 
 [源码地址](https://github.com/hejialianghe/Senior-FrontEnd/tree/master/examples/react/simpleDemo)
 
-1. 新建app.js
+1. 新建 app.js
 
 ```js
-import React from 'react';
+import React from 'react'
 
 const App = () => {
-    return (<div onClick={() => alert('hello')}>
-        client
-    </div> );
+  return <div onClick={() => alert('hello')}>client</div>
 }
- 
-export default App;
+
+export default App
 ```
 
-2. 新建client.js
+2. 新建 client.js
 
 ```js
 import React from 'react'
@@ -144,20 +148,21 @@ import App from './components/app'
 // hydrate渲染，看见服务端已经渲染好的dom，就不会再次渲染
 ReactDOM.hydrate(<App />, document.getElementById('root'))
 ```
-3. 我们用webpack构建我们的客户端渲染组件，打包成main.js
+
+3. 我们用 webpack 构建我们的客户端渲染组件，打包成 main.js
 
 ```js
- // 下载webpack、webpack-cli
+// 下载webpack、webpack-cli
 const path = require('path')
-const CopyPlugin = require('copy-webpack-plugin');
-const HtmlWebpackPlugin =require('html-webpack-plugin')
+const CopyPlugin = require('copy-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
   entry: './src/client.js',
   output: {
     // 打包后的main.js放到build文件下
     path: path.resolve(__dirname, 'build'),
-    filename: 'main.js'
+    filename: 'main.js',
   },
   module: {
     rules: [
@@ -165,11 +170,12 @@ module.exports = {
         test: /\.(js|jsx)$/,
         use: 'babel-loader',
         exclude: /node_modules/,
-      }
-    ]
-  }
-};
+      },
+    ],
+  },
+}
 ```
+
 <font color="red">我们客户端渲染已经结束，接下来看看服务端怎么做</font>
 
 4. document.js
@@ -195,6 +201,7 @@ const Document = ({ children }) => (
 
 export default Document
 ```
+
 5. serverRouter.js
 
 ```js
@@ -204,33 +211,34 @@ import ReactDOMServer from 'react-dom/server'
 import Document from './components/Document'
 import App from './components/App'
 
-const router = express.Router();
+const router = express.Router()
 
 // 渲染app.js ，服务端负责渲染，客户端负责绑定事件
 /*
  renderToString 主要用于需要交互的页面
  renderToStaticMarkup 主要用于单纯的展示页面
 */
-const appString = ReactDOMServer.renderToString(<App/>)
-const html = ReactDOMServer.renderToStaticMarkup(<Document>
-  {appString}
-</Document>)
+const appString = ReactDOMServer.renderToString(<App />)
+const html = ReactDOMServer.renderToStaticMarkup(
+  <Document>{appString}</Document>
+)
 
-router.get("/", function (req, res, next) {
-    res.status(200).send(html);
-});
+router.get('/', function (req, res, next) {
+  res.status(200).send(html)
+})
 
 module.exports = router
 ```
-nodemon ./src/server.js 启动服务，可以看见页面用了ssr渲染，又有了点击事件
 
-## 2.2 实现SPA同构渲染
+nodemon ./src/server.js 启动服务，可以看见页面用了 ssr 渲染，又有了点击事件
+
+## 2.2 实现 SPA 同构渲染
 
 [源码地址](https://github.com/hejialianghe/Senior-FrontEnd/tree/master/examples/react/simpleDemo-2)
 
 - react-router 基本的客户端路由实现
 - 理解无状态组件
-- 利用react-router 实现服务端路由
+- 利用 react-router 实现服务端路由
 
 ### 2.2.1 客户端路由
 
@@ -244,7 +252,7 @@ App.js
 
 ```js
 import React from 'react'
-import { Route, Switch, NavLink } from 'react-router-dom';
+import { Route, Switch, NavLink } from 'react-router-dom'
 import routes from '../core/routes.js'
 
 const App = () => {
@@ -260,7 +268,7 @@ const App = () => {
       </ul>
 
       <Switch>
-        {routes.map(route => (
+        {routes.map((route) => (
           <Route key={route.path} exact={route.path === '/'} {...route} />
         ))}
       </Switch>
@@ -270,6 +278,7 @@ const App = () => {
 
 export default App
 ```
+
 routes.js
 
 ```js
@@ -279,41 +288,40 @@ import NotFound from '../components/NotFound'
 
 const routes = [
   {
-    path: "/",
+    path: '/',
     component: Home,
   },
   {
-    path: "/user",
+    path: '/user',
     component: User,
   },
   {
-    path: "",
+    path: '',
     component: NotFound,
   },
-];
+]
 
 export default routes
 ```
+
 ### 2.2.2 服务端路由
 
-StaticRouter 
+StaticRouter
+
 - 无状态组件
 - 什么是无状态：它永远不会更改位置，服务端不会有用户点击切换路由，已经渲染的路由组件不会在更改
 - location: string | object
 - context: object
 
 ```js
-<StaticRouter
- location={req.url}
- context={context}
->
-<App/>
+<StaticRouter location={req.url} context={context}>
+  <App />
 </StaticRouter>
 ```
+
 serverRouter.js
 
 ```js
-
 const express = require('express')
 import React from 'react'
 import ReactDOMServer from 'react-dom/server'
@@ -322,24 +330,21 @@ import App from './components/app'
 import { StaticRouter } from 'react-router-dom'
 const router = express.Router()
 
-router.get("*",  function (req, res, next) {
-
-// 第一次加载或者刷新页面都有服务端渲染，然后客户端接管路由跳转渲染页面
+router.get('*', function (req, res, next) {
+  // 第一次加载或者刷新页面都有服务端渲染，然后客户端接管路由跳转渲染页面
   const appString = ReactDOMServer.renderToString(
-    <StaticRouter
-      location={req.url}
-    >
+    <StaticRouter location={req.url}>
       <App />
-    </StaticRouter>)
+    </StaticRouter>
+  )
 
-  const html = ReactDOMServer.renderToStaticMarkup(<Document>
-    {appString}
-  </Document>)
+  const html = ReactDOMServer.renderToStaticMarkup(
+    <Document>{appString}</Document>
+  )
   console.log('html', html)
 
-  res.status(200).send(html);
-  
-});
+  res.status(200).send(html)
+})
 
 module.exports = router
 ```
@@ -351,54 +356,56 @@ module.exports = router
 ## 2.3 何时请求异步数据
 
 [源码地址](https://github.com/hejialianghe/Senior-FrontEnd/tree/master/examples/react/simpleDemo-3)
+
 ### 2.3.1 客户端请求的时机和实现
 
-推荐：componentDidmount、useEffect中发送请求
+推荐：componentDidmount、useEffect 中发送请求
 
 不推荐：componentWillmount、componentWillReceiveProps、componentWillUpdate
 
-#### 为什么不在componentWillmount请求数据？
+#### 为什么不在 componentWillmount 请求数据？
 
-1. 执行完componentWillmount后，会立即执行render方法，这时候接口数据还没有返回，提前请求并没有减少render方法的调用
-2. 过期警告componentWillmount、componentWillReceiveProps、componentWillUpdate，在新版本的react将移除这些生命周期；
-在新的版本中将采用fiber架构：fiber架构将导致这些生命周期多次执行。
-
+1. 执行完 componentWillmount 后，会立即执行 render 方法，这时候接口数据还没有返回，提前请求并没有减少 render 方法的调用
+2. 过期警告 componentWillmount、componentWillReceiveProps、componentWillUpdate，在新版本的 react 将移除这些生命周期；
+   在新的版本中将采用 fiber 架构：fiber 架构将导致这些生命周期多次执行。
 
 ![fiber-line.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/533d88f4890a475a9b69557c61a74f80~tplv-k3u1fbpfcp-watermark.image)
 
 同步：是一次性渲染全部组件
 
-异步：分片多次渲染，高优先级任务可以打断渲染（遇到点击，滚动这样的任务把它作为高优先级任务优先响应用户,浏览器空闲时间再次接着渲染，所以会导致上3个生命周期多次执行）
+异步：分片多次渲染，高优先级任务可以打断渲染（遇到点击，滚动这样的任务把它作为高优先级任务优先响应用户,浏览器空闲时间再次接着渲染，所以会导致上 3 个生命周期多次执行）
 
 ### 2.3.2 服务端请求的时机和实现
 
-服务端不会执行componentDidmount、useEffect，所以服务端要在渲染组件之前要拿到数据
+服务端不会执行 componentDidmount、useEffect，所以服务端要在渲染组件之前要拿到数据
 
-axios发送请求(支持服务端和客户端)
+axios 发送请求(支持服务端和客户端)
 
 ```bash
 yarn add axios
 ```
-1. 新建apiRouter.js
+
+1. 新建 apiRouter.js
 
 模拟一些接口，并返会一些数据
 
 ```js
 const express = require('express')
 
-const router = express.Router();
+const router = express.Router()
 
-router.get("/home", function (req, res, next) {
+router.get('/home', function (req, res, next) {
   res.json({ title: 'Home', desc: '这是home页面' })
-});
+})
 
-router.get("/user", function (req, res, next) {
+router.get('/user', function (req, res, next) {
   res.json({ name: '张三', age: '21', id: '1' })
-});
+})
 
 module.exports = router
 ```
-2. 改写server.js
+
+2. 改写 server.js
 
 ```diff
 require('@babel/register')({
@@ -419,6 +426,7 @@ app.use('/',serverRouter)
 
 app.listen(3003)
 ```
+
 3. api.js
 
 请求数据的封装
@@ -427,35 +435,42 @@ app.listen(3003)
 import axios from 'axios'
 
 const req = axios.create({
-  baseURL:'http://localhost:3003/api',
-});
+  baseURL: 'http://localhost:3003/api',
+})
 
 req.interceptors.response.use(function (response) {
-  return response.data;
-});
+  return response.data
+})
 
 // 请求首页
 export const fetchHome = () => req.get('/home')
 // 请求用户信息
 export const fetchUser = () => req.get('/user')
 ```
-4. user组件
+
+4. user 组件
 
 ```js
-import React,{useEffect} from 'react';
+import React, { useEffect } from 'react'
 import { fetchUser } from '../core/api'
 
-const User = ({staticContext}) => {
+const User = ({ staticContext }) => {
   // staticContext 用于服务端渲染，staticContext是请求接口返回的值，具体可以看serverRouter.js
-  console.log('staticContext',staticContext)
+  console.log('staticContext', staticContext)
   // 客户端请求的时机，在服务端渲染的时候，useEffect并不会执行
-  useEffect(()=>{
-    fetchUser().then(data=>console.log('User data:',data))
-  },[])
+  useEffect(() => {
+    fetchUser().then((data) => console.log('User data:', data))
+  }, [])
   return (
     <main>
       <h1>User</h1>
-      <button onClick={()=>{alert('user!')}}>click me</button>
+      <button
+        onClick={() => {
+          alert('user!')
+        }}
+      >
+        click me
+      </button>
     </main>
   )
 }
@@ -463,36 +478,36 @@ const User = ({staticContext}) => {
 User.getData = fetchUser
 export default User
 ```
+
 5. serverRouter.js
 
 ```js
-
 const express = require('express')
 import React from 'react'
 import ReactDOMServer from 'react-dom/server'
 import Document from '../components/documnet'
 import App from '../components/app'
-import { StaticRouter,matchPath } from 'react-router-dom'
+import { StaticRouter, matchPath } from 'react-router-dom'
 import routes from '../core/routes'
 const router = express.Router()
 
-router.get("*", async function (req, res, next) {
+router.get('*', async function (req, res, next) {
   let data = {}
   let getData = null
 
   // 匹配当前路由，然后拿到当前要渲染组件的静态属性getData；getData就是请求的接口函数
-  routes.some(route => {
-    const match = matchPath(req.path, route);
+  routes.some((route) => {
+    const match = matchPath(req.path, route)
     if (match) {
       getData = (route.component || {}).getData
     }
     return match
-  });
-  
+  })
+
   if (typeof getData === 'function') {
     try {
       data = await getData()
-    } catch (error) { }
+    } catch (error) {}
   }
   const appString = ReactDOMServer.renderToString(
     <StaticRouter
@@ -501,18 +516,19 @@ router.get("*", async function (req, res, next) {
       context={data}
     >
       <App />
-    </StaticRouter>)
+    </StaticRouter>
+  )
 
-  const html = ReactDOMServer.renderToStaticMarkup(<Document data={data}>
-    {appString}
-  </Document>)
+  const html = ReactDOMServer.renderToStaticMarkup(
+    <Document data={data}>{appString}</Document>
+  )
 
-  res.status(200).send(html);
-
-});
+  res.status(200).send(html)
+})
 
 module.exports = router
 ```
+
 #### 总结：
 
 1. 服务端渲染是在渲染组件之前请求数据，然后利用`context`把值传到对应组件，这样就渲染出了有数据的组件。
@@ -521,22 +537,24 @@ module.exports = router
 ## 2.4 客户端复用服务端数据
 
 [源码地址](https://github.com/hejialianghe/Senior-FrontEnd/tree/master/examples/react/simpleDemo-4)
+
 #### 服务端怎样向客户端传递数据
 
-- 通过window全局变量
+- 通过 window 全局变量
 
-#### 利用window全局变量传递数据
+#### 利用 window 全局变量传递数据
 
-1. 改写serverRouter.js
+1. 改写 serverRouter.js
 
 ```js
-  const html = ReactDOMServer.renderToStaticMarkup(<Document data={data}>
-    {appString}
-  </Document>)
+const html = ReactDOMServer.renderToStaticMarkup(
+  <Document data={data}>{appString}</Document>
+)
 ```
+
 2. 改写 doucment.js
 
-我们可以将传递过来的数据转换成JSON字符串，赋值给window.__APP_DATA；然后放到script标签中，在客户端就会执行以下代码。
+我们可以将传递过来的数据转换成 JSON 字符串，赋值给 window.\_\_APP_DATA；然后放到 script 标签中，在客户端就会执行以下代码。
 
 ```diff
 import React from 'react'
@@ -563,13 +581,14 @@ const Document = ({ children ,data}) => {
 }
 export default Document
 ```
-3. 改写home.js
+
+3. 改写 home.js
 
 ```js
-import React, { useState } from 'react';
-import {fetchHome} from '../core/api'
-const Home = ({staticContext}) => {
-  console.log('staticContext',staticContext)
+import React, { useState } from 'react'
+import { fetchHome } from '../core/api'
+const Home = ({ staticContext }) => {
+  console.log('staticContext', staticContext)
   const getInitialData = () => {
     // 服务端渲染拿到的数据
     if (staticContext) {
@@ -594,22 +613,23 @@ Home.getData = fetchHome
 
 export default Home
 ```
+
 #### 客户端路由跳转数据获取
 
-上面home.js的写法有一定问题？
+上面 home.js 的写法有一定问题？
 
-- home.js客户端渲染从`window.__APP_DATA__`上获取数据，如果home跳转到user，那么user.js数据从哪获取呢？不能从`window.__APP_DATA__`获取了，user.js需要不同的数据。
+- home.js 客户端渲染从`window.__APP_DATA__`上获取数据，如果 home 跳转到 user，那么 user.js 数据从哪获取呢？不能从`window.__APP_DATA__`获取了，user.js 需要不同的数据。
 
 - `window.__APP_DATA__` 只能应用于首屏获取数据。
 
-4. 新建useData.js
+4. 新建 useData.js
 
-useData.js 是封装的一个hooks,用于处理数据
+useData.js 是封装的一个 hooks,用于处理数据
+
 ```js
 import { useState, useEffect } from 'react'
 
 const useData = (staticContext, initial, getData) => {
-
   // 初始化数据
   const getInitialData = () => {
     //  server render
@@ -632,26 +652,31 @@ const useData = (staticContext, initial, getData) => {
     }
     if (typeof getData === 'function') {
       console.log('spa render')
-      getData().then(res => setData(res)).catch()
+      getData()
+        .then((res) => setData(res))
+        .catch()
     }
   }, [])
 
   return [data, setData]
-
 }
 
 export default useData
 ```
 
-4. 改写home.js
+4. 改写 home.js
 
 ```js
-import React, { useState } from 'react';
-import {fetchHome} from '../core/api'
+import React, { useState } from 'react'
+import { fetchHome } from '../core/api'
 import useData from '../core/useData'
 
-const Home = ({staticContext}) => {
-  const [data, setData] = useData(staticContext, { title: '', desc: ''}, fetchHome)
+const Home = ({ staticContext }) => {
+  const [data, setData] = useData(
+    staticContext,
+    { title: '', desc: '' },
+    fetchHome
+  )
   return (
     <main>
       <h1>{data.title}</h1>

@@ -1,5 +1,4 @@
-const arr = [5, 8, 0, 6, 2, 3, 7]
-[5, 3, 0, 6, 2, 8, 7]
+const arr = [5, 8, 0, 6, 2, 3, 7][(5, 3, 0, 6, 2, 8, 7)]
 
 // 冒泡排序
 function bubbling(src) {
@@ -157,60 +156,61 @@ function quickSort(data) {
 //  [5, 8, 9, 6, 2, 3, 7]
 //  [5, 3, 9, 6, 2, 8, 7]
 // const function  quickSort (arr) {
- 
+
 //     const left = 0
 //     const right = right.length-1
 //     partition(arr,left,right,benchmark)
-    
-// } 
+
+// }
 
 // function partition (arr,left,right) {
 //     const benchmark = arr[arr.length-1/2]
-//     const 
+//     const
 //     while(arr[left]<benchmark)   {
-//         left ++ 
+//         left ++
 //     }
 
 //     while(arr[right]>benchmark)   {
-//         right -- 
+//         right --
 //     }
-    
+
 //     if(left)
 // }
 
-const arr1 = [8, 5, 9,10, 6, 9, 8, 7]
+const arr1 = [8, 5, 9, 10, 6, 9, 8, 7]
 2
 function quickSort(arr, left, right) {
-    var len = arr.length,
-        partitionIndex,
-        left = typeof left != 'number' ? 0 : left,
-        right = typeof right != 'number' ? len - 1 : right;
+  var len = arr.length,
+    partitionIndex,
+    left = typeof left != 'number' ? 0 : left,
+    right = typeof right != 'number' ? len - 1 : right
 
-    if (left < right) {
-        partitionIndex = partition(arr, left, right);
-        quickSort(arr, left, partitionIndex-1);
-        quickSort(arr, partitionIndex+1, right);
-    }
-    return arr;
+  if (left < right) {
+    partitionIndex = partition(arr, left, right)
+    quickSort(arr, left, partitionIndex - 1)
+    quickSort(arr, partitionIndex + 1, right)
+  }
+  return arr
 }
 
-function partition(arr, left ,right) {     // 分区操作
-    var pivot = left,                      // 设定基准值（pivot）
-        index = pivot + 1;
-    for (var i = index; i <= right; i++) {
-        if (arr[i] < arr[pivot]) {
-            swap(arr, i, index);
-            index++;
-        }        
+function partition(arr, left, right) {
+  // 分区操作
+  var pivot = left, // 设定基准值（pivot）
+    index = pivot + 1
+  for (var i = index; i <= right; i++) {
+    if (arr[i] < arr[pivot]) {
+      swap(arr, i, index)
+      index++
     }
-    swap(arr, pivot, index - 1);
-    return index-1;
+  }
+  swap(arr, pivot, index - 1)
+  return index - 1
 }
 
 function swap(arr, i, j) {
-    var temp = arr[i];
-    arr[i] = arr[j];
-    arr[j] = temp;
+  var temp = arr[i]
+  arr[i] = arr[j]
+  arr[j] = temp
 }
 
-console.log('quickSort(arr1)',quickSort(arr1))
+console.log('quickSort(arr1)', quickSort(arr1))

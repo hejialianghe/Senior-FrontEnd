@@ -1,7 +1,7 @@
-'use strict';
+'use strict'
 
-module.exports = pac3;
+module.exports = pac3
 
 function pac3() {
-    // TODO
+  // TODO
 }

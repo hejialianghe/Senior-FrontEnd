@@ -1,12 +1,12 @@
 ## 3.1 事件处理
 
-### 3.1.1 react事件和DOM事件
+### 3.1.1 react 事件和 DOM 事件
 
-| react事件  |  原生事件  |
-| :-------: | :--------: | 
-|  onClick |  onclick |  
-|  onClick={eventListener} |  onclick="eventListener()" |  
-|  e.preventDefalut |  onclick="javascript" |  
+|       react 事件        |         原生事件          |
+| :---------------------: | :-----------------------: |
+|         onClick         |          onclick          |
+| onClick={eventListener} | onclick="eventListener()" |
+|    e.preventDefalut     |   onclick="javascript"    |
 
 ```jsx{10}
 class ListItem extends Component {
@@ -29,12 +29,13 @@ class ListItem extends Component {
    }
   }
 ```
-在面向对象的编程中，this的使用方法会随着引用对象的差别而不同，当被对象引用时指向的是对象，单独函数引用指向的是window，严格模式是`undefined`，那我们在react中怎么解决这个问题呢？
 
-### 3.1.2 this关键词的处理
+在面向对象的编程中，this 的使用方法会随着引用对象的差别而不同，当被对象引用时指向的是对象，单独函数引用指向的是 window，严格模式是`undefined`，那我们在 react 中怎么解决这个问题呢？
 
-- 在jsx中使用bind方法
-- 在构造函数中使用bind方法
+### 3.1.2 this 关键词的处理
+
+- 在 jsx 中使用 bind 方法
+- 在构造函数中使用 bind 方法
 - 使用箭头函数
 
 ```jsx{5,11,19}
@@ -56,12 +57,13 @@ class ListItem extends Component {
     return (
       <div className='listItem'>
         {/*方法1*/}
-        <span onclick={this.handleClick.bind(this)}>header<span>   
+        <span onclick={this.handleClick.bind(this)}>header<span>
       <div>
     )
    }
   }
 ```
+
 ### 3.1.3 向事件处理程序传递参数
 
 ```jsx{15,17,19}
@@ -79,11 +81,11 @@ class ListItem extends Component {
     return (
       <div className='listItem'>
        {/* 方法1*/}
-        <span onclick={this.handleClick.bind(this,1)}>header<span> 
+        <span onclick={this.handleClick.bind(this,1)}>header<span>
          {/* 方法2*/}
-        <span onclick={()=>this.handleClick(1)}>header<span>  
+        <span onclick={()=>this.handleClick(1)}>header<span>
           {/* 传递事件对象event*/}
-        <span onclick={(e)=>this.handleClick(1,e)}>header<span>  
+        <span onclick={(e)=>this.handleClick(1,e)}>header<span>
       <div>
     )
    }
@@ -113,78 +115,81 @@ class ListItem extends Component {
    render(){
     return (
       <div className='listItem'>
-        <span onclick={()=>this.props.onDelete(this.state.conunt)}>header<span>  
+        <span onclick={()=>this.props.onDelete(this.state.conunt)}>header<span>
       <div>
     )
    }
   }
 ```
-### 3.1.5 React事件机制
 
-#### DOM事件
+### 3.1.5 React 事件机制
+
+#### DOM 事件
 
 ![](~@/react/domhandle.png)
 
-在js的事件触发经过3个阶段，事件的捕获->目标对象事件的处理->事件冒泡，假设在`text`中触发了事件，会经过一个捕获的阶段，父级元素将事件一直传递到本身发生的元素上，在经过本身的事件处理之后，会经历冒泡饿阶段，事件从子元素向父元素冒泡；就因为这样，事件委托成为了可能，就是将子元素的事件处理委托给父元素。
+在 js 的事件触发经过 3 个阶段，事件的捕获->目标对象事件的处理->事件冒泡，假设在`text`中触发了事件，会经过一个捕获的阶段，父级元素将事件一直传递到本身发生的元素上，在经过本身的事件处理之后，会经历冒泡饿阶段，事件从子元素向父元素冒泡；就因为这样，事件委托成为了可能，就是将子元素的事件处理委托给父元素。
 
-#### react事件
+#### react 事件
 
 ![](~@/react/reacthandle.png)
 
-react会将所有的事件都绑定到document上，而不是某个元素上面，统一的使用事件监听，并在冒泡阶段处理事件，当挂载和卸载组件的时候
-只需在统一的事件监听位置，增加或删除对象，因此极大的提高效率；当事件触发的时候，我们的组件会生成一个合成事件，然后传递到`documennt`中，doucument会通过`DispatchEvent`回调函数依次执行`DispatchEvent`中同类型的事件监听函数，事件注册是在组件生成的时候，我们将vDom中所有的事件的原生事件`documennt`中的一个监听器当中，也就是所有的事件处理函数都存在`ListenerBank`中
+react 会将所有的事件都绑定到 document 上，而不是某个元素上面，统一的使用事件监听，并在冒泡阶段处理事件，当挂载和卸载组件的时候
+只需在统一的事件监听位置，增加或删除对象，因此极大的提高效率；当事件触发的时候，我们的组件会生成一个合成事件，然后传递到`documennt`中，doucument 会通过`DispatchEvent`回调函数依次执行`DispatchEvent`中同类型的事件监听函数，事件注册是在组件生成的时候，我们将 vDom 中所有的事件的原生事件`documennt`中的一个监听器当中，也就是所有的事件处理函数都存在`ListenerBank`中
 并以`key`作为索引，这样的好处是将可能要触发的事件分门别类。
 
-react事件要素
+react 事件要素
 
-- react事件是合成事件，不是DOM原生事件
-- 在document监听所有支持的事件
-- 使用统一的分发函数dispatchEvent
+- react 事件是合成事件，不是 DOM 原生事件
+- 在 document 监听所有支持的事件
+- 使用统一的分发函数 dispatchEvent
 
 ### 3.1.6 扩展学习
 
 [源码分析事件](https://zhuanlan.zhihu.com/p/25883536)
 
-[合成事件](	http://react.html.cn/docs/events.html)
+[合成事件](http://react.html.cn/docs/events.html)
 
-## 3.2 认识State
+## 3.2 认识 State
 
 安装`react-devtools`调试工具
 
-方法1:有条件的可以在谷歌商店安装
+方法 1:有条件的可以在谷歌商店安装
 
-方法2:没有条件的看地址安装[点击我](https://www.npmjs.com/package/react-devtools)
+方法 2:没有条件的看地址安装[点击我](https://www.npmjs.com/package/react-devtools)
 
-### 3.2.1 如何定义State
+### 3.2.1 如何定义 State
+
 ```jsx
    class ListItem extends Component {
      constructor(props){
      super(props)
      this.state={ //定义一个state
-         conunt:1 
+         conunt:1
      }
    }
    render(){
     return (
       <div className='listItem'>
-        <span>{this.state.count}<span>  
+        <span>{this.state.count}<span>
       <div>
     )
    }
-  } 
+  }
 ```
-### 3.2.2 修改State
 
-- 使用setState
-- setState是异步的
-- State的更新是一个浅合并（shalllow merge）的过程
+### 3.2.2 修改 State
+
+- 使用 setState
+- setState 是异步的
+- State 的更新是一个浅合并（shalllow merge）的过程
 
 ```jsx
    class ListItem extends Component {
      constructor(props){
      super(props)
      this.state={
-         conunt:1 
+         conunt:1
      }
    }
    addCunt(){
@@ -197,20 +202,21 @@ react事件要素
    render(){
     return (
       <div className='listItem'>
-        <span onclick={()=>this.addCount()}>{this.state.count}<span>  
+        <span onclick={()=>this.addCount()}>{this.state.count}<span>
       <div>
     )
    }
-  } 
+  }
 ```
-addCount函数中打印的2次`conut`的值是一样的，说明setState的处理过程是异步的而不是同步的,react在执行setState时候，优化执行的时机，多个setState合并在一起去执行，如果非要在state变化话后做一些操作的话，其实setState会接收第二个参数。
+
+addCount 函数中打印的 2 次`conut`的值是一样的，说明 setState 的处理过程是异步的而不是同步的,react 在执行 setState 时候，优化执行的时机，多个 setState 合并在一起去执行，如果非要在 state 变化话后做一些操作的话，其实 setState 会接收第二个参数。
 
 ```jsx
    class ListItem extends Component {
      constructor(props){
      super(props)
      this.state={
-         conunt:1 
+         conunt:1
      }
    }
    addCunt(){
@@ -223,21 +229,23 @@ addCount函数中打印的2次`conut`的值是一样的，说明setState的处�
    render(){
     return (
       <div className='listItem'>
-        <span onclick={()=>this.addCount()}>{this.state.count}<span>  
+        <span onclick={()=>this.addCount()}>{this.state.count}<span>
       <div>
     )
    }
-  } 
+  }
 ```
+
 ### 3.2.3 创建新的状态
 
-修改state我们都要遵循状态都应该是不可变数据
+修改 state 我们都要遵循状态都应该是不可变数据
 
 #### 什么是不可变数据
 
 不可变数据是函数式编程的重要概念，就是我们对已经初始化的数据不进行更改，每次更改都是创建新的对象来承载新的数据状态
 
 状态类型
+
 - 值类型：string、number、boolean、null、undefined
 - 数组类型
 - 对象
@@ -265,7 +273,7 @@ this.setState({
 })
 ```
 
-上面创建新的对象都是浅拷贝，如果要深拷贝可以用immutable.js类库 来处理不可变数据。
+上面创建新的对象都是浅拷贝，如果要深拷贝可以用 immutable.js 类库 来处理不可变数据。
 
 ### 3.2.4 扩展资料
 
@@ -273,17 +281,17 @@ this.setState({
 
 [状态组件和无状态组件](https://juejin.im/entry/59a980306fb9a02485103d0b)
 
-[setState异步的理解](https://juejin.im/post/5bf1444cf265da614a3a1660)
+[setState 异步的理解](https://juejin.im/post/5bf1444cf265da614a3a1660)
 
-## 3.3 State进阶
+## 3.3 State 进阶
 
 ### 3.3.1 通过条件判断优化渲染
 
-下面代码是我们渲染一个列表，当我们删除第一行列表的时候，其它2个列表其实没有任何变化，但是它们的render方法还是执行了，执行了render方法其实也要diff对比，当一个大型的项目，这显然也是很耗时的，所以我们要优化它，优化有2种方法：
+下面代码是我们渲染一个列表，当我们删除第一行列表的时候，其它 2 个列表其实没有任何变化，但是它们的 render 方法还是执行了，执行了 render 方法其实也要 diff 对比，当一个大型的项目，这显然也是很耗时的，所以我们要优化它，优化有 2 种方法：
 
 1. sholudComponentUpdate(利用这个钩子阻止，如果子组件没有变化就不进行渲染)
 
-2. PureComponent（利用react提供的组件）
+2. PureComponent（利用 react 提供的组件）
 
 ![](~@/react/shouldUpdate.png)
 
@@ -292,7 +300,7 @@ this.setState({
 import React,{Component} from 'react';
 import ListItem from './listItem'
 class Stated extends Component {
-    state = { 
+    state = {
         listData: [
             {
               id: 1,
@@ -323,10 +331,10 @@ class Stated extends Component {
          const listData=this.state.listData.filter(item=>item.id!==id)
          this.setState({
             listData
-         })       
+         })
      }
-    render() {  
-        return (  
+    render() {
+        return (
             <div>
                 {this.state.listData.length<=0 && <div>购物车为空</div>}
                 {this.renderList()}
@@ -340,9 +348,9 @@ export default Stated;
 import React, { Component } from 'react';
 class ListItem extends Component {
     state = {  }
-    render() { 
+    render() {
         console.log('item render--虚拟dom')
-        return (  
+        return (
             <div>
                 <span>{this.props.data.name}</span>
                 <button onClick={()=>{
@@ -352,23 +360,27 @@ class ListItem extends Component {
         );
     }
 }
- 
+
 export default ListItem;
 ```
+
 #### sholudComponentUpdate
+
 ```jsx
 // 子组件
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 class ListItem extends Component {
-    state = {  }
-    shouldComponentUpdate(nextProps,nextState){
-        if(nextProps.data.id===this.props.data.id) return false
-        return true
-    }
+  state = {}
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.data.id === this.props.data.id) return false
+    return true
+  }
 }
-export default ListItem;
+export default ListItem
 ```
+
 #### PureComponent
+
 ```jsx
 // 父组件
 import React,{PrueComponent} from 'react';
@@ -385,23 +397,23 @@ class Stated extends PrueComponent {
 
 ### 3.3.3 状态提升
 
-当我们的子组件都要控制同一个数据源的时候，我们需要将数据提升到它们共同的父组件当中，然后父组件通过props传递给子组件，并由父组件进行统一管理和存储。
-
+当我们的子组件都要控制同一个数据源的时候，我们需要将数据提升到它们共同的父组件当中，然后父组件通过 props 传递给子组件，并由父组件进行统一管理和存储。
 
 ### 3.3.4 为什么使用不可变数据
 
 1. 可回溯
 
- 不直接在数据上修改，方便我们追溯以前的历史记录。
- 
+不直接在数据上修改，方便我们追溯以前的历史记录。
+
 2. 跟踪数据改变
 
 直接修改数据，跟踪数据的改变需要把当前数据和以前数据的版本进行对比，这样整个对象树都要遍历一次
 如果使用不可变数据，创建新的对象，这样我们发现是一个新的对象，那我们不需要对象树对比就知道数据发生了变化，因为对象不是同一个引用了
 
-3. 确定在react中何时重新渲染
+3. 确定在 react 中何时重新渲染
 
-不可变性最主要优势在于它可以帮助我们在react中创建Pure components，我们可以轻松确定不可变数据是否发生了改变，从而确实何时对组件进行重新渲染
+不可变性最主要优势在于它可以帮助我们在 react 中创建 Pure components，我们可以轻松确定不可变数据是否发生了改变，从而确实何时对组件进行重新渲染
+
 ### 3.3.5 有状态组件和无状态组件
 
 #### Stateful
@@ -420,19 +432,17 @@ class Stated extends PrueComponent {
 
 尽可能通过状态提升原则，将需要的状态提取到父组件中，而其他的组件使用无状态组件编写
 
-
 ### 3.3.6 扩展资料
 
 [不可变数据](https://github.com/immutable-js/immutable-js)
 
-[JS内存管理](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Memory_Management)
+[JS 内存管理](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Memory_Management)
 
 [状态提升](http://huziketang.mangojuice.top/books/react/lesson17)
 
-[context管理状态](http://react.html.cn/docs/context.html)
+[context 管理状态](http://react.html.cn/docs/context.html)
 
-[context管理状态](https://juejin.im/post/5a90e0545188257a63112977)  
-
+[context 管理状态](https://juejin.im/post/5a90e0545188257a63112977)
 
 ## 3.4 生命周期
 
@@ -446,64 +456,67 @@ class Stated extends PrueComponent {
 
 ### 3.4.2 创建阶段
 
-#### 1. 创建阶段constructor
+#### 1. 创建阶段 constructor
 
 - 初始化内部状态，显性设置和隐性设置
 
-   一个类必须有`constructor`方法，如果这个方法没有显示定义，一个默认的`constructor`方法会被添加
+  一个类必须有`constructor`方法，如果这个方法没有显示定义，一个默认的`constructor`方法会被添加
 
-- 需要使用super()调用基类的构造函数
+- 需要使用 super()调用基类的构造函数
 
-  将父类的props注入给子组件
+  将父类的 props 注入给子组件
 
-- 可以直接修改state
-#### 2. 创建阶段componentWillMount(16.3移除)
+- 可以直接修改 state
 
-- UI渲染完成前调用
+#### 2. 创建阶段 componentWillMount(16.3 移除)
+
+- UI 渲染完成前调用
 - 只执行一次
-- 这里调用setState不会触发render
+- 这里调用 setState 不会触发 render
 
- 更多的时候我们把组件里面的内容，会提前到`constructor`中，所以这个生命周期函数在项目中我们很少使用
+更多的时候我们把组件里面的内容，会提前到`constructor`中，所以这个生命周期函数在项目中我们很少使用
 
-#### 3. 创建阶段render
+#### 3. 创建阶段 render
 
 - 一个组件必须有的方法（我们的类组件）
-- 返回一个顶级的react元素
+- 返回一个顶级的 react 元素
   只能有一个根元素，不能返回并列元素
-- 渲染的是Dom Tree的一个React对象
+- 渲染的是 Dom Tree 的一个 React 对象
 
-#### 4. 创建阶段componentDidMount
+#### 4. 创建阶段 componentDidMount
 
-- UI渲染完成后调用
+- UI 渲染完成后调用
 - 只执行一次
 - 获取一些外部数据资源
 
-需要注意的是当父组件执行render的时候，当所有子组件都完成了创建，那么父组件才能最终的完成渲染，然后父组件执行componentDidMount
-
+需要注意的是当父组件执行 render 的时候，当所有子组件都完成了创建，那么父组件才能最终的完成渲染，然后父组件执行 componentDidMount
 
 ### 3.4.3 更新阶段
 
-当state和props发生变化时，进入更新阶段
+当 state 和 props 发生变化时，进入更新阶段
 
-#### 1.更新阶段componentWillReceiveProps(16.3移除)
+#### 1.更新阶段 componentWillReceiveProps(16.3 移除)
 
-只接收props
-- 组件接收到新props的时候触发
-- 在此对比新props和原来的props
+只接收 props
+
+- 组件接收到新 props 的时候触发
+- 在此对比新 props 和原来的 props
 - 不推荐使用
 
-#### 2.更新阶段shouldComponentUpdate
+#### 2.更新阶段 shouldComponentUpdate
 
-接收state和props
-- 是否要继续执行render方法
-- 可以由PureComponent自动实现
+接收 state 和 props
 
-#### 3.更新阶段componentDidUpdate
+- 是否要继续执行 render 方法
+- 可以由 PureComponent 自动实现
 
-- 每次UI更新时调用
+#### 3.更新阶段 componentDidUpdate
+
+- 每次 UI 更新时调用
 - 更新一些外部数据资源
 
 ### 3.4.4 卸载阶段 componentWillUnmount
+
 - 组件移除时调用
 - 可以用来做资源的释放
 
@@ -515,18 +528,17 @@ class Stated extends PrueComponent {
 
 #### 新的生命周期
 
-16.3以后移除了 componentWillmount、componentWillReceiveProps、componentWillUpdate
+16.3 以后移除了 componentWillmount、componentWillReceiveProps、componentWillUpdate
 
 ![](~@/react/newLifecycle.png)
 
 ### 3.4.6 扩展资料
 
-[React新生命周期1](https://www.jianshu.com/p/514fe21b9914)
+[React 新生命周期 1](https://www.jianshu.com/p/514fe21b9914)
 
+[React 新生命周期 2](https://zhuanlan.zhihu.com/p/38030418)
 
-[React新生命周期2](https://zhuanlan.zhihu.com/p/38030418)
-
-## 3.5 React组件设计模式
+## 3.5 React 组件设计模式
 
 ### 3.5.1 高阶组件
 
@@ -537,48 +549,54 @@ class Stated extends PrueComponent {
 高阶组件就是接收组件作为参数，并返回新的组件
 
 ```js
-const NewComponent=higherOrderComponent(OldComponent)
+const NewComponent = higherOrderComponent(OldComponent)
 ```
+
 ![](~@/react/higherOrder.png)
 
 #### 案例：假如多个组件需要鼠标滑入时给个提示，滑出时清空提示，那么可以把这个公共提示抽离出来复用
 
 目录
+
 ```bash
-src/  
+src/
     components/
        Item/
          index.jsx
          withTooltip.js
-``` 
-封装Hoc组件（withTooltip.js）
+```
+
+封装 Hoc 组件（withTooltip.js）
+
 ```js
-import React from 'react';
-const withTooltip=(Component)=>{
-    class Hoc extends React.Component {
-        state={
-            showToolTip:false,
-            content:''
-        }
-        handleOver=(e)=>{
-            this.setState({showToolTip:true,content:e.target.innerText})
-        }
-        handleOut=()=>{
-            this.setState({showToolTip:true,content:''})
-        }
-        render(){
-            return(
-                <div onMouseOver={this.handleOver} onMouseOut={this.handleOut}>
-                    <Component action={this.state} {...props}></Component>
-                </div>
-            )
-        }
+import React from 'react'
+const withTooltip = (Component) => {
+  class Hoc extends React.Component {
+    state = {
+      showToolTip: false,
+      content: '',
     }
-    return Hoc
+    handleOver = (e) => {
+      this.setState({ showToolTip: true, content: e.target.innerText })
+    }
+    handleOut = () => {
+      this.setState({ showToolTip: true, content: '' })
+    }
+    render() {
+      return (
+        <div onMouseOver={this.handleOver} onMouseOut={this.handleOut}>
+          <Component action={this.state} {...props}></Component>
+        </div>
+      )
+    }
+  }
+  return Hoc
 }
 export default withTooltip
 ```
+
 在需要的组件引入并调用（index.jsx）
+
 ```jsx{13}
 import React from 'react';
 import withTooltip from './withTooltip'
@@ -594,16 +612,18 @@ const ItemA = (props) => {
 }
 export default withTooltip(ItemA)
 ```
+
 ![](~@/react/higherOrder2.png)
 
 #### 高阶组件特性
+
 - 一个函数，传入一个组件，返回一个新组件
-- 一般不会有ui展现
+- 一般不会有 ui 展现
 - 提供一些可复用的功能
 
 ### 3.5.2 函数作为子组件（renderProps）
 
-解决复用业务逻辑的问题，是指一种在组件之间使用一个值为函数的props，来共享代码的的设计模式
+解决复用业务逻辑的问题，是指一种在组件之间使用一个值为函数的 props，来共享代码的的设计模式
 
 ![](~@/react/renderProps.png)
 
@@ -627,67 +647,73 @@ render(){
     }
 }/>
 ```
+
 #### 改写上面的案例
 
 目录
+
 ```bash
-src/  
+src/
     components/
        Rp/
          index.jsx
          withTooltip.js
-``` 
+```
+
 定义子组件（withTooltip.js）
+
 ```jsx
-import React from 'react';
-    class WithTooltip extends React.Component {
-        state={
-            showToolTip:false,
-            content:''
-        }
-        handleOver=(e)=>{
-            this.setState({showToolTip:true,content:e.target.innerText})
-        }
-        handleOut=()=>{
-            this.setState({showToolTip:true,content:''})
-        }
-        render(){
-            return(
-                <div onMouseOver={this.handleOver} onMouseOut={this.handleOut}>
-                    {this.props.render(this.state)}
-                </div>
-            )
-        }
-    }
+import React from 'react'
+class WithTooltip extends React.Component {
+  state = {
+    showToolTip: false,
+    content: '',
+  }
+  handleOver = (e) => {
+    this.setState({ showToolTip: true, content: e.target.innerText })
+  }
+  handleOut = () => {
+    this.setState({ showToolTip: true, content: '' })
+  }
+  render() {
+    return (
+      <div onMouseOver={this.handleOver} onMouseOut={this.handleOut}>
+        {this.props.render(this.state)}
+      </div>
+    )
+  }
+}
 export default WithTooltip
-``` 
+```
+
 定义父组件（index.jsx)
+
 ```jsx
-import React from 'react';
+import React from 'react'
 import WithTooltip from './withTooltip'
 const ItemA = (props) => {
-    return (
-        <div className="container">
-              <WithTooltip 
-                  render={({showToolTip,content})=>(
-                    <div>
-                      <button>Tooltip</button>
-                        {
-                        showToolTip && <div>{content}</div>
-                        }
-                    </div>
-                )}>
-            </WithTooltip>
-        </div>
-        );
+  return (
+    <div className="container">
+      <WithTooltip
+        render={({ showToolTip, content }) => (
+          <div>
+            <button>Tooltip</button>
+            {showToolTip && <div>{content}</div>}
+          </div>
+        )}
+      ></WithTooltip>
+    </div>
+  )
 }
 export default ItemA
-``` 
+```
+
 ### 3.5.3 函数作为子组件（Children）
 
 改写成函数作为子组件（更加直观）推荐
 
 定义子组件
+
 ```jsx{16}
 import React from 'react';
     class WithTooltip extends React.Component {
@@ -710,8 +736,10 @@ import React from 'react';
         }
     }
 export default WithTooltip
-``` 
+```
+
 定义父组件
+
 ```jsx{7-14}
 import React from 'react';
 import WithTooltip from './withTooltip'
@@ -728,14 +756,15 @@ const ItemB = (props) => {
                     </div>
                 )}
             </WithTooltip>
-    
+
         </div>
         );
 }
 export default ItemB
-``` 
+```
+
 ### 3.5.4 扩展阅读
 
-[扩展阅读1](https://www.jianshu.com/p/ff6b3008820a)
+[扩展阅读 1](https://www.jianshu.com/p/ff6b3008820a)
 
-[扩展阅读2](https://zhuanlan.zhihu.com/p/62791765)
+[扩展阅读 2](https://zhuanlan.zhihu.com/p/62791765)

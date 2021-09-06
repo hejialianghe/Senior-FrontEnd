@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 
 const useData = (staticContext, initial, getData) => {
-
   // 初始化数据
   const getInitialData = () => {
     if (staticContext) {
@@ -24,12 +23,13 @@ const useData = (staticContext, initial, getData) => {
     }
     if (typeof getData === 'function') {
       console.log('spa render')
-      getData().then(res => setData(res)).catch()
+      getData()
+        .then((res) => setData(res))
+        .catch()
     }
   }, [])
 
   return [data, setData]
-
 }
 
 export default useData

@@ -1,7 +1,7 @@
-'use strict';
+'use strict'
 
-const pac2 = require('..');
+const pac2 = require('..')
 
 describe('pac-2', () => {
-    it('needs tests');
-});
+  it('needs tests')
+})

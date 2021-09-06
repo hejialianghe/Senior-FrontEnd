@@ -1,46 +1,55 @@
-## 2.1初识vue
+## 2.1 初识 vue
+
 ### 2.1.1 创建项目
-####  :tomato: 安装vueCLI
+
+#### :tomato: 安装 vueCLI
+
 ```bash
- npm i @vue/cli -g 
+ npm i @vue/cli -g
  #or
  yarn global add @vue/cli
 ```
-####  :tomato: 创建项目
+
+#### :tomato: 创建项目
+
 ```bash
  vue create project
  #or
  vue ui
 ```
+
 ### 2.1.2 命名规则
 
 1. cameCase：videoExampleComponent （小驼峰）
 2. PascalCase：VideoExampleComponent（大驼峰）
 3. kebab-case：video-example-component （烤串的命名规则）
 
-下面我们看一下在我们vue中，怎样用上面的命名规则
+下面我们看一下在我们 vue 中，怎样用上面的命名规则
 
-####  :tomato: cameCase
+#### :tomato: cameCase
 
-- js函数、变量
+- js 函数、变量
+
 ```javascript
 new Vue({
     el:'#app'
     data(){
         return {
-            myTest:'' // 变量的命名规则 
+            myTest:'' // 变量的命名规则
         }
     },
     methods:{
-        myFn(){ // 函数的命名规则 
+        myFn(){ // 函数的命名规则
 
         }
     }
 })
 ```
-####  :tomato: PascalCase
 
-- js类，组件文件
+#### :tomato: PascalCase
+
+- js 类，组件文件
+
 ```javascript
 // 类
 class Promise () {
@@ -53,10 +62,12 @@ components/
 |- TestList.vue
 |- TestItem.vue
 ```
-####  :tomato: kebab-case
+
+#### :tomato: kebab-case
+
 - HTML
 
-在html中大小写是不敏感的，正因为这样我们约定在模版中才采用烤串的方式，来避免混淆
+在 html 中大小写是不敏感的，正因为这样我们约定在模版中才采用烤串的方式，来避免混淆
 
 ```javascript
 Vue.component('navigation-header', NavigationHeader)
@@ -65,14 +76,15 @@ Vue.component('navigation-header', NavigationHeader)
 ```
 
 ## 2.2 模版
+
 ### 2.2.1 列表循环
 
-- 不推荐在同一元素上使用v-if和v-for
-- 非要用，记住v-for的优先级高于v-if
+- 不推荐在同一元素上使用 v-if 和 v-for
+- 非要用，记住 v-for 的优先级高于 v-if
 
 ### 2.2.1 jsx
 
-vue中使用jsx语法
+vue 中使用 jsx 语法
 
 ```javascript
 <script>
@@ -119,9 +131,10 @@ export default {
 
 <style scoped></style>
 ```
+
 ## 2.3 数据
 
-### 2.3.1 data为什么是一个函数
+### 2.3.1 data 为什么是一个函数
 
 因为组件会复用，只有每个组件实例维护一份独立拷贝，才不会相互影响
 
@@ -135,12 +148,14 @@ new Vue({
 ```
 
 ## 2.4 事件&样式
+
 ### 2.4.1 事件
+
 ```vue
 <template>
   <div>
-    <p>{{count}}</p>
-    <button @click="add($event,1)" ></button>
+    <p>{{ count }}</p>
+    <button @click="add($event, 1)"></button>
   </div>
 </template>
 
@@ -153,21 +168,20 @@ export default {
   },
   methods:{
       add(event,num){
-          //event原生的dom事件   
+          //event原生的dom事件
           this.count+=num
       }
   }
 }
 </script>
 
-<style scoped lang="scss">
-</style>
-
+<style scoped lang="scss"></style>
 ```
 
 ### 2.4.2 自定义事件
 
 自定义事件实现双向绑定
+
 ```javascript
     // 父组件
     <template>
@@ -211,7 +225,8 @@ export default {
 
 ### 2.4.3 样式
 
-为了避免样式的全局污染，我们平时在style上加入scoped
+为了避免样式的全局污染，我们平时在 style 上加入 scoped
+
 ```javascript
 <template>
   <div class=“test”></div>
@@ -249,7 +264,7 @@ export default {
 // 如果用到组件库，想修改组件库里的的样式且style为css
 <style scoped>
 .test >>> .van-btn {
- 
+
 }
 </style>
 ```
@@ -258,7 +273,7 @@ export default {
 
 ### 2.5.1 组件注册
 
-####  :tomato: 批量导入组件（weppack的require.context()）
+#### :tomato: 批量导入组件（weppack 的 require.context()）
 
 ```javascript
 const requireComponent=require.context(
@@ -285,22 +300,25 @@ const requireComponent=require.context(
         )
     })
 ```
-####  :tomato: 按需导出
+
+#### :tomato: 按需导出
 
 babel-plugin-import 根据这个插件进行按需导入，不同的库插件也会不同
+
 ```javascript
-import { button} from 'components'
+import { button } from 'components'
 //最终会转换require得方式导入
-var button=require('componets/lib/button')
+var button = require('componets/lib/button')
 require('components/lib/button/style/css')
 ```
+
 ### 2.5.2 生命周期
 
-- beforeCreate 最初调用触发，data和events都不能用
-- created data和events已经初始化好，data已经具有响应式；在这里可以发送请求
-- beforeMount 在模版编译之后，渲染之前触发，ssr中不可用，基本用不上这个hook
-- mounted 在渲染之后触发，并能访问组件中的DOM以及$ref,SSR中不可用
+- beforeCreate 最初调用触发，data 和 events 都不能用
+- created data 和 events 已经初始化好，data 已经具有响应式；在这里可以发送请求
+- beforeMount 在模版编译之后，渲染之前触发，ssr 中不可用，基本用不上这个 hook
+- mounted 在渲染之后触发，并能访问组件中的 DOM 以及$ref,SSR 中不可用
 - beforeUpdate 在数据变化后，模版改变前触发，切勿使用它监听数据变化
-- updated 在数据改变后，模版改变后触发，常用于重渲染案后的打点，性能检测或触发vue组件中非vue组件的更新
+- updated 在数据改变后，模版改变后触发，常用于重渲染案后的打点，性能检测或触发 vue 组件中非 vue 组件的更新
 - beforeDestroy 组件卸载前触发，可以在此时清理事件、计时器或者取消订阅操作
 - destroyed 卸载完毕后触发，可以做最后的打点或事件触发操作

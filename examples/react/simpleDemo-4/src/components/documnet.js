@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Document = ({ children ,data}) => {
+const Document = ({ children, data }) => {
   return (
     <html lang="en">
       <head>
