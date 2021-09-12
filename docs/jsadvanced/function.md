@@ -145,9 +145,9 @@
           // 写的测试的代码
         let expect=4
         if(result!==expect){
-            throw new Error(`1+2应该等于${expect},但结果确是${result}`)
+            throw new Error(`1+2应该等于${expect},但结果却是${result}`)
         }
-      // 最后输出：Uncaught Error: 1+2应该等于4,但结果确是3 
+      // 最后输出：Uncaught Error: 1+2应该等于4,但结果却是3 
    ```
   1. 案例2
    ``` javascript
