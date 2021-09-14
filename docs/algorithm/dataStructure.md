@@ -155,3 +155,54 @@ function isPalindrome(params) {
 时间复杂度: O(n) 该解法中 while 循环最多执行 n/2 次，即回文时，因此，时间复杂度为 O(n)。
 
 空间复杂度: O(n) 该解法中，申请了 1 个大小为 n 的数组空间，因此，空间复杂度为 O(n)。
+
+## 2.2 数组
+### 2.2.1 找出出现一次的数字
+
+给一非空数组，某个元素只出现一次，其他元素都均出现2次；找出出现一次的那个元素？
+
+示例：
+
+```bash
+输入: [1,6,3,3,1,]
+输出: 6
+```
+#### 方式1： 分组法
+
+用分组法，时间和空间的复杂度都偏高，理解分组的思想才是重点。
+
+```js
+function singleNumber(arr) {
+    const arrGroups =arr.map((item)=>{
+        return arr.filter((ele)=>item === ele)
+     })
+    return arrGroups.find((item)=>item.length===1)[0]
+}
+```
+
+复杂度分析：
+
+- 时间复杂度: O(n2)
+
+使用了 map 和 filter ，嵌套遍历，故为 O(n2) 。 
+
+- 空间复杂度: O(n)
+
+map 方法创建了一个长度为 n 的数组，占用了 n 大小的空间。
+
+#### 方式2： 异或比较法
+
+```js
+function singleNumber(arr) {
+    return arr.reduce((accumulator, currentValue) => accumulator ^ currentValue);
+}
+```
+复杂度分析：
+
+时间复杂度: O(n)
+
+仅用 reduce 方法遍历，一层遍历，故为 O(n) 。
+
+空间复杂度: O(1)
+
+空间复杂度为常量，占用空间没有随数据量 n的大小发生改变，故为O(1)。
