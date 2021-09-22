@@ -15,7 +15,7 @@ module.exports = {
     head: [
         ['link', {
             rel: 'icon',
-            href: `/logo.jpeg`
+            href: `/logo.png`
         }]
     ],
     ga: '',
@@ -36,7 +36,7 @@ module.exports = {
       editLinkText: "在 GitHub 上编辑此页",
       lastUpdated: "最新更新时间",
       sidebarDepth: 3,
-      logo: '/logo.jpeg',
+      logo: '/logo.png',
       adsConfig: [
         {
           title: '联系作者',
