@@ -192,6 +192,8 @@ map 方法创建了一个长度为 n 的数组，占用了 n 大小的空间。
 
 #### 方式2： 异或比较法
 
+异或运算符可以将两个数字比较，由于有一个数只出现了一次，其他数皆出现了两次，类似乘法 则无论先后顺序，最后相同的数都会异或成0，唯一出现的数与0异或就会得到其本身，该方法是最优解，直接通过比较的方式即可得到只出现一次的数字。
+
 ```js
 function singleNumber(arr) {
     return arr.reduce((accumulator, currentValue) => accumulator ^ currentValue);
