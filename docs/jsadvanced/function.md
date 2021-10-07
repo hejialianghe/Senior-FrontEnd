@@ -517,7 +517,7 @@ calculate(10, 20) // 相同的参数，第二次调用是，从缓存中取出�
 let memoize = function (func) {
 	let cache = {}
 	return function (key) {
-		if (!cache[key]) {
+		if (!cache[key] || (typeof cache[key] === 'number' && !!cache[key])) {
 			cache[key] = func.apply(this, arguments)
 		}
 		return cache[key]
@@ -535,7 +535,9 @@ let memoize = function (func) {
      var memoize = function (key) {
        var cache = memoize.cache
        var address='' + (hasher ? hasher.apply(this,arguments) : key)
-       var (!cache[address]) chache[address] = func.apply(this,arguments)
+       if (!cache[address] || (typeof cache[key] === 'number' && !!cache[key])) {
+		   cache[address] = func.apply(this, arguments)
+	   }
        return cache[address]
      }
      memoize.cache={}
@@ -563,7 +565,9 @@ var memoize = function (func, hasher) {
 	var memoize = function (key) {
 		var cache = memoize.cache
 		var address = '' + (hasher ? hasher.apply(this, arguments) : key)
-		if (!cache[address]) cache[address] = func.apply(this, arguments)
+		if (!cache[address] || (typeof cache[key] === 'number' && !!cache[key])) {
+			cache[address] = func.apply(this, arguments)
+		}
 		return cache[address]
 	}
 	memoize.cache = {}
