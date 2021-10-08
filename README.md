@@ -17,13 +17,15 @@ As a front-end development engineer, the blogger knows the importance of growth.
 
 ```bash
 
-├── javaScript进阶            # 大厂如何去做防抖和节流
-├── 计算机网络                 # 学会基础知识，才能更好的理解下面的知识
-├── vue                      # 源码讲解，涉及3.0
-├── react                    # 源码讲解，涉及16.8hook
-├── node.js                  # koa源码
-├── 工程化                    # 涉及cli
-├── 项目实践                  #有道云笔记
+├── javaScript进阶 (JavaScript advanced) # 大厂如何去做防抖和节流
+├── 计算机网络 (Computer network)  # 学会基础知识，才能更好的理解下面的知识
+├── vue                          # 源码讲解，涉及3.0
+├── react                        # 源码讲解，涉及16.8hook
+├── node.js                      # koa源码
+├── 工程化 (engineering)          # 涉及cli
+├── 小程序  (Applet)              # 进阶
+├── 数据结构与算法 (Data structures and algorithms)                 
+├── 项目实践   (Project practice)  # react同构
 
 ```
 
@@ -46,6 +48,7 @@ If there is a harvest, give a start oh, this project open source free reading, d
 Why do I net name is ant, I hope I can be like ant, although the body is small but the strength is big, I hope you are the same! If you find any errors in this article, please contact me immediately!
 
 WeChat：
+
 <img src="./docs/.vuepress/public/weixin.jpeg" width="200" />
 
 ## 5. Sponsorship
