@@ -2,12 +2,17 @@
 
 [![Build Status](https://travis-ci.com/hejialianghe/Senior-FrontEnd.svg?branch=master)](https://travis-ci.com/hejialianghe/Senior-FrontEnd) [![GitHub forks](https://img.shields.io/github/forks/hejialianghe/Senior-FrontEnd.svg?style=flat-square)](https://github.com/hejialianghe/Senior-FrontEnd/network) [![GitHub stars](https://img.shields.io/github/stars/hejialianghe/Senior-FrontEnd.svg?style=flat-square)](https://github.com/hejialianghe/Senior-FrontEnd/stargazers) [![GitHub issues](https://img.shields.io/github/issues/hejialianghe/Senior-FrontEnd.svg?style=flat-square)](https://github.com/hejialianghe/Senior-FrontEnd/issues) [![GitHub last commit](https://img.shields.io/github/last-commit/hejialianghe/Senior-FrontEnd.svg?style=flat-square)](https://github.com/hejialianghe/Senior-FrontEnd/commits/master)
 
-## 1. 前言
+寻找合作伙伴，翻译英文版本。
+
+Find partners and translate English version.
+## 1. Preface
 
 博主作为一个前端开发工程师，深知成长的重要，现市场上大多数是api工程师;就是只会用api并不了解原理，长此以往就成为了可替代的人，如何成为一个高级开发工程师！成为一个高级开发工程师需要会那些知识！
 跟着我的博客去学习，能让你了解web全栈工程师的知识体系，让自己的学习有方向。
 
-## 2. 学习大纲
+As a front-end development engineer, the blogger knows the importance of growth. Most of the current market is API engineer; Is only able to use API does not understand the principle, in the long run, become replaceable people, how to become a senior development engineer! That's what it takes to be a senior development engineer! Follow my blog to learn, you can understand the web full stack engineer knowledge system, to get their own learning direction.
+
+## 2. Study program
 
 ```bash
 
@@ -20,28 +25,32 @@
 ├── 项目实践                  #有道云笔记
 
 ```  
-
-## 3. 给个start哦
+## 3. For a start
 
 如果有收获就给个start哦 ！！！ :pray: :pray: :pray:，本项目开源免费阅读,不设置任何障碍阻止阅读！
 
+If there is a harvest, give a start oh, this project open source free reading, do not set up any obstacles to prevent reading!
+
 [gitee极速版阅读](https://hejialianghe.gitee.io/)
 
-[github阅读地址](https://hejialianghe.github.io/)
+[Github reading site](https://hejialianghe.github.io/)
 
-国内用户请使用gitee版访问阅读
+中国用户请使用gitee版访问阅读
 
-## 4.联系方式 :vibration_mode:
+Chinese users please use gitee version to access and read
+## 4.contact :vibration_mode:
 
 我为什么网名叫蚂蚁，我希望我能够像蚂蚁一样，虽然身体小但是力量大，希望你们也一样！如果发现文章有错误，请即时联系我！
 
+Why do I net name is ant, I hope I can be like ant, although the body is small but the strength is big, I hope you are the same! If you find any errors in this article, please contact me immediately!
+
 <img src="./docs/.vuepress/public/weixin.jpeg" width="200" />
 
-## 5.赞赏
+## 5. Sponsorship
 
-![赞赏方式](./image/money.f845196d.png)
+![赞助渠道 Sponsorship channels](./image/money.f845196d.png)
 
-### 赞赏名单:art:
+### Appreciation list:art:
 
 | 昵称  |  赞赏时间  | 赞赏方式 | 赞赏金额 |   备注   |
 | :---: | :--------: | :------: | :------: | :------: |
