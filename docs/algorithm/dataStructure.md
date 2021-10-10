@@ -387,3 +387,69 @@ threeNum(nums)
 空间复杂度: O(n)
  
 uniqueMap可能在不断的开启新空间
+
+## 2.3 栈和队列
+#### 栈（stack）
+
+栈是一种特殊的列表，它按照`先进后出`的原则存储数据；先进入的数据被压在栈底，后进去的数据在栈顶。需要读取数据的时候需要从栈顶开始。
+
+我们可以想象一下，我们放盘子，先放入下面盘子，拿盘子的时候最后才能拿到。
+
+栈的主要操作就是`入栈`、`出栈`，在js中栈和队列的实现一般都依赖数组；可以看做栈和队列是特别的数组。（用链表来实现也是可以的，用链表来实现会比数组麻烦很多）
+
+![](~@/jsasvanced/stack.png)
+
+### 2.3.1 栈的实现
+
+```js
+class Stack {
+  constructor(){
+    this.data=[]
+  }
+  push(value){
+    this.data.push(value)
+  }
+  pop(){
+   return this.data.pop()
+  }
+}
+
+const stack = new Stack()
+// 入栈
+stack.push(1)
+stack.push(2)
+
+while(stack.data.length){
+  console.log('出栈',stack.pop())
+}
+```
+#### 队列（queue）
+
+队列是`先进先出`的数据结构，跟我们的`栈`不一样，队列的概念比较好理解；它就像我们去食堂买饭一样，先去的先打到饭；后去的后打到饭。
+
+队列的操作有2种：插入元素、删除元素。
+- 只可以向尾部插入元素
+- 只可以头部移除元素
+
+```js
+class Queue {
+  constructor(){
+    this.data=[]
+  }
+  unQueue(value){
+    this.data.push(value)
+  }
+  deQueue(){
+   return this.data.shift()
+  }
+}
+
+const stack = new Queue()
+// 入队
+stack.unQueue(1)
+stack.unQueue(2)
+
+while(stack.data.length){
+  console.log('出对',stack.deQueue())
+}
+```

@@ -1,6 +1,4 @@
-## 2.1 javaScript 内
-管理
-
+## 2.1 javaScript 内存管理
 ### 2.1.1 js 内存机制
 
 #### :tomato: 内存空间：栈内存（stack）、堆内存（heap）

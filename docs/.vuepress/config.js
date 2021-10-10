@@ -46,7 +46,7 @@ module.exports = {
       nav:[
         { text: 'GitHub', link: 'https://github.com/hejialianghe/Senior-FrontEnd' },
         { text: 'Blog', link: 'http://youliaowu.com/' },
-        { text: 'Gitee', link: 'https://gitee.com/hejialianghe' }
+        { text: 'Gitee', link: 'https://gitee.com/hejialianghe/Senior-FrontEnd' }
       ],
         sidebar:[
             {
