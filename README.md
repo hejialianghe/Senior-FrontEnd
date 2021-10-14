@@ -57,7 +57,7 @@ WeChat：
 
 ### Appreciation list:art:
 
-| nickname  | Appreciate the time | Appreciation way | Appreciates the amount |       remark       |
+| nickname  |   time |   way |   amount |       remark       |
 | :-------: | :-----------------: | :--------------: | :--------------------: | :----------------: |
 |   \*国    |     2020-01-02      |      Alipay      |        ￥ 8.00         |         -          |
 |   犇犇    |     2020-01-02      |      WeChat      |        ￥ 5.88         |         -          |
