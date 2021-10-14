@@ -22,8 +22,8 @@ Find partners and translate English version.
 ├── 项目实践   (Project practice)  # react同构
 
 ```
-## 3. 给个start哦(For a start)
-如果有收获就给个start哦 ！！！ :pray: :pray: :pray: ，本项目开源免费阅读,不设置任何障碍阻止阅读！
+## 3. 给个start哦(For a star)
+如果有收获就给个star哦 ！！！ :pray: :pray: :pray: ，本项目开源免费阅读,不设置任何障碍阻止阅读！
 
 If there is a harvest, give a start oh, this project open source free reading, do not set up any obstacles to prevent reading!
 
@@ -54,7 +54,7 @@ WeChat：
 ![](~@/guide/money.png)
 ### 赞赏名单(Appreciation list) :tada: 
 
-| nickname  | Appreciate the time | Appreciation way | Appreciates the amount |       remark       |
+| nickname  |  time | Payment method  | amount |       remark       |
 | :-------: | :-----------------: | :--------------: | :--------------------: | :----------------: |
 |   \*国    |     2020-01-02      |      Alipay      |        ￥ 8.00         |         -          |
 |   犇犇    |     2020-01-02      |      WeChat      |        ￥ 5.88         |         -          |
