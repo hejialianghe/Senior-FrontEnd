@@ -29,9 +29,9 @@ As a front-end development engineer, the blogger knows the importance of growth.
 
 ```
 
-## 3. For a start
+## 3. For a star
 
-如果有收获就给个 start 哦 ！！！ :pray: :pray: :pray:，本项目开源免费阅读,不设置任何障碍阻止阅读！
+如果有收获就给个 star 哦 ！！！ :pray: :pray: :pray:，本项目开源免费阅读,不设置任何障碍阻止阅读！
 
 If there is a harvest, give a start oh, this project open source free reading, do not set up any obstacles to prevent reading!
 
