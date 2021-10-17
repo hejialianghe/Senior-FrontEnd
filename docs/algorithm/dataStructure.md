@@ -171,7 +171,7 @@ function isPalindrome(params) {
 输出: 6
 ```
 
-#### 方式 1： 分组法
+#### 方法 1： 分组法
 
 用分组法，时间和空间的复杂度都偏高，理解分组的思想才是重点。
 
@@ -468,7 +468,6 @@ while (stack.data.length) {
   console.log('出对', stack.deQueue())
 }
 ```
-
 ### 2.3.3 有效括号
 
 给定一个只包括 '('，')'，'{'，'}'，'['，']'的字符串，判断字符串是否有效
@@ -522,5 +521,34 @@ isValid(brackets) // true
 时间复杂度: O(n) 遍历了 1 次 有n个元素的空间 
 
 空间复杂度: O(n)
+### 2.3.4 缺失的数字
+
+给定一个包含 0, 1, 2, ..., n 中 n 个数的序列，找出 0 .. n 中没有出现在序列中的那个数。
+
+示例：
+
+```bash
+输入:  [3,5,4,6,8,9,1,2,0];
+输出: 7;
+```
+#### 方法1： 分组法计算法
+
+通过计算如果不缺少一个数字的情况下总和应该多少，缺少一个数字总合多少；它们之差就是缺少的那个数字。
+
+```js
+const lostArr = [3, 5, 4, 6, 8, 9, 1, 2, 0, 2]
+
+function lostNumber(arr) {
+  const total = arr.reduce((total, num) => {
+    return total + num
+  }, 0)
+
+  const length = arr.length
+  const termial = ((1 + length) * length) / 2
+  return termial - total
+}
+
+lostNumber(lostArr) //7
+```
 
 

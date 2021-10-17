@@ -40,6 +40,8 @@ for (let i = 0; i < n; i++) {
 
 高中数学知识， y = loga x 叫做对数函数，a 是对数；y 就是以 a 为底 x 的对数。
 
+如果 ，即a的x次方等于N（a>0，且a≠1），那么数x叫做以a为底N的对数（logarithm），其中，a叫做对数的底数，N叫做真数，x叫做“以a为底N的对数”。
+
 ```js
 for (leti = 1; i <= n; i *= 2) {
   console.log(i)

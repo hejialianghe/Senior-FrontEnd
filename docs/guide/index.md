@@ -31,7 +31,7 @@ If there is a harvest, give a start oh, this project open source free reading, d
 ![GitHub forks](https://img.shields.io/github/forks/hejialianghe/Senior-FrontEnd.svg?style=flat-square)
 ![GitHub last commit](https://img.shields.io/github/last-commit/hejialianghe/Senior-FrontEnd.svg?style=flat-square)
 
-[项目地址](https://github.com/hejialianghe/seniorFrontEnd)
+[项目地址 Source address](https://github.com/hejialianghe/seniorFrontEnd)
 
 [gitee极速版阅读](https://hejialianghe.gitee.io/)
 
