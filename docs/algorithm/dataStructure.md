@@ -603,5 +603,31 @@ function maxSlidingWindow (nums,k){
 
 2. 双端队列
 
+```js
+function maxSlidingWindow(nums, k) {
+  const maxArr = []
+  const doubleEndedQueue = []
+  const len = nums.length
+  for (let i = 0; i < len; i++) {
+    while (
+      doubleEndedQueue.length &&
+      nums[i] > nums[doubleEndedQueue[doubleEndedQueue.length - 1]]
+    ) {
+      doubleEndedQueue.pop()
+    }
+    doubleEndedQueue.push(i)
+
+    while (doubleEndedQueue.length && doubleEndedQueue[0] <= i - k) {
+      doubleEndedQueue.shift()
+    }
+    if (i >= k - 1) {
+      maxArr.push(nums[doubleEndedQueue[0]])
+    }
+  }
+  return maxArr
+}
+
+```
+
 
 
