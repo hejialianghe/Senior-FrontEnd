@@ -567,7 +567,7 @@ lostNumber(lostArr) //7
 ```
 什么是滑动窗口？
 
-k代表窗口的范围，每次滑动窗口往后进一步，直到窗口无法前进。
+k代表窗口的范围，每次滑动窗口往前进一步，直到窗口无法前进。
 
 下面是窗口滑动的过程：
 
@@ -584,6 +584,24 @@ k代表窗口的范围，每次滑动窗口往后进一步，直到窗口无法�
 3,5,4,-6,8,[9,-1,2],0
 
 3,5,4,-6,8,9,[-1,2,0]
+
+1. 双指针+遍历
+
+```js
+function maxSlidingWindow (nums,k){
+    const maxArr =[]
+    for(let i =0;i<=nums.length-k;i++){
+        const left =i
+        const right=k+i
+        const kNums = nums.slice(left,right)
+        const maxNum = Math.max(...kNums)
+        maxArr.push(maxNum)
+    }
+    return maxArr
+}
+```
+
+2. 双端队列
 
 
 
