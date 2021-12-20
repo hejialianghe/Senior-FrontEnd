@@ -15,17 +15,17 @@
 
 ```javascript
 function fn() {
-  var t = 10
-  var f = 10
+  var i = 10
+  var j = 10
   console.log(i + j)
 }
 // 我们直接打印fn会出现一段字符串
 console.log(fn)
+// 打印结果
 /*
- 打印结果
   f fn() {
-     var t=10;
-     var f=10;
+     var i=10;
+     var j=10;
      console.log(i+j)
  }
 */
