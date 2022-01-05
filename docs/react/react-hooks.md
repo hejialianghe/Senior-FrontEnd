@@ -1430,5 +1430,5 @@ function ProductPage({ productId }) {
 
   useEffect(() => {
     fetchProduct();
-  }, [ProductPage]); 
+  }, [fetchProduct]); 
 ```
