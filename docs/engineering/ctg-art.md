@@ -1577,6 +1577,10 @@ module.exports.pitch=function (remainingReg,precedingReq,input) {
 loader有`loader-runner`作为调试工具，webpack的plugin因为需要的上下文信息太多了，所以没有一个模拟的环境，如果我们要开发`plugin`需要
 配置webpack，在真实的环境中开发。
 
+[webpack官方教你如何编写一个plugin](https://www.webpackjs.com/contribute/writing-a-plugin/)
+
+编写pugins我们可以进入[webpack网站](https://www.webpackjs.com/api/compiler-hooks/#emit)查看相关开发api和hooks。
+
 1. 搭建开发环境
 
 ```js
@@ -1654,8 +1658,6 @@ class WebpackSizePlugin {
   }
 }
 ```
-
-编写pugins我们可以进入[webpack网站](https://www.webpackjs.com/api/compiler-hooks/#emit)查看相关开发api和hooks
 
 webpack配置
 ```js
