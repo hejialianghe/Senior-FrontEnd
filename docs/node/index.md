@@ -291,7 +291,7 @@ EventEmitter的核心就是事件触发的Emitter，事件监听的on功能进�
 
  - 函数、对象或者属性，如函数、数组甚至任意类型的JS对象
 
-#### 模块记载优先级
+#### 模块加载优先级
 
 ![](~@/node/modulepriority.png)
 
