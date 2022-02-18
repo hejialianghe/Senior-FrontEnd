@@ -12,7 +12,9 @@
     "prettier": "prettier -w '**/*.{js,md,json}'",
     "build": "vuepress build docs",
     "upload-server": "sh deploy.sh",
-    "changelog": "auto-changelog --remote upstream --commit-limit false"
+    "changelog": "auto-changelog --remote upstream --commit-limit false",
+    "commit": "git-cz",
+    "release": "standard-version"
   },
   "keywords": [],
   "author": "hejialiang",
@@ -38,8 +40,15 @@
     "auto-changelog": "^2.3.0",
     "changelog": "^1.4.2",
     "commander": "^6.1.0",
+    "commitizen": "^4.2.4",
+    "cz-conventional-changelog": "^3.3.0",
     "express": "^4.17.1",
     "lodash": "^4.17.15",
     "prettier": "^2.3.2"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
