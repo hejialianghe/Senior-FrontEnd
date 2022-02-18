@@ -75,8 +75,7 @@ export function HooksAvatar (){
 - useEffect
 函数组件处理副作用的方法，什么是副作用？异步请求、订阅原生的dom实事件、setTimeoutd等
 - useContext
-接受一个context对象（React.createContext的返回值）并返回该context的当前值，当前的context由上层组件中距离最近的`<Mycontext.provider></Mycontext.provider>`的
-value prop决定
+接受一个context对象（React.createContext的返回值）并返回该context的当前值，当前的context由上层组件中距离最近的`<Mycontext.provider></Mycontext.provider>`的value prop决定
 - useReducer
 另一种"useState"，跟redux有点类似
 - useRef
