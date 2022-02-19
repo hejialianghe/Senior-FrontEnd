@@ -2,6 +2,7 @@
 
 [git文档](http://git-scm.com/book/zh/v2)
 
+[package.json配置查询](https://docs.npmjs.com/cli/v8/configuring-npm/package-json#config)
 ### 7.1.1 Git flow规范
 
 在工作中避免不了多人协作，协作避免不了有一个规范的流程，让大家有效的去合作；让项目仅仅有条的发展下去；`git flow`是最早诞生，
@@ -71,25 +72,99 @@ scope | commit影响的范围
 - footer：一些备注，通常是BREAKING CHANGE 或 修改的bug链接 
 
 #### 利用插件（commitizen）
+ 
+利用commitizen，提交规范的commit。
+
+[package.json配置查询](https://docs.npmjs.com/cli/v8/configuring-npm/package-json#config)
+
+- commitizen 用于提示用户输入或选择，生成规范的commit
+- cz-conventional-changelog  用于生成changelog
 
 ```bash
-# cz-conventional-changelog changelog插件 
+# 1. 下载cz-conventional-changelog changelog插件 
 npm install -g commitizen cz-conventional-changelog
+# 2. package.json 配置
+
+{
+    "scripts": { 
+    # 以后提交commit 直接执行npm run commit
+       "commit": "git-cz",
+    },
+    # config用来设置一些项目不怎么变化的项目配置，用户用的时候可以使用如下用法：process.env.npm_package_config_commitizen
+    "config": {
+      "commitizen": {
+        "path": "./node_modules/cz-conventional-changelog"
+      }
+  }
+}
+
+# 也可以使用以下配置，配置全局变量
 # 命令行中输入以下命令，配置到czrc目录下,也可以用vim编辑~/.czrc添加到文件中去{ "path": "cz-conventional-changelog"}
 echo '{ "path": "cz-conventional-changelog"}' > ~/.czrc
-git cz
 ```
-自定义文档格式,commit用中文去写
+
+自定义文档格式,commit用中文去写（扩展）
 
 ```bash
-npm install -g customizable
-echo '{ "path": "customizable"}' > ~/.czrc
+# 1.下载
+npm install -g cz-customizable
+# 2. package.json 配置
+...
+"config": {
+  "commitizen": {
+    "path": "node_modules/cz-customizable"
+  },
+  "cz-customizable": {
+    "config": "./cz.config.js"
+  }
+}
+
+# 也可以使用以下配置，配置全局变量
+echo '{ "path": "cz-customizable"}' > ~/.czrc
+# echo添加或vim编辑添加
 vim .czrc
-# 修改成这个内容 { "path": "cz-customizable"}
-touch .cz.config.js
-git cz
+# 添加配置 { "path": "cz-customizable"}
+
+# 3.创建配置文件
+touch ./cz.config.js
 ```
-gitmoji(趣味图标)
+cz.config.js
+
+```js
+module.exports = {
+  //可选类型
+  types: [
+    { value: 'feat', name: 'feat:   新功能' },
+    { value: 'fix', name: 'fix:   修复' },
+    { value: 'docs', name: 'docs:   文档变更' },
+    { value: 'style', name: 'style:   代码格式(不影响代码运行的变动)' },
+    {
+      value: 'refactor',
+      name: 'refactor:重构(既不是增加feature)，也不是修复bug'
+    },
+    { value: 'perf', name: 'perf:   性能优化' },
+    { value: 'test', name: 'test:   增加测试' },
+    { value: 'chore', name: 'chore:   构建过程或辅助功能的变动' },
+    { value: 'revert', name: 'revert:   回退' },
+    { value: 'build', name: 'build:   打包' },
+    { value: 'revert', name: 'revert:   回退' }
+  ],
+  //消息步骤
+  messages: {
+    type: '请选择提交类型',
+    customScope: '请输入修改范围(可选)',
+    subject: '请简要描述提交(必填)',
+    body: '请输入详细描述(可选)',
+    footer: '请输入要关闭的issue(可选)',
+    confirmCommit: '确认以上信息提交?(y/n)'
+  },
+  //跳过问题
+  skipQuestion: ['body', 'footer'],
+  //subject文字长度默认是
+  subjectLimit: 72
+}
+```
+gitmoji(趣味图标)（扩展）
 
 ```bash
 npm i -g gitmoji-cli
