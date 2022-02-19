@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.1](https://github.com/hejialianghe/Senior-FrontEnd/compare/v0.1.0...v0.1.1) (2022-02-19)
+
+
+### Features
+
+* **docs/engineering/git.md:** 1. git commit 工程化 ([f196df8](https://github.com/hejialianghe/Senior-FrontEnd/commit/f196df8c0095f1e10d322862f732bbb1e89d59d8))
+
 ## 0.1.0 (2022-02-18)
 
 
