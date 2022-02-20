@@ -1,6 +1,6 @@
 language: node_js
 node_js: 
-  - lts/* #设置语言版本，lts表示稳定版
+  - 12  #设置语言版本，
 branches:
   only:
     - master #设置只监听哪个分支
