@@ -15,7 +15,7 @@ before_install:
 - chmod 600 ~/.ssh/id_rsa # 降低 id_rsa 文件的权限
 - echo -e "Host 122.51.11.29\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config # 将生产服务器地址加入到测试机的信任列表中
 install:  # 安装依赖
-  - npm
+  - npm i
 
 script:  # 需要执行的脚本
     - npm run build
