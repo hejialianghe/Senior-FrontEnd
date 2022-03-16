@@ -38,7 +38,9 @@ function reverse(params) {
           .split('')
           .reverse()
           .join('')
-  return value
+          
+  const result = x > 0 ? parseInt(value, 10) : 0 - parseInt(value, 10);
+  return result
 }
 ```
 
