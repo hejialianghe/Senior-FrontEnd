@@ -317,6 +317,7 @@ foo('hello')
   //函数外a被改变，这就是函数的副作用
   let a = 5
   let foo = () => (a = a * 10)
+  foo()
   console.log(a) // 50
 
   let arr = [1, 2, 3, 4, 5, 6]
