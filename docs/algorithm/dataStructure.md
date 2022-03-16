@@ -25,22 +25,15 @@ JavaScript 常用的数据结构：
 
 ```js
 function reverse(params) {
-  if (typeof params !== 'number') return
+  if (typeof params !== 'number') return;
+  
+  const value = String(params)
+    .slice(params > 0 ? 0 : 1)
+    .split('')
+    .reverse()
+    .join('');
 
-  const value =
-    params > 0
-      ? String(params)
-          .split('')
-          .reverse()
-          .join('')
-      : String(params)
-          .slice(1)
-          .split('')
-          .reverse()
-          .join('')
-          
-  const result = x > 0 ? parseInt(value, 10) : 0 - parseInt(value, 10);
-  return result
+  return params > 0 ? Number(value) : 0 - Number(value);
 }
 ```
 
