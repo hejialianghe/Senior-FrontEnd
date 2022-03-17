@@ -351,9 +351,9 @@ foo('hello')
   let foo = data => {
     data.count = 3
   }
-  console.log(data.cont) // 1
+  console.log(data.count) // 1
   foo(data)
-  console.log(data.cont) // 3
+  console.log(data.count) // 3
 
   // 改进后使我们的数据具有不可变性
   let data = { count: 1 }
@@ -361,9 +361,9 @@ foo('hello')
     let lily = JSON.parse(JSON.stringify(data)) // leg lily= {...data} 使用扩展运算符去做拷贝，只能拷贝第一层
     lily.count = 3
   }
-  console.log(data.cont) // 1
+  console.log(data.count) // 1
   foo(data)
-  console.log(data.cont) // 1
+  console.log(data.count) // 1
   ```
 
 ## 2.4 compose 函数 pipe 函数

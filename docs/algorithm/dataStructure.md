@@ -1,10 +1,10 @@
-javascript 常用的数据结构：
+JavaScript 常用的数据结构：
 
-- 字符串
-- 数组
-- 栈
-- 队列
-- 链表
+- [字符串](#_2-1-字符串)
+- [数组](#_2-2-数组)
+- [栈](#_2-3-栈和队列)
+- [队列](#_2-3-栈和队列)
+- [链表](#_2-4-链表)
 - 树
 
 ## 2.1 字符串
@@ -27,9 +27,20 @@ javascript 常用的数据结构：
 function reverse(params) {
   if (typeof params !== 'number') return
 
-  return params > 0
-    ? String(params).split('').reverse().join('')
-    : String(params).slice(1).split('').reverse().join('')
+  const value =
+    params > 0
+      ? String(params)
+          .split('')
+          .reverse()
+          .join('')
+      : String(params)
+          .slice(1)
+          .split('')
+          .reverse()
+          .join('')
+          
+  const result = x > 0 ? parseInt(value, 10) : 0 - parseInt(value, 10);
+  return result
 }
 ```
 
