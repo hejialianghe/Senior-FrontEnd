@@ -9,7 +9,7 @@ JavaScript 常用的数据结构：
 
 ## 2.1 字符串
 
-字符串是由零个和多个字符组成的有序序列，是 javascript 最基础的数据结构，也是学习编程的基础。
+字符串是由零个和多个字符组成的有序序列，是 JavaScript 最基础的数据结构，也是学习编程的基础。
 
 ### 2.1.1 翻转整数
 
@@ -63,12 +63,9 @@ function reverse(params) {
 
 ```js
 function reverse(params) {
-  if (typeof params !== 'number') return
+  if (typeof params !== 'string') return
   // 反转字符串
-  return params
-    .split('')
-    .reverse()
-    .join('')
+  return params.split('').reverse().join('')
 }
 ```
 
@@ -79,11 +76,9 @@ function reverse(params) {
 ```js
 function reverse(str) {
   const params = str.split('')
-  for (let i = 0; i < params.length / 2; i++) {
-    ;[params[i], params[params.length - i - 1]] = [
-      params[params.length - i - 1],
-      params[i]
-    ]
+  const n = params.length
+  for (let i = 0; i < n / 2; i++) {
+    [params[i], params[n - i - 1]] = [params[n - i - 1], params[i]]
   }
   return params.join('')
 }
@@ -112,10 +107,7 @@ function isPalindrome(params) {
   //去除 非单词字符、非数字
   const arr = params.toLowerCase().replace(/[^A-Za-z0-9]/g, '')
   // 反转
-  const reverseStr = arr
-    .split('')
-    .reverse()
-    .join('')
+  const reverseStr = arr.split('').reverse().join('')
   return reverseStr === params
 }
 ```
@@ -179,10 +171,10 @@ function isPalindrome(params) {
 
 ```js
 function singleNumber(arr) {
-  const arrGroups = arr.map(item => {
-    return arr.filter(ele => item === ele)
+  const arrGroups = arr.map((item) => {
+    return arr.filter((ele) => item === ele)
   })
-  return arrGroups.find(item => item.length === 1)[0]
+  return arrGroups.find((item) => item.length === 1)[0]
 }
 ```
 
@@ -470,6 +462,7 @@ while (stack.data.length) {
   console.log('出对', stack.deQueue())
 }
 ```
+
 ### 2.3.3 有效括号
 
 给定一个只包括 '('，')'，'{'，'}'，'['，']'的字符串，判断字符串是否有效
@@ -504,7 +497,7 @@ function isValid(b) {
   const map = new Map([
     ['}', '{'],
     [']', '['],
-    [')', '(']
+    [')', '('],
   ])
   for (let item of b) {
     if (!map.has(item)) {
@@ -518,11 +511,13 @@ function isValid(b) {
 
 isValid(brackets) // true
 ```
+
 复杂度分析：
 
-时间复杂度: O(n) 遍历了 1 次 有n个元素的空间 
+时间复杂度: O(n) 遍历了 1 次 有 n 个元素的空间
 
 空间复杂度: O(n)
+
 ### 2.3.4 缺失的数字
 
 给定一个包含 0, 1, 2, ..., n 中 n 个数的序列，找出 0 .. n 中没有出现在序列中的那个数。
@@ -533,7 +528,8 @@ isValid(brackets) // true
 输入:  [3,5,4,6,8,9,1,2,0];
 输出: 7;
 ```
-#### 方法1： 分组法计算法
+
+#### 方法 1： 分组法计算法
 
 通过计算如果不缺少一个数字的情况下总和应该多少，缺少一个数字总合多少；它们之差就是缺少的那个数字。
 
@@ -552,11 +548,13 @@ function lostNumber(arr) {
 
 lostNumber(lostArr) //7
 ```
+
 复杂度分析：
 
 时间复杂度: O(n) ，2 次遍历数组，所以最终的时间复杂度是 O(n)
 
-空间复杂度: O(1)，会有3个临时变量，不会随着入参数组的增加而增加，所以空间复杂度是 O(1)
+空间复杂度: O(1)，会有 3 个临时变量，不会随着入参数组的增加而增加，所以空间复杂度是 O(1)
+
 ### 2.3.5 滑动窗口问题
 
 给定一个数组 nums 和滑动窗口的大小 k，请找出所有滑动窗口里的最大值。
@@ -567,9 +565,10 @@ lostNumber(lostArr) //7
 输入:  nums = [3,5,4,-6,8,9,-1,2,0] 和k=3
 输出: [5,5,8,9,9,9,2]
 ```
+
 什么是滑动窗口？
 
-k代表窗口的范围，每次滑动窗口往前进一步，直到窗口无法前进。
+k 代表窗口的范围，每次滑动窗口往前进一步，直到窗口无法前进。
 
 下面是窗口滑动的过程：
 
@@ -592,20 +591,20 @@ k代表窗口的范围，每次滑动窗口往前进一步，直到窗口无法�
 窗口的本质就是约定范围，如果想约定范围我们就应该想到双指针；我们可以定义一个`left`左指针,定义一个`right`右指针；分别指向窗口的两端，通过不断移动左右指针来达到移动窗口的目的。
 
 ```js
-function maxSlidingWindow (nums,k){
-    const maxArr =[]
-    for(let i =0;i<=nums.length-k;i++){
-        const left =i
-        const right=k+i
-        const kNums = nums.slice(left,right)
-        const maxNum = Math.max(...kNums)
-        maxArr.push(maxNum)
-    }
-    return maxArr
+function maxSlidingWindow(nums, k) {
+  const maxArr = []
+  for (let i = 0; i <= nums.length - k; i++) {
+    const left = i
+    const right = k + i
+    const kNums = nums.slice(left, right)
+    const maxNum = Math.max(...kNums)
+    maxArr.push(maxNum)
+  }
+  return maxArr
 }
 ```
 
-上面的解法其实还可以优化，每次我们滑动窗口都需要找出最大值，每次滑动窗口只移动一位；其实当前窗口前2位数是上一次后2位数；
+上面的解法其实还可以优化，每次我们滑动窗口都需要找出最大值，每次滑动窗口只移动一位；其实当前窗口前 2 位数是上一次后 2 位数；
 在当前窗口找最大值时候，上一次比较过的数在本次窗口还要比较，那是不是重复比较了？
 
 2. 双端队列
@@ -640,12 +639,13 @@ function maxSlidingWindow(nums, k) {
   return maxArr
 }
 ```
+
 ## 2.4 链表
 
 相对于数组，链表是一种稍微复杂的数据结构，掌握起来也要比数组稍微难一些。链表通过指针将不连续的内存串联起来。
 数组的线性序是由数组的下标来决定的，而 链表的的顺序是由各个对象中的指针来决定。
 
-JavaScript的数组被实现成了对象，与Java相比，效率偏低。 在实际开发中，不能单靠复杂度就决定使用哪个数据结构，没有一种数据结构是完美的，否则其他的数据结构不都被淘汰了。
+JavaScript 的数组被实现成了对象，与 Java 相比，效率偏低。 在实际开发中，不能单靠复杂度就决定使用哪个数据结构，没有一种数据结构是完美的，否则其他的数据结构不都被淘汰了。
 
 链表的结构可以由很多种，它可以是单链表或双链表，也可以是已排序的或未排序的，环形的或非环形的。如果一个链表是单向的，那么链表中的每个元素没有指向前一个元素的指针。已排序的和
 未排序的链表较好理解
@@ -654,6 +654,7 @@ JavaScript的数组被实现成了对象，与Java相比，效率偏低。 在�
 数组在插入或删除元素时，为了保证数据的连续性，需要对原有的数据进行挪动。然而链表在插入
 或删除时，不要挪动原来的数据，因为链表的数据本身就是非连续的空间，因此在链表中插入、删
 除数据是非常快的。
+
 ### 2.4.1 设计一个链表
 
 ```js
