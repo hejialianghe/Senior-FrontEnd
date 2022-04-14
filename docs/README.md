@@ -5,7 +5,7 @@ actionText: 快速上手 →
 actionLink: /guide/
 features:
 - title: JavaScript进阶
-  details: 了解高阶函数、Underscore源码分析、EventLopp、异步编程、设计模式
+  details: 了解高阶函数、Underscore源码分析、EventLoop、异步编程、设计模式
 - title: 计算机网络
   details: 了解网络协议、网络请求、Axios源码分析、网络安全、模块加载、路由调度
 - title: Vue
