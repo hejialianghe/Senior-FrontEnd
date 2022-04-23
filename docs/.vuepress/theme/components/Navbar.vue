@@ -153,4 +153,7 @@ $navbar-horizontal-padding = 1.5rem
 // .div2:hover {
 // 	animation-play-state:paused;
 // }
+.dropdown-wrapper{
+z-index: 100;
+}
 </style>

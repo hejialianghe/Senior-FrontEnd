@@ -168,6 +168,30 @@ module.exports = {
                   ["projectPractice/",'Nextjs']
                 ]
               }
-        ]
-    }
+        ],
+        locales: {
+          '/': {
+            selectText: '选择语言',
+            label: '简体中文',
+          },
+          '/en/': {
+            selectText: 'Languages',
+            label: 'English'
+          }
+        }
+    },
+    locales: { 
+                // 键名是该语言所属的子路径
+          // 作为特例，默认语言可以使用 '/' 作为其路径。
+          '/': {
+            lang: 'zh-CN', // 将会被设置为 <html> 的 lang 属性
+            title: 'web全栈体系',
+            description: '你好，朋友',
+          },
+          '/en/': {
+            lang: 'en-US',
+            title: 'Web full stack architecture',
+            description: 'Hello, my friend!'
+          }
+     },
 }

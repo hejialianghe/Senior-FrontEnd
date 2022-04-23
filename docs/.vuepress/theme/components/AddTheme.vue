@@ -24,7 +24,7 @@ export default {
 <style scoped lang="stylus">
 .ads 
   position fixed;
-  z-index 99;
+  z-index 10;
   top 90px;
   right 50px;
   width 100px;
