@@ -73,3 +73,8 @@ WeChat：
 |   \*亚    |     2021-07-05      |      Alipay      |        ￥ 6.66         |         -          |
 | 田\*4    |     2022-02-06      |      WeChat      |        ￥ 109.99        |         -          |
 |   \*明    |     2022-03-20     |      WeChat      |        ￥ 8.88        |         -          |
+
+## 6.License
+MIT
+
+Copyright (c) 2022-present, hejialianghe
