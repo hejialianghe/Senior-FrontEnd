@@ -54,7 +54,7 @@ WeChat：
 ![](~@/guide/money.png)
 ### 赞赏名单(Appreciation list) :tada: 
 
-| name  |  time | Payment Method  | amount |       remark       |
+| nickname  |  time | Payment Method  | amount |       remark       |
 | :-------: | :-----------------: | :--------------: | :--------------------: | :----------------: |
 |   \*国    |     2020-01-02      |      Alipay      |        ￥ 8.00         |         -          |
 |   犇犇    |     2020-01-02      |      WeChat      |        ￥ 5.88         |         -          |

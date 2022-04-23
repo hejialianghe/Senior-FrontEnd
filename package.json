@@ -14,7 +14,7 @@
     "upload-server": "sh deploy.sh",
     "changelog": "auto-changelog --remote upstream --commit-limit false",
     "commit": "git-cz",
-    "release": "standard-version"
+    "release": "standard-version && git push origin --tags"
   },
   "keywords": [],
   "author": "hejialiang",

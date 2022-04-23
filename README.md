@@ -13,7 +13,7 @@ Find partners and translate English version.
 
 As a front-end development engineer, the blogger knows the importance of growth. Most of the current market is API engineer; Is only able to use API does not understand the principle, in the long run, become replaceable people, how to become a senior development engineer! That's what it takes to be a senior development engineer! Follow my blog to learn, you can understand the web full stack engineer knowledge system, to get their own learning direction.
 
-## 2. Study program
+## 2. Study Program
 
 ```bash
 
@@ -29,7 +29,7 @@ As a front-end development engineer, the blogger knows the importance of growth.
 
 ```
 
-## 3. For a star
+## 3. For a Star
 
 如果有收获就给个 star 哦 ！！！ :pray: :pray: :pray:，本项目开源免费阅读,不设置任何障碍阻止阅读！
 
@@ -55,7 +55,7 @@ WeChat：
 
 ![赞助渠道 Sponsorship channels](./image/money.f845196d.png)
 
-### Appreciation list:art:
+### Appreciation List:art:
 
 | nickname  |   time |   Payment method |   amount |       remark       |
 | :-------: | :-----------------: | :--------------: | :--------------------: | :----------------: |
