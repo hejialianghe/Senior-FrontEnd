@@ -170,7 +170,7 @@ charles做客户端和服务端的中介，代理了https请求；charles会动�
 
 关掉charles的External Proxy setting：点击顶部Proxy-> 去掉勾选 External Proxy Settings
 
-2. 开启后手机浏览器无法打开网页
+2. 开启手机代理后浏览器无法打开网页
    -  要保证电脑和手机同一个Wi-Fi,手机上填的代理服务器ip不要填错了，可以查看charles：Help/Local IP Address；端口一般是8888
    -  打开https的网站，会提醒不是安全连接，说明你证书没有安装正确，或者没有信任
    -  一般就上诉2个问题，也可以重启试试
@@ -185,6 +185,11 @@ charles做客户端和服务端的中介，代理了https请求；charles会动�
 
 -  safari浏览器访问`https:chls.pro/ssl`下载证书描述文件时候，确保配置了http代理（ip:8888），
 如果换电脑需要再次下载证书，可以在描述文件中查看证书，charles通用名称中会包含你电脑系统的名称
+
+5. 手机开启代理后，也能访问网页，但是电脑上的charles没有抓取到数据
+
+- 检查代理是否正确
+- 重启charles
 
 ### 8.4.4 Map请求重定向
 
@@ -790,3 +795,11 @@ curl localhost:3000/api/music/playlists/101 -X DELETE  -H 'Content-Type: applica
 json-server index.js --routes routes.json --middleware middleware.js
 ```
 源码地址：/examples/engineering/8.6
+
+## 8.8 Stream 手机抓包APP
+
+ 安装软件-> 安装证书-> 信任证书
+<p align="left">
+    <img width="260px" src="~@/engineering/stream.jpeg">
+</p>
+  
