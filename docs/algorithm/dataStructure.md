@@ -645,6 +645,9 @@ function maxSlidingWindow(nums, k) {
 相对于数组，链表是一种稍微复杂的数据结构，掌握起来也要比数组稍微难一些。链表通过指针将不连续的内存串联起来。
 数组的线性序是由数组的下标来决定的，而 链表的的顺序是由各个对象中的指针来决定。
 
+在多数编程语言中，数组的长度是固定的，一旦被填满，要再加入数据将会变得非常困难。在数组
+中，添加和删除元素也比较麻烦，因为需要把数组中的其他元素向前或向后移动。
+
 JavaScript 的数组被实现成了对象，与 Java 相比，效率偏低。 在实际开发中，不能单靠复杂度就决定使用哪个数据结构，没有一种数据结构是完美的，否则其他的数据结构不都被淘汰了。
 
 链表的结构可以由很多种，它可以是单链表或双链表，也可以是已排序的或未排序的，环形的或非环形的。如果一个链表是单向的，那么链表中的每个元素没有指向前一个元素的指针。已排序的和
@@ -659,14 +662,80 @@ JavaScript 的数组被实现成了对象，与 Java 相比，效率偏低。 �
 
 ```js
 class Node {
-  constructor(value){
-    this.value=value
-    this.next=null
+  constructor(value) {
+    this.value = value
+    this.next = null
   }
 }
-class LinkedList(){
-  constructor(){
-    this.head=new Node('head')
+
+class linkedList {
+  constructor() {
+    this.head = new Node('A')
+  }
+  // 查找节点
+  find(item) {
+    let node = this.head
+    while (node !== item && node !== null) {
+      node = node.next
+    }
+    return node
+  }
+  // 移除节点
+  remove(item) {
+    const prevNode = this.findPrev(item)
+    if (prevNode.next !== null) {
+      prevNode.next = prevNode.next.next
+    }
+  }
+  // 插入节点
+  insert(el, item) {
+    const newNode = new Node(el)
+    const currentNode = this.find(item)
+    newNode.next = currentNode.next
+    currentNode.next = newNode
+  }
+  // 找当前节点上一个节点
+  findPrev(item) {
+    let node = this.head
+    while (node.next !== null && node.next.value !== item) {
+      node = node.next
+    }
+    return node
   }
 }
+```
+### 2.4.2 反转一个链表
+
+示例：
+
+```js
+输入: 1->2->3->4->5->NULL
+输出: 5->4->3->2->1->NULL
+```
+
+1. 用迭代的方法实现。
+
+```js
+const linked={
+  head:{
+    value:1,
+    next:{
+      value:3,
+      next:{
+        value:5,
+        next:null
+      }
+    }
+  }
+}
+let head = linked.head
+let next = null
+let pre= null
+while(head){
+  next = head.next // 先存下后面的链表
+  head.next = pre // 当前的指针指向上一个
+  pre =head // 把反转的链表存起来
+  head =next // 取出存下来的链表，继续遍历
+}
+// pre 就是最终反转的链表
 ```

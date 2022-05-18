@@ -358,7 +358,7 @@ foo('hello')
   // 改进后使我们的数据具有不可变性
   let data = { count: 1 }
   let foo = data => {
-    let lily = JSON.parse(JSON.stringify(data)) // leg lily= {...data} 使用扩展运算符去做拷贝，只能拷贝第一层
+    let lily = JSON.parse(JSON.stringify(data)) // let lily= {...data} 使用扩展运算符去做拷贝，只能拷贝第一层
     lily.count = 3
   }
   console.log(data.count) // 1
@@ -716,10 +716,10 @@ rst(2) //3
 
         let deBounce = function (fn,delay){
           let timer=null
-          return function (..args) {
+          return function (...args) {
             if(timer) clearTimeout(timer)
             timer = setTimeout(()=>{
-              fn(..args)
+              fn(...args)
             },delay)
           }
         }
