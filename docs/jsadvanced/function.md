@@ -386,7 +386,7 @@ foo('hello')
 
 ```javascript
       // 一般会这么做
-      let calculate => x => (x+10) * 10
+      let calculate = x => (x+10) * 10
       console.log(calculate(10))
 
 ```
