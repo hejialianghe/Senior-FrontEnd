@@ -8,7 +8,7 @@ As a front-end development engineer, the blogger knows the importance of growth.
 寻找合作伙伴，翻译英文版本。
 
 Find partners and translate English version.
-## 2. 学习大纲(Study Program)
+## 2. 学习大纲(Study program)
 
 ```bash
 ├── javaScript进阶 (JavaScript advanced) # 大厂如何去做防抖和节流
@@ -22,7 +22,7 @@ Find partners and translate English version.
 ├── 项目实践   (Project practice)  # react同构
 
 ```
-## 3. 给个start哦(For a Star)
+## 3. 给个start哦(For a star)
 如果有收获就给个star哦 ！！！ :pray: :pray: :pray: ，本项目开源免费阅读,不设置任何障碍阻止阅读！
 
 If there is a harvest, give a start oh, this project open source free reading, do not set up any obstacles to prevent reading!
@@ -54,7 +54,7 @@ WeChat：
 ![](~@/guide/money.png)
 ### 赞赏名单(Appreciation list) :tada: 
 
-| nickname  |  time | Payment Method  | amount |       remark       |
+| nickname  |  time | Payment method  | amount |       remark       |
 | :-------: | :-----------------: | :--------------: | :--------------------: | :----------------: |
 |   \*国    |     2020-01-02      |      Alipay      |        ￥ 8.00         |         -          |
 |   犇犇    |     2020-01-02      |      WeChat      |        ￥ 5.88         |         -          |
@@ -67,9 +67,14 @@ WeChat：
 |   \*奇    |     2021-03-01      |      Alipay      |        ￥ 6.60         |    老铁老厉害了    |
 | Doctype\* |     2021-03-16      |      WeChat      |        ￥ 10.00        | 感谢作者，想请教您 |
 |   \*瑶    |     2021-04-27      |      Alipay      |        ￥ 6.66         |         -          |
-|   \*亚    |     2021-07-05      |      Alipay      |        ￥ 6.66         |         -         |
+|   \*亚    |     2021-07-05      |      Alipay      |        ￥ 6.66         |         
 | 田\*4    |     2022-02-06      |      WeChat      |        ￥ 109.99        |         -          |
 |   \*明    |     2022-03-20     |      WeChat      |        ￥ 8.88        |         -          |
+|   \*水    |     2022-04-18     |      WeChat      |        ￥ 6.60        |         -          |
+|   \*🐯    |     2022-06-09     |      WeChat      |        ￥ 6.66       |         -          |
+|   \**S    |     2022-07-07    |      WeChat      |        ￥ 9.99       |         -          |
+
+
 
 
 
