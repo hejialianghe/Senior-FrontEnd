@@ -26,7 +26,7 @@ Find partners and translate English version.
 ## 3. 给个start哦(For a star)
 如果有收获就给个star哦 ！！！ :pray: :pray: :pray: ，本项目开源免费阅读,不设置任何障碍阻止阅读！
 
-If there is a harvest, give a start oh, this project open source free reading, do not set up any obstacles to prevent reading!
+Feel free to give it a star on Github if you find this valuable. This project is entirely open-sourced, which means you have full-freedom to read whatever you like with restrictions whatsoever!
 
 ![GitHub stars](https://img.shields.io/github/stars/hejialianghe/Senior-FrontEnd.svg?style=flat-square) 
 ![GitHub forks](https://img.shields.io/github/forks/hejialianghe/Senior-FrontEnd.svg?style=flat-square)
@@ -44,7 +44,7 @@ If there is a harvest, give a start oh, this project open source free reading, d
 
 我为什么网名叫蚂蚁，我希望我能够像蚂蚁一样，虽然身体小但力量大，希望你们也一样！如果发现文章有错误，请即时联系我！
 
-Why do I net name is ant, I hope I can be like ant, although the body is small but the strength is big, I hope you are the same! If you find any errors in this article, please contact me immediately!
+Why do I use "ant" as my internet name? Well, I just hope I could be like an ant, tiny in size but has massive strength that carries big responsibilities - and I hope you're the same! Also, please feel free to get in touch with me if you find any errors in any of my blog articles.
 
 WeChat：
 
