@@ -3,7 +3,8 @@
 博主作为一个前端开发工程师，深知成长的重要，现市场上大多数是api工程师;就是只会用api并不了解原理，长此以往就成为了可替代的人，如何成为一个高级开发工程师！成为一个高级开发工程师需要会那些知识！
 跟着我的博客去学习，能让你了解web全栈工程师的知识体系，让自己的学习有方向。
 
-As a front-end development engineer, the blogger knows the importance of growth. Most of the current market is API engineer; Is only able to use API does not understand the principle, in the long run, become replaceable people, how to become a senior development engineer! That's what it takes to be a senior development engineer! Follow my blog to learn, you can understand the web full stack engineer knowledge system, to get their own learning direction.
+As a front-end engineer, I understand, deep down, that growing my skills is crucial to succeed in my career. The current market has no shortage of the type of engineers who only know how to consume APIs, but don't know enough about what's going on under the hood. These types of engineer will inevitably, become easily replacable overtime. Now you ask yourself, how do I become a senior frontend engineer? What does it take to become one? Well, here in my blog, I'll walk you through the entire learning path of almos everything you need to become a senior fullstack engineer (web), so that you have a much easier time navigating the world of software engineering.
+
 
 寻找合作伙伴，翻译英文版本。
 
