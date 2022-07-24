@@ -9,7 +9,7 @@ As a front-end engineer, I understand, deep down, that growing my skills is a cr
 寻找合作伙伴，翻译英文版本。
 
 I'm also looking for collaborators to help translate this blog for the English version
-## 2. 学习大纲(Study program)
+## 2. 学习大纲(Learning Path)
 
 ```bash
 ├── javaScript进阶 (JavaScript advanced) # 大厂如何去做防抖和节流
