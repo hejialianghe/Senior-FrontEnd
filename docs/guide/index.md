@@ -3,12 +3,13 @@
 博主作为一个前端开发工程师，深知成长的重要，现市场上大多数是api工程师;就是只会用api并不了解原理，长此以往就成为了可替代的人，如何成为一个高级开发工程师！成为一个高级开发工程师需要会那些知识！
 跟着我的博客去学习，能让你了解web全栈工程师的知识体系，让自己的学习有方向。
 
-As a front-end development engineer, the blogger knows the importance of growth. Most of the current market is API engineer; Is only able to use API does not understand the principle, in the long run, become replaceable people, how to become a senior development engineer! That's what it takes to be a senior development engineer! Follow my blog to learn, you can understand the web full stack engineer knowledge system, to get their own learning direction.
+As a front-end engineer, I understand, deep down, that growing my skills is a crucial factor to succeed in my career. The current market has no shortage of the type of engineers who only know how to consume APIs, but don't know enough about what's going on under the hood. These types of engineer will inevitably, become easily replacable overtime. Now you ask yourself, how do I become a senior engineer? What does it take to become one? Well, here in my blog, I'll walk you through the entire learning path of almost everything you need to become a senior fullstack engineer (web), so that you have a much easier time navigating the world of software engineering.
+
 
 寻找合作伙伴，翻译英文版本。
 
-Find partners and translate English version.
-## 2. 学习大纲(Study program)
+I'm also looking for collaborators to help translate this blog for the English version
+## 2. 学习大纲(Learning Path)
 
 ```bash
 ├── javaScript进阶 (JavaScript advanced) # 大厂如何去做防抖和节流
@@ -25,7 +26,7 @@ Find partners and translate English version.
 ## 3. 给个start哦(For a star)
 如果有收获就给个star哦 ！！！ :pray: :pray: :pray: ，本项目开源免费阅读,不设置任何障碍阻止阅读！
 
-If there is a harvest, give a start oh, this project open source free reading, do not set up any obstacles to prevent reading!
+Feel free to give it a star on Github if you find this valuable. This project is entirely open-sourced, which means you have full-freedom to read whatever you like with restrictions whatsoever!
 
 ![GitHub stars](https://img.shields.io/github/stars/hejialianghe/Senior-FrontEnd.svg?style=flat-square) 
 ![GitHub forks](https://img.shields.io/github/forks/hejialianghe/Senior-FrontEnd.svg?style=flat-square)
@@ -43,7 +44,7 @@ If there is a harvest, give a start oh, this project open source free reading, d
 
 我为什么网名叫蚂蚁，我希望我能够像蚂蚁一样，虽然身体小但力量大，希望你们也一样！如果发现文章有错误，请即时联系我！
 
-Why do I net name is ant, I hope I can be like ant, although the body is small but the strength is big, I hope you are the same! If you find any errors in this article, please contact me immediately!
+Why do I use "ant" as my internet name? Well, I just hope I could be like an ant, tiny in size but has massive strength that carries big responsibilities - and I hope you're the same! Also, please feel free to get in touch with me if you find any errors in any of my blog articles.
 
 WeChat：
 
