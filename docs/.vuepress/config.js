@@ -190,7 +190,7 @@ module.exports = {
           },
           '/en/': {
             lang: 'en-US',
-            title: 'Web full stack architecture',
+            title: 'Full-stack Engineering (web) - Learning Roadmap',
             description: 'Hello, my friend!'
           }
      },
