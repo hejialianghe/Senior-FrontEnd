@@ -8,11 +8,11 @@
 
 ####  Hybrid-rendering
 
-Naitve和Web都有它们的优势和劣势，我们想有一种混合的方案去中和它们的优势和劣势，达到一个平衡的效果，下面有3种方案
+Both native-rendering nd web-rendering have their own pros and cons. Below we have 3 strategies that give us a balance of all factors using a combination of tricks and hacks
 
-- PhoneGap：跑的还是常见web页面，只是在页面包了一层壳，native提供一些api调用，它确实有些原生的体验
-- React-Native：能达到原生体验，但稳定性没那么好
-- JS-SDK：提供了一些拍照、扫一扫的原生能力
+- PhoneGap: Bascially just a web interface. The only difference is that we wrap it with a native layer which provides API access to some native features
+- React Native: Most native experience, but not so stable
+- JS-SDK: Provides certain native feature access such as camara, scanning, etc.
 
 ####  微信小程序的选择
 
