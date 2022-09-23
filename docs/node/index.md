@@ -504,7 +504,7 @@ Node及Node的Web框架都拥有天然的包容性，易于扩展和维护
 #### 1. 一个简单的http服务
 ```js
     var http=require('http')
-    http.creareServer(function(req,res){
+    http.createServer(function(req,res){
         res.write('Hello World')
         res.end()
     }).listen(1000)
