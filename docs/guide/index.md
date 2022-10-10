@@ -36,7 +36,7 @@ Feel free to give it a star on Github if you find this valuable. This project is
 
 [项目地址 Source address](https://github.com/hejialianghe/seniorFrontEnd)
 
-[gitee 极速版阅读](https://hejialianghe.gitee.io/)
+[gitee 极速版阅读](https://js.youliaowu.com)
 
 [Github Reading Site](https://hejialianghe.github.io/)
 

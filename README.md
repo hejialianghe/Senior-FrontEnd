@@ -35,7 +35,7 @@ As a front-end development engineer, the blogger knows the importance of growth.
 
 If there is a harvest, give a start oh, this project open source free reading, do not set up any obstacles to prevent reading!
 
-[gitee 极速版阅读](https://hejialianghe.gitee.io/)
+[gitee 极速版阅读](https://js.youliaowu.com)
 
 [Github Reading Site](https://hejialianghe.github.io/)
 
