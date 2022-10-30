@@ -35,7 +35,7 @@ As a front-end development engineer, the blogger knows the importance of growth.
 
 If there is a harvest, give a start oh, this project open source free reading, do not set up any obstacles to prevent reading!
 
-[gitee 极速版阅读](https://js.youliaowu.com)
+[极速版阅读](https://js.youliaowu.com)
 
 [Github Reading Site](https://hejialianghe.github.io/)
 
@@ -82,6 +82,7 @@ WeChat：
 | \*apoleon | 2022-09-06 |     WeChat     | ￥ 66.66  |         -          |
 |   z\*f    | 2022-10-08 |     WeChat     | ￥ 50.00  |         -          |
 |   \*又    | 2022-10-12 |     WeChat     |  ￥ 8.80  |         -          |
+|   \*\_    | 2022-10-26 |     WeChat     |  ￥ 5.00  |         -          |
 
 ## 6.License
 

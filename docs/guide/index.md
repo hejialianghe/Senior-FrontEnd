@@ -36,7 +36,7 @@ Feel free to give it a star on Github if you find this valuable. This project is
 
 [项目地址 Source address](https://github.com/hejialianghe/seniorFrontEnd)
 
-[gitee 极速版阅读](https://js.youliaowu.com)
+[极速版阅读](https://js.youliaowu.com)
 
 [Github Reading Site](https://hejialianghe.github.io/)
 
@@ -83,3 +83,4 @@ WeChat：
 | \*apoleon | 2022-09-06 |     WeChat     | ￥ 66.66  |         -          |
 |   z\*f    | 2022-10-08 |     WeChat     | ￥ 50.00  |         -          |
 |   \*又    | 2022-10-12 |     WeChat     |  ￥ 8.80  |         -          |
+|   \*\_    | 2022-10-26 |     WeChat     |  ￥ 5.00  |         -          |
