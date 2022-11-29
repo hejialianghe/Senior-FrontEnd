@@ -1,7 +1,7 @@
 <template>
 <div class="carousel">
         <Marquee>
-            <MarqueeItem>每次更新会有缓存，请刷新浏览器！</MarqueeItem>
+            <MarqueeItem>Please manually refresh this page for new updates!</MarqueeItem>
         </Marquee>    
 </div>
 </template>
