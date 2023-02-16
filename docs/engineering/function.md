@@ -512,7 +512,7 @@ calculate(10, 20) // 相同的参数，第二次调用是，从缓存中取出�
 let memoize = function(func) {
   let cache = {}
   return function(key) {
-    if (!cache[key] || (typeof cache[key] === 'number' && !!cache[key])) {
+    if (!cache.hasOwnProperty(key)) {
       cache[key] = func.apply(this, arguments)
     }
     return cache[key]
