@@ -3,7 +3,7 @@ node_js:
   - 12  #设置语言版本，
 branches:
   only:
-    - master #设置只监听哪个分支
+    - main #设置只监听哪个分支
 cache:
   apt: true
   yarn: true
