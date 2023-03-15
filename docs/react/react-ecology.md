@@ -409,7 +409,7 @@ yarn  add babel-plugin-import --dev
 
 ### 4.3.2 Ant生态
 
-1. AvaJS
+1. DvaJS
 
 基于redux轻量数据流
 

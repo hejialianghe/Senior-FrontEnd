@@ -28,7 +28,7 @@ I'm also looking for collaborators to help translate this blog for the English v
 
 如果有收获就给个 star 哦 ！！！ :pray: :pray: :pray: ，本项目开源免费阅读,不设置任何障碍阻止阅读！
 
-Feel free to give it a star on Github if you find this valuable. This project is entirely open-sourced, which means you have full-freedom to read whatever you like with restrictions whatsoever!
+Feel free to give it a star on Github if you find this valuable. This project is entirely open-sourced, which means you have full-freedom to read whatever you like with zero restrictions whatsoever!
 
 ![GitHub stars](https://img.shields.io/github/stars/hejialianghe/Senior-FrontEnd.svg?style=flat-square)
 ![GitHub forks](https://img.shields.io/github/forks/hejialianghe/Senior-FrontEnd.svg?style=flat-square)
@@ -84,3 +84,6 @@ WeChat：
 |   z\*f    | 2022-10-08 |     WeChat     | ￥ 50.00  |         -          |
 |   \*又    | 2022-10-12 |     WeChat     |  ￥ 8.80  |         -          |
 |   \*\_    | 2022-10-26 |     WeChat     |  ￥ 5.00  |         -          |
+|   \*\,    | 2022-12-04 |     WeChat     |  ￥ 5.00  |         -          |
+|   \*\笑脸  | 2023-02-21 |     WeChat     |  ￥ 6.66  | 整理不错，继续加油老铁 |
+|   \*\jm  | 2023-03-02|     WeChat     |  ￥ 8.88  |    加油！ |
