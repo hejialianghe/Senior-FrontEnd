@@ -12,16 +12,16 @@ jobs:
         node-version: ['12.x']
 
     steps:
-    - uses: actions/checkout@v3
+    - name: 签出代码
+      uses: actions/checkout@main
 
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
+    - name: 安装node.js
+      uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
 
-    - name: Build
+    - name: 安装依赖、下载、推送
       run: |
         npm install
         npm run build
-        sed -i 's/\r//' deploy.sh
-        bash ./deploy.sh
+        npm run upload-server
