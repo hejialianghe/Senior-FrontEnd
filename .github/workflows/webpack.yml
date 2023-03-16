@@ -25,6 +25,9 @@ jobs:
         npm install
         npm run build
     - name: 发布
+      env:
+        access_token: ${{ secrets.ACCESS_TOKEN }}
       run: |
+        echo $access_token
         sed -i 's/\r//' deploy.sh
         bash ./deploy.sh
