@@ -20,8 +20,10 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
-    - name: 安装依赖、下载、推送
+    - name: 安装依赖、下载
       run: |
         npm install
         npm run build
-        npm run upload-server
+    - name: 发布
+      run: |
+        bash ./deploy.sh
