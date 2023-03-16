@@ -13,6 +13,10 @@ git commit -m 'deploy'
 
 ls
 
+
+git config --global user.email "hejialianghe@qq.com"
+git config --global user.name "hejialianghe"
+
 git push -f https://${secrets.access_token}@github.com/hejialianghe/hejialianghe.github.io master
 
 cd - 
