@@ -3,16 +3,13 @@ name: NodeJS with Webpack
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-
 jobs:
   build:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [14.x, 16.x, 18.x]
+        node-version: '16.x'
 
     steps:
     - uses: actions/checkout@v3
@@ -26,4 +23,5 @@ jobs:
       run: |
         npm install
         npm run build
+        sed -i 's/\r//' deploy.sh
         bash ./deploy.sh
