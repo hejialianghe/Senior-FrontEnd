@@ -26,4 +26,5 @@ jobs:
         npm run build
     - name: 发布
       run: |
+        sed -i 's/\r//' deploy.sh
         bash ./deploy.sh
