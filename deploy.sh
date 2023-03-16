@@ -16,9 +16,7 @@ git commit -m 'deploy'
 
 ls
 
-echo $secrets
-echo $access_token
-
 git push -f https://${access_token}@github.com/hejialianghe/hejialianghe.github.io master
 
+echo '部署成功!'
 cd - 
