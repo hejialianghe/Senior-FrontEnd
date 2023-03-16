@@ -7,15 +7,14 @@ set -e
 # cd 到构建输出的目录下
 cd dist
 
+git config --global user.email "hejialianghe@qq.com"
+git config --global user.name "hejialianghe"
+
 git init
 git add -A
 git commit -m 'deploy'
 
 ls
-
-
-git config --global user.email "hejialianghe@qq.com"
-git config --global user.name "hejialianghe"
 
 git push -f https://${secrets.access_token}@github.com/hejialianghe/hejialianghe.github.io master
 
