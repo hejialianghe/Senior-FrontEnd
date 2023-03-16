@@ -13,6 +13,6 @@ git commit -m 'deploy'
 
 ls
 
-git push -f https://${access_token}@github.com/hejialianghe/hejialianghe.github.io master
+git push -f https://${secrets.access_token}@github.com/hejialianghe/hejialianghe.github.io master
 
 cd - 
