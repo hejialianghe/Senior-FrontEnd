@@ -19,6 +19,6 @@ ls
 echo $secrets
 echo $access_token
 
-# git push -f https://${access_token}@github.com/hejialianghe/hejialianghe.github.io master
+git push -f https://${access_token}@github.com/hejialianghe/hejialianghe.github.io master
 
 cd - 
