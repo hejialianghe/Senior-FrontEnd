@@ -1,0 +1,33 @@
+name: NodeJS with Webpack
+
+on:
+  push:
+    branches: [ "main" ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: ['12.x']
+
+    steps:
+    - name: 签出代码
+      uses: actions/checkout@main
+
+    - name: 安装node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: 安装依赖、下载
+      run: |
+        npm install
+        npm run build
+    - name: 发布
+      env:
+        access_token: ${{ secrets.ACCESS_TOKEN }}
+      run: |
+        echo $access_token
+        sed -i 's/\r//' deploy.sh
+        bash ./deploy.sh

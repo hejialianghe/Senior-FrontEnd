@@ -1,6 +1,6 @@
 ![seniorFrontEnd](./image/seniorFrontEnd.png)
 
-[![Build Status](https://travis-ci.com/hejialianghe/Senior-FrontEnd.svg?branch=master)](https://travis-ci.com/hejialianghe/Senior-FrontEnd) [![GitHub forks](https://img.shields.io/github/forks/hejialianghe/Senior-FrontEnd.svg?style=flat-square)](https://github.com/hejialianghe/Senior-FrontEnd/network) [![GitHub stars](https://img.shields.io/github/stars/hejialianghe/Senior-FrontEnd.svg?style=flat-square)](https://github.com/hejialianghe/Senior-FrontEnd/stargazers) [![GitHub issues](https://img.shields.io/github/issues/hejialianghe/Senior-FrontEnd.svg?style=flat-square)](https://github.com/hejialianghe/Senior-FrontEnd/issues) [![GitHub last commit](https://img.shields.io/github/last-commit/hejialianghe/Senior-FrontEnd.svg?style=flat-square)](https://github.com/hejialianghe/Senior-FrontEnd/commits/master)
+[![NodeJS with Webpack](https://github.com/hejialianghe/Senior-FrontEnd/actions/workflows/webpack.yml/badge.svg?branch=main)](https://github.com/hejialianghe/Senior-FrontEnd/actions/workflows/webpack.yml) [![GitHub forks](https://img.shields.io/github/forks/hejialianghe/Senior-FrontEnd.svg?style=flat-square)](https://github.com/hejialianghe/Senior-FrontEnd/network) [![GitHub stars](https://img.shields.io/github/stars/hejialianghe/Senior-FrontEnd.svg?style=flat-square)](https://github.com/hejialianghe/Senior-FrontEnd/stargazers) [![GitHub issues](https://img.shields.io/github/issues/hejialianghe/Senior-FrontEnd.svg?style=flat-square)](https://github.com/hejialianghe/Senior-FrontEnd/issues) [![GitHub last commit](https://img.shields.io/github/last-commit/hejialianghe/Senior-FrontEnd.svg?style=flat-square)](https://github.com/hejialianghe/Senior-FrontEnd/commits/master)
 
 寻找合作伙伴，翻译英文版本。
 
@@ -86,6 +86,7 @@ WeChat：
 |   \*\,    | 2022-12-04 |     WeChat     |  ￥ 5.00  |         -          |
 |   \*\笑脸  | 2023-02-21 |     WeChat     |  ￥ 6.66  | 整理不错，继续加油老铁 |
 |   \*\jm  | 2023-03-02|     WeChat     |  ￥ 8.88  |加油！ |
+|   \*\峰  | 2023-03-13|     WeChat     |  ￥ 8.88  |    做的很好，希望坚持下去 |
 ## 6.License
 
 MIT
