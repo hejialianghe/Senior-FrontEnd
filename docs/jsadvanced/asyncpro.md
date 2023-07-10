@@ -1531,7 +1531,7 @@ async function readFilesByAsync() {
 
 ### 3.7.3 实现 Promise 原型上的 then 方法
 
-<font color="red">**看到这么多代码不要慌张，我会拆分详细讲解，then 方法是 Promise 的重点，其他方法都 then 方法有关系**</font>
+<font color="red">**看到这么多代码不要慌张，我会拆分详细讲解，then 方法是 Promise 的重点，其他方法都跟 then 方法有关系**</font>
 
 我们要先明确 then 方法实现了什么？
 
@@ -1826,30 +1826,24 @@ Promise.reject = function(reason) {
  * 所有成功才成功，有一个失败就失败
  * 返回一个的Promise，这个promise的结果由传过来的数组决定，一个失败就是失败
  */
-// 这个也不难，循环传入的数组，把成功的promise的返回的值放到values中
-// 只有当values和promises相同时，说明全部成功，这时候返回一个成功的数组，有一个失败就失败
+// 这个也不难，循环传入的数组，把成功的promise的返回的值放到results中
+// 只有当results和promises长度相同时，说明全部成功，这时候返回一个成功的数组，有一个失败就失败
 Promise.all = function(promises) {
   return new Promise((resolve, reject) => {
-    let values = []
-    promises.map(item => {
-      if (item instanceof Promise) {
-        item.then(res => {
-          values.push(res)
-        }, reject)
-      } else {
-        // 为了正确的放入values，所以也让其异步
-        setTimeout(() => {
-          values.push(item)
-        })
-      }
-    })
-    // 这里用setTiemeout是因上面的then方法是异步的，让下面的代码也异步，才能拿到最终的values数组
-    setTimeout(() => {
-      if (values.length === promises.length) {
-        resolve(values)
-      }
-    })
-  })
+    let results = [];
+    let count = 0;
+
+    promises.forEach((promise, index) => {
+      Promise.resolve(promise).then((result) => {
+        results[index] = result;
+        count++;
+
+        if (count === promises.length) {
+          resolve(results);
+        }
+      }).catch(reject);
+    });
+  });
 }
 ```
 

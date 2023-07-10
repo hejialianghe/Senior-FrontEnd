@@ -39,7 +39,7 @@ function reverse(params) {
           .reverse()
           .join('')
           
-  const result = x > 0 ? parseInt(value, 10) : 0 - parseInt(value, 10);
+  const result = value > 0 ? parseInt(value, 10) : 0 - parseInt(value, 10);
   return result
 }
 ```
