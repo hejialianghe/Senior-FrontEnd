@@ -167,6 +167,13 @@ module.exports = {
           ['projectPractice/nextjs', 'Nextjs'],
         ],
       },
+      {
+        title: '杂项',
+        collapsable: false,
+        children: [
+          ['sundry/react', 'react杂项'],
+        ],
+      },
     ],
     locales: {
       '/': {

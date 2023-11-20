@@ -13,7 +13,7 @@
     "build": "vuepress build docs",
     "upload-server": "sh deploy.sh",
     "changelog": "auto-changelog --remote upstream --commit-limit false",
-    "commit": "git-cz",
+    "cm": "git-cz",
     "release": "standard-version && git push origin --tags"
   },
   "keywords": [],
