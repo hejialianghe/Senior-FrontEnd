@@ -1,6 +1,6 @@
 ## 【译】build-your-own-react
 
-### 背景
+<h3>背景</h3>
 
 我们将从头开始重写react，遵循真实的React代码架构，没有优化和非必要功能。
 
@@ -9,7 +9,7 @@
 你可以在 Didact 存储库中找到旧博客文章和代码的历史记录。还有一个演讲涵盖了相同的内容。但这是一个独立的帖子。
 
 * [Step0: Review(回顾)](#0)
-* [Step1: The createElement Function(创建函数组件)](#1)
+* [Step1: The createElement Function(createElement 函数)](#1)
 * [Step2: render Function](#2)
 * [Step3: Concurrent Mode (并行模式)](#3)
 * [Step4: Fibers](#4)
@@ -18,8 +18,7 @@
 * [Step7: Function Components 函数组件](#7)
 * [Step8: Hooks](#8)
 
-
-### Step1:  Review(回顾) <a name="0"></a>
+ <h3>Step0:  Review(回顾)</h3> <a name="0"> </a>
 
 我们先回顾一些基本概念，如果你对React、JSX、DOM元素的工作原理比较了解，你可以跳过这一步。
 
@@ -56,18 +55,96 @@ const element = {
   },
 }
 ```
-以上就是一个 React Element ，一个具有两个属性（type与props）的对象。（好吧，它还有更多，但我们只关心这两个）。
+以上就是一个React Element ，一个具有两个属性（type与props）的对象。（好吧，它还有更多，但我们只关心这两个）。
 
+这个type是一个字符串，它指定了我们要创建DOM node节点的类型，tagName是你想要通过document.createElement创建HTML元素时传递给它的字符串；它也可以是个函数，但我们将它留给Step7
 
-### Step1: The createElement Function(创建函数组件) <a name="1"></a>
+props是另一个对象，它具有JSX属性中的所有键和值。它还具有特殊属性：children。
+
+children在本例中是一个字符串，但它通常是一个包含更多elements的数组。这就是为什么elements也是树。
+
+我们需要替换的另一段React代码：ReactDOM.render。
+
+render是 React 更改 DOM 的地方，所以让我们手动实现dom的更新。
+
+首先我们使用element type属性创建了一个 DOM node ，在这个例子中是h1 。
+
+然后我们将所有 element props 分配给这个DOM node，在这里是只有一个 title。
+
+```javascript
+const node = document.createElement(element.type)
+node["title"] = element.props.title
+```
+
+:::warning
+为了避免混淆，我将使用 “element” 来指代 React元素，使用 “node” 来指代 DOM 元素。
+:::
+
+然后，我们为子节点创建节点。我们只有一个字符串作为子节点，所以我们创建了一个文本节点。
+
+```javascript
+const text = document.createTextNode("")
+text["nodeValue"] = element.props.children
+```
+
+使用textNode而不是设置innerText，接下来我们以后以相同的方式处理。还要注意我们如何设置nodeValue标题，这个过程与给 h1 设置 title props类似，这就像是字符串中带有这样一个 props: {nodeValue: "hello"}。
+
+最后，我们将textNode 添加至 h1，将h1添加至 container 。
+
+现在我们有了和以前一样的app，但没有使用React。
+
+```javascript
+const element = {
+  type: "h1",
+  props: {
+    title: "foo",
+    children: "Hello",
+  },
+}
+​
+const container = document.getElementById("root")
+​
+const node = document.createElement(element.type)
+node["title"] = element.props.title
+​
+const text = document.createTextNode("")
+text["nodeValue"] = element.props.children
+​
+node.appendChild(text)
+container.appendChild(node)
+```
+
+### Step1: The createElement Function(createElement 函数) <a name="1"></a>
+
+让我们从另一个app重新开始。这一次，我们将用我们自己的React版本替换官方React代码。
+
+我们将从编写自己的 createElement。
+
+<font color="red">*让我们将 JSX 转换为 JS，这样我们就能实现 createElement 函数的调用了**</font>
+
+```javascript
+const element = (
+  <div id="foo">
+    <a>bar</a>
+    <b />
+  </div>
+)
+const container = document.getElementById("root")
+ReactDOM.render(element, container)
+
+```
+
   
-### Step2:render Function <a name="2"></a>
+<h3>Step2:render Function <a name="2"></a></h3>
 
-### Step3: Concurrent Mode (并行模式) <a name="3"></a>
-### Step4:  Fibers <a name="4"></a>
+<h3>Step3: Concurrent Mode (并行模式) <a name="3"></a></h3>
 
-### Step5:  Render 和 Commit 阶段 <a name="5"></a>
-### Step6: Reconciliation （协调算法）<a name="6"></a>
+<h3> Step4:  Fibers <a name="4"></a></h3>
 
-### Step7: Function Components 函数组件 <a name="7"></a>
-### Step8:  Hooks <a name="8"></a>
+<h3>Step5:  Render 和 Commit 阶段 <a name="5"></a></h3>
+
+<h3>Step6: Reconciliation （协调算法）<a name="6"></a></h3>
+
+<h3> Step7: Function Components 函数组件 <a name="7"></a></h3>
+
+<h3> Step8:  Hooks <a name="8"></a></h3>
