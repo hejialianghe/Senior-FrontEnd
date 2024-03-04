@@ -24,5 +24,5 @@ features:
   details: 同构项目
 - title: 杂项
   details: react原理、js基础等
-footer:  MAYI | Copyright © 2020-present(版权所有，转载请注来源)
+# footer:  MAYI | Copyright © 2020-present(版权所有，转载请注来源)
 ---

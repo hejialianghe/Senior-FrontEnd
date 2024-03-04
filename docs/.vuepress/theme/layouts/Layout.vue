@@ -19,6 +19,12 @@
       <slot name="page-top" #top />
       <slot name="page-bottom" #bottom />
     </Page>
+    <footer class="footer">
+    <div class="container">
+      <p class="text-center">© 2024 web全栈体系. All Rights Reserved.（所有文章未经授权禁止转载、摘编、复制或建立镜像，如有违反，追究法律责任。）</p>
+      <p class="text-center"><a href="https://beian.miit.gov.cn" target="_blank">豫ICP备19041317号-1</a></p>
+    </div>
+  </footer>
   </div>
 </template>
 
@@ -138,3 +144,20 @@ export default {
   },
 }
 </script>
+
+<style scoped >
+.footer {
+  background-color: #000;
+  color: #fff;
+  padding: 20px 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.text-center {
+  text-align: center;
+}
+</style>

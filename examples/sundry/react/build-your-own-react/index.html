@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>build-your-own-react</title>
+  </head>
+  <body>
+    <div id ="root"></div>
+    <script>
+      const element = {
+        type: 'h1',
+        props: {
+          title: 'foo',
+          children: 'Hello',
+        },
+      }
+
+      const root = document.getElementById('root')
+      const node = document.createElement(element.type)
+      node['title'] = element.props.title
+      const text = document.createTextNode(element.props.children)
+    //   text['nodeValue'] = element.props.children
+      node.appendChild(text)
+      root.appendChild(node)
+    </script>
+  </body>
+</html>
