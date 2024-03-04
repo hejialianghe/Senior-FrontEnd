@@ -1027,7 +1027,7 @@ console.log(a) //[1,2,3,4]
 
 ### 2.8.3 深拷贝实现
 
-#### :tomato: JSON.parse(JSON.string(obj))
+#### :tomato: JSON.parse(JSON.stringify(obj))
 
 ```javascript
 let obj = {
