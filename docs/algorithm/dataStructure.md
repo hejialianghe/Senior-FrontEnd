@@ -287,23 +287,16 @@ let j = num2.length - 1
 // m是num1和num2合并后长度
 let m = k + j + 1
 
-while (k >= 0 && j >= 0) {
-  if (num2[j] > num1[k]) {
-    num1[m] = num2[j]
-    j--
-  } else {
-    num1[m] = num1[k]
-    k--
-  }
-  m--
-}
-// 特殊情况：1.num1先遍历完，2.num2先遍历完。
-// num2先遍历完，我们不用处理，因为我们就是把num2合并到num1。
-// num1先遍历完，我们把num2全部复制到num1中。
-while (j >= 0) {
-  num1[m] = num2[j]
-  j--
-  m--
+// 将num2中所有数据合并到num1中，当num2的指针小于0才结束
+while (y >= 0) {
+    if (num1[x] > num2[y]) {
+        num1[m] = num1[x]
+        x--
+    } else {
+        num1[m] = num2[y]
+        y--
+    }
+    m--
 }
 ```
 
