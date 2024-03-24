@@ -5,7 +5,7 @@ JavaScript 常用的数据结构：
 - [栈](#_2-3-栈和队列)
 - [队列](#_2-3-栈和队列)
 - [链表](#_2-4-链表)
-- 树
+- [树](#_2-5-树)
 
 ## 2.1 字符串
 
@@ -524,19 +524,21 @@ isValid(brackets) // true
 输出: 7;
 ```
 
-#### 方法 1： 分组法计算法
+#### 方法 1： 计算法
 
 通过计算如果不缺少一个数字的情况下总和应该多少，缺少一个数字总合多少；它们之差就是缺少的那个数字。
 
 ```js
-const lostArr = [3, 5, 4, 6, 8, 9, 1, 2, 0, 2]
+const lostArr = [3, 5, 4, 6, 8, 9, 1, 2, 0]
 
+// 计算出数组中的总和
 function lostNumber(arr) {
   const total = arr.reduce((total, num) => {
     return total + num
   }, 0)
 
   const length = arr.length
+  // 计算出如果不缺少数字，应该得多少
   const termial = ((1 + length) * length) / 2
   return termial - total
 }
@@ -723,14 +725,128 @@ const linked={
     }
   }
 }
-let head = linked.head
-let next = null
-let pre= null
-while(head){
-  next = head.next // 先存下后面的链表
-  head.next = pre // 当前的指针指向上一个
-  pre =head // 把反转的链表存起来
-  head =next // 取出存下来的链表，继续遍历
+
+
+function reverseLiked (linked){
+ let head= linked.head
+ let result = null
+ while(head){
+  // temp 临时储存的变量
+   let temp = head.next
+   head.next = result
+   result = head
+   head = temp
+ }
+  return result
 }
-// pre 就是最终反转的链表
+
+reverseLiked(linked)
 ```
+
+复杂度分析：
+
+时间复杂度: O(n), 只迭代了一次链表
+
+空间复杂度: O(1)，会有 3 个临时变量，反转没有增加存储空间，所以空间复杂度是 O(1)
+
+2. 用递归的方式实现
+
+```js
+function reverseList(head) {
+    if (!head || !head.next) {
+        return head;
+    }
+
+    // 递归调用，反转剩余部分的链表
+    let newHead = reverseList(head.next);
+
+    // 将当前节点的下一个节点的指针指向当前节点，实现反转
+    head.next.next = head;
+    // 防止链表循环，
+    head.next = null;
+
+    return newHead;
+}
+```
+
+复杂度分析：
+
+时间复杂度: O(n), 只迭代了一次链表
+
+空间复杂度: O(n)，使用了递归的方法，耗费 O(n) 的空间
+
+## 2.5 树结构
+#### 树(Tree)
+
+树（Tree）是一种非线性数据结构，它由若干个节点（Node）组成，并以层次关系相连。树是一种重要的数据结构，在计算机科学中应用广泛，涵盖了算法、数据库、操作系统等多个领域。树结构的灵活性和多样性使得它成为了解决各种问题的有力工具。
+#### 树的基本概念：
+
+节点（Node）：树中的基本单位，每个节点可以包含一个值（也称为键），以及指向其他节点的引用。
+
+根节点（Root Node）：树的顶端节点，是树的起始节点，它没有父节点。
+
+父节点（Parent Node）：一个节点的直接上级节点，除了根节点外，每个节点都有且仅有一个父节点。
+
+子节点（Child Node）：一个节点的直接下级节点，一个节点可以有多个子节点。
+
+叶子节点（Leaf Node）：没有子节点的节点称为叶子节点，也称为终端节点。
+
+内部节点（Internal Node）：除了根节点和叶子节点之外的节点都称为内部节点。
+
+子树（Subtree）：树中任意一个节点及其所有子孙节点构成的子结构称为子树。
+
+深度（Depth）：从根节点到某个节点的唯一路径的长度，根节点的深度为0，每向下一层深度加1。
+
+高度（Height）：从某个节点到其最远叶子节点的最长路径的长度，也称为深度。树的高度等于根节点的高度。
+
+路径（Path）：从一个节点到另一个节点的连续边的序列，路径的长度是路径上边的数量。
+
+树的度（Degree）：树中节点的最大子节点数量称为树的度。
+
+二叉树（Binary Tree）：每个节点最多只能有两个子节点的树结构。
+
+![](~@/algorithm/tree.png)
+
+#### 树的遍历算法：
+
+树的遍历是指按照一定顺序访问树中的所有节点，常用的树的遍历算法包括：
+
+前序遍历（Preorder Traversal）：先访问根节点，然后递归地前序遍历左子树和右子树。
+
+中序遍历（Inorder Traversal）：先递归地中序遍历左子树，然后访问根节点，最后递归地中序遍历右子树。
+
+后序遍历（Postorder Traversal）：先递归地后序遍历左子树和右子树，然后访问根节点。
+
+层序遍历（Level Order Traversal）：从根节点开始，逐层从左到右访问所有节点。
+
+### 2.5.1 二叉树(Binary Tree)
+
+二叉树（Binary Tree）是一种特殊的树结构，其中每个节点最多有两个子节点，分别称为左子节点和右子节点。二叉树是一种重要且常用的树结构，在计算机科学和数据结构中应用广泛。
+
+#### 二叉树的基本概念：
+
+节点（Node）：二叉树中的基本单位，每个节点可以包含一个值（也称为键），以及指向左子节点和右子节点的引用。
+
+根节点（Root Node）：树的顶端节点，是树的起始节点，它没有父节点。
+
+父节点（Parent Node）：一个节点的直接上级节点，除了根节点外，每个节点都有且仅有一个父节点。
+
+子节点（Child Node）：一个节点的直接下级节点，每个节点最多有两个子节点，分别称为左子节点和右子节点。
+
+叶子节点（Leaf Node）：没有子节点的节点称为叶子节点，也称为终端节点。
+
+内部节点（Internal Node）：除了根节点和叶子节点之外的节点都称为内部节点。
+
+空节点（Null Node）：在二叉树中，某个节点没有左子节点或右子节点时，可以用空节点（null）表示。
+
+####  二叉树的分类：
+
+满二叉树（Full Binary Tree）：每个节点都有零个或两个子节点的二叉树称为满二叉树。
+
+完全二叉树（Complete Binary Tree）：除了最后一层外，每一层上的节点都有两个子节点，并且最后一层上的节点都集中在该层的左侧，形成一个紧凑的结构。
+
+平衡二叉树（Balanced Binary Tree）：任意节点的左右子树高度差不超过1的二叉树称为平衡二叉树。
+
+二叉搜索树（Binary Search Tree，BST）：一种特殊的二叉树，对于每个节点，其左子树上的所有节点值都小于该节点的值，而右子树上的所有节点值都大于该节点的值。这种性质使得在BST中可以进行高效的搜索、插入和删除操作。
+
+![](~@/algorithm/binaryTree.png)
