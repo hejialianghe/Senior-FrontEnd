@@ -22,5 +22,5 @@ features:
   details: DSA and approaches to solving these problems 
 - title: Real-life Projects
   details: Production-grade, real-world applications
-footer:  MAYI | Copyright © 2020-present
+# footer:  MAYI | Copyright © 2020-present 
 ---
