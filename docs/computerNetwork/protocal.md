@@ -158,9 +158,23 @@ The data packets take different routes to their destinations
 
 - 光电信号的传输
 
-### 1.2.2 TCP/IP的三次握手
+### 1.2.2 TCP 三次握手（Three-Way Handshake）
 
 ![](~@/network/threehand.png)
+
+TCP三次握手用于在客户端和服务器之间建立可靠的连接。具体步骤如下：
+
+1.SYN（同步报文）：
+        客户端：向服务器发送一个TCP报文，SYN标志位设为1，并包含一个初始序列号（Sequence Number, seq）。此报文表示客户端请求建立连接。
+        报文示例：SYN(seq=x)。
+
+2.SYN-ACK（同步-确认报文）：
+        服务器：收到SYN报文后，回复一个SYN-ACK报文，SYN和ACK标志位均设为1。服务器的SYN报文包含其自己的初始序列号（seq=y），ACK报文的确认号（Acknowledgment Number, ack）设为客户端的序列号加1，即ack=x+1。
+        报文示例：SYN-ACK(seq=y, ack=x+1)。
+
+3.ACK（确认报文）：
+        客户端：收到服务器的SYN-ACK报文后，发送一个ACK报文，ACK标志位设为1，确认号设为服务器的序列号加1，即ack=y+1。至此，连接建立成功，可以开始数据传输。
+        报文示例：ACK(ack=y+1)
 
 ### 1.2.3 TCP/IP协议的消息顺序处理方法
 
@@ -168,6 +182,48 @@ The data packets take different routes to their destinations
   - SEQ（Sequence）：这个消息发送前一共发送了多少字节
   - ACK （Acknowledge）：这个消息发送前一共收到了多少字节
 
+### 1.2.4 TCP 四次挥手（Four-Way Handshake）
+
+TCP四次挥手用于断开客户端和服务器之间的连接。具体步骤如下：
+
+1.FIN（终止报文）：
+        客户端：发送一个FIN报文，FIN标志位设为1，表示客户端要终止连接。
+        报文示例：FIN(seq=u)。
+
+2.ACK（确认报文）：
+        服务器：收到FIN报文后，回复一个ACK报文，确认号设为客户端的序列号加1，即ack=u+1。
+        报文示例：ACK(ack=u+1)。
+
+3.FIN（终止报文）：
+        服务器：准备好终止连接后，发送一个FIN报文，FIN标志位设为1，并包含其自己的序列号（seq=v）。
+        报文示例：FIN(seq=v)。
+
+4.ACK（确认报文）：
+        客户端：收到服务器的FIN报文后，发送一个ACK报文，确认号设为服务器的序列号加1，即ack=v+1。至此，连接彻底断开。
+        报文示例：ACK(ack=v+1)。
+
+### 1.2.5 详细说明
+
+三次握手的目的：
+:::tip
+  确认连接双方都有接收和发送数据的能力。
+
+  同步序列号，以便双方能够正确重组数据包。
+
+  防止旧的重复连接请求干扰新的连接。
+:::
+四次挥手的步骤原因：
+:::tip
+客户端发送FIN报文：表明客户端已无数据要发送，但仍能接收数据。
+
+服务器发送ACK报文：确认收到客户端的FIN报文。
+
+服务器发送FIN报文：在处理完所有数据后，通知客户端可以断开连接。
+
+客户端发送ACK报文：确认收到服务器的FIN报文后，连接正式关闭。
+
+这些步骤确保了在断开连接时，双方都能处理完所有的数据传输，不会有数据丢失或中断。
+:::
 ## 1.3 DNS与CDN
 
 ### 1.3.1 DNS的基础知识
