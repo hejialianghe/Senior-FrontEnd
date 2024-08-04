@@ -1,26 +1,26 @@
-## 【译】build-your-own-react 
-
-<h3>背景</h3>
+## 背景
 
 我们将从头开始重写react，遵循真实的React代码架构，没有优化和非必要功能。
 
-如果您读过我之前的[build your own React](https://engineering.hexacta.com/didact-learning-how-react-works-by-building-it-from-scratch-51007984e5c5)，不同之处在于这篇文章基于 React16.8，所以我们现在可以使用hooks并删除与class相关的所有代码。
+如果您读过我之前的[build your own React](https://pomb.us/build-your-own-react/)，不同之处在于这篇文章基于 React16.8，所以我们现在可以使用hooks并删除与class相关的所有代码。
 
 你可以在 Didact 存储库中找到旧博客文章和代码的历史记录。还有一个演讲涵盖了相同的内容。但这是一个独立的帖子。
 
-<h3>目录</h3>
+## 目录
 
-* [Step0: Review(回顾)](#0)
-* [Step1: The createElement Function(createElement 函数)](#1)
-* [Step2: render Function](#2)
-* [Step3: Concurrent Mode (并行模式)](#3)
-* [Step4: Fibers](#4)
-* [Step5: Render 和 Commit 阶段](#5)
-* [Step6: Reconciliation （协调算法）](#6)
-* [Step7: Function Components 函数组件](#7)
-* [Step8: Hooks](#8)
+- Step0: Review(回顾)
+- Step1: The createElement Function(createElement 函数)
+* Step2: render Function
+* Step3: Concurrent Mode (并行模式)
+* Step4: Fibers
+* Step5: Render 和 Commit 阶段
+* Step6: Reconciliation （协调算法）
+* Step7: Function Components（函数组件）
+* Step8: Hooks
 
- <h3>Step0:  Review(回顾)</h3> <a name="0"> </a>
+## 详细
+
+### Step0:  Review(回顾)
 
 我们先回顾一些基本概念，如果你对React、JSX、DOM元素的工作原理比较了解，你可以跳过这一步。
 
@@ -116,7 +116,7 @@ node.appendChild(text)
 container.appendChild(node)
 ```
 ---
-<h3>Step1: The createElement Function(createElement 函数)</h3> <a name="1"></a>
+### Step1: The createElement Function(createElement 函数)
 
 让我们从另一个app重新开始。这一次，我们将用我们自己的React版本替换官方React代码。
 
@@ -201,16 +201,16 @@ function createTextElement(text) {
 ```
 
 ---
-<h3>Step2:render Function <a name="2"></a></h3>
+### Step2:render Function
 ---
-<h3>Step3: Concurrent Mode (并行模式) <a name="3"></a></h3>
+### Step3: Concurrent Mode (并行模式)
 ---
-<h3> Step4:  Fibers <a name="4"></a></h3>
+###  Step4:  Fibers
 ---
-<h3>Step5:  Render 和 Commit 阶段 <a name="5"></a></h3>
+### Step5:  Render 和 Commit 阶段 
 ---
-<h3>Step6: Reconciliation （协调算法）<a name="6"></a></h3>
+###  Step6: Reconciliation （协调算法）
 ---
-<h3> Step7: Function Components 函数组件 <a name="7"></a></h3>
+###  Step7: Function Components 函数组件 
 ---
-<h3> Step8:  Hooks <a name="8"></a></h3>
+###  Step8:  Hooks 
