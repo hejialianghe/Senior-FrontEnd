@@ -39,15 +39,6 @@
           ],
         },
         {
-          title: 'Vue2.0源码',
-          collapsable: false,
-          children: [
-            ['vue2.0/', '前言'],
-            ['vue2.0/dataResponse', '响应式'],
-            ['vue2.0/virtualdomAndDiff', 'virtualdom和DIff'],
-          ],
-        },
-        {
           title: 'react',
           collapsable: false,
           children: [
@@ -90,17 +81,6 @@
           children: [['applets/performance', '小程序进阶']],
         },
         {
-          title: '数据结构与算法',
-          collapsable: false,
-          children: [
-            ['algorithm/complexity', '复杂度'],
-            ['algorithm/dataStructure', '数据结构'],
-            ['algorithm/thinking', '解题思路'],
-            ['algorithm/sort', '排序算法专题'],
-            ['algorithm/base', '真题'],
-          ],
-        },
-        {
           title: '项目实战',
           collapsable: false,
           children: [
@@ -108,14 +88,7 @@
             ['projectPractice/demo', '实现一个同构的demo'],
             ['projectPractice/nextjs', 'Nextjs'],
           ],
-        },
-        {
-          title: '杂项',
-          collapsable: false,
-          children: [
-            ['sundry/react', 'react杂项'],
-          ],
-        },
+        }
       ]
   
     return sidebar

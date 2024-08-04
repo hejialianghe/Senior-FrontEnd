@@ -1,8 +1,8 @@
 <template>
 <div class="carousel">
-        <Marquee>
+        <!-- <Marquee>
             <MarqueeItem>Please manually refresh this page for new updates!</MarqueeItem>
-        </Marquee>    
+        </Marquee>     -->
 </div>
 </template>
 

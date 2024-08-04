@@ -1,5 +1,5 @@
 const path = require('path')
-const {NavItemsZH,SidebarZH} = require('./config/index')
+const {NavItemsZH,SidebarZH,NavItemsEN,SidebarEN} = require('./config/index')
 
 module.exports = {
   title: 'web全栈体系',
@@ -54,12 +54,22 @@ module.exports = {
     ],
     locales: {
       '/': {
-        selectText: '选择语言',
         label: '简体中文',
+        selectText: '选择语言',
+        ariaLabel: '选择语言',
+        editLinkText: '在 GitHub 上编辑此页',
+        lastUpdated: '上次更新',
+        nav: NavItemsZH,
+        sidebar: SidebarZH
       },
-      '/en/': {
-        selectText: 'Languages',
+      '/en-US/': {
         label: 'English',
+        selectText: 'Languages',
+        ariaLabel: 'Select language',
+        editLinkText: 'Edit this page on GitHub',
+        lastUpdated: 'Last Updated',
+        nav: NavItemsEN,
+        sidebar: SidebarEN,
       },
     },
   },
@@ -70,8 +80,6 @@ module.exports = {
       lang: 'zh-CN', // 将会被设置为 <html> 的 lang 属性
       title: 'web全栈体系',
       description: '你好，朋友',
-      nav: NavItemsZH,
-      sidebar: SidebarZH
     },
     '/en-US/': {
       lang: 'en-US',
