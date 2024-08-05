@@ -7,8 +7,9 @@ const SidebarEN = {
     children: [
       ['complexity', 'Complexity'],
       ['dataStructure', 'Data Structure'],
-      ['thinking', 'Problem-Solving Approach'],
+      ['recursion', 'recursion'],
       ['sort', 'Sorting Algorithms'],
+      ['thinking', 'Problem-Solving Approach'],
       ['base', 'Real Questions'],
     ],
   }],
