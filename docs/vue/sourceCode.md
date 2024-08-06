@@ -202,7 +202,7 @@ data.age = 3
 
 在下一次DOM更新循环结束之后执行延迟回调
 
-```javacsript
+```javascript
     Vue.nextTick([callback,context])
     Vm.$nextTick([callback])
 ```
