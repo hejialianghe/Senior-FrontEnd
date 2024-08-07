@@ -818,6 +818,9 @@ function reverseList(head) {
 后序遍历（Postorder Traversal）：先遍历左子树，然后遍历右子树，最后访问根节点。
 
 层序遍历（Level Order Traversal）：从根节点开始，逐层从左到右访问所有节点。
+:::warning
+  区分前序、中序、后序，要看根节点的访问时间；先访问就是前序，中间访问就是中序，最后访问就是后序。
+:::
 
 ### 2.5.1 二叉树(Binary Tree)
 
