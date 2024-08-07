@@ -811,11 +811,11 @@ function reverseList(head) {
 
 树的遍历是指按照一定顺序访问树中的所有节点，常用的树的遍历算法包括：
 
-前序遍历（Preorder Traversal）：先访问根节点，然后递归地前序遍历左子树和右子树。
+前序遍历（Preorder Traversal）：先访问根节点，然后遍历左子树，最后遍历右子树。
 
-中序遍历（Inorder Traversal）：先递归地中序遍历左子树，然后访问根节点，最后递归地中序遍历右子树。
+中序遍历（Inorder Traversal）：先遍历左子树，然后访问根节点，最后遍历右子树。
 
-后序遍历（Postorder Traversal）：先递归地后序遍历左子树和右子树，然后访问根节点。
+后序遍历（Postorder Traversal）：先遍历左子树，然后遍历右子树，最后访问根节点。
 
 层序遍历（Level Order Traversal）：从根节点开始，逐层从左到右访问所有节点。
 
