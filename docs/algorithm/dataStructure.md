@@ -850,6 +850,6 @@ function reverseList(head) {
 
 平衡二叉树（Balanced Binary Tree）：任意节点的左右子树高度差不超过1的二叉树称为平衡二叉树。
 
-二叉搜索树（Binary Search Tree，BST）：一种特殊的二叉树，对于每个节点，其左子树上的所有节点值都小于该节点的值，而右子树上的所有节点值都大于该节点的值。这种性质使得在BST中可以进行高效的搜索、插入和删除操作。
+二叉搜索树（Binary Search Tree，BST）：一种特殊的二叉树，较小的值保存在左子树中，较大的值保存在右子树中。这种性质使得在BST中可以进行高效的搜索、插入和删除操作。
 
 ![](~@/algorithm/binaryTree.png)
