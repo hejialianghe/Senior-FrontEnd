@@ -828,6 +828,9 @@ function reverseList(head) {
 后序遍历（Postorder Traversal）：先遍历左子树，然后遍历右子树，最后访问根节点。
 
 层序遍历（Level Order Traversal）：从根节点开始，逐层从左到右访问所有节点。
+:::warning
+  区分前序、中序、后序，要看根节点的访问时间；先访问就是前序，中间访问就是中序，最后访问就是后序。
+:::
 
 ### 2.5.1 二叉树(Binary Tree)
 
@@ -857,5 +860,5 @@ function reverseList(head) {
 
 平衡二叉树（Balanced Binary Tree）：任意节点的左右子树高度差不超过1的二叉树称为平衡二叉树。
 
-二叉搜索树（Binary Search Tree，BST）：一种特殊的二叉树，对于每个节点，其左子树上的所有节点值都小于该节点的值，而右子树上的所有节点值都大于该节点的值。这种性质使得在BST中可以进行高效的搜索、插入和删除操作。
+二叉搜索树（Binary Search Tree，BST）：一种特殊的二叉树，较小的值保存在左子树中，较大的值保存在右子树中。这种性质使得在BST中可以进行高效的搜索、插入和删除操作。
 
