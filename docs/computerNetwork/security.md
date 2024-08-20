@@ -21,6 +21,7 @@
   解决方案：
      1. 输入过滤（转义）
      2. 输出过滤（转义）
+     3. cookie设置HttpOnly，HttpOnly 属性的 cookie 不能通过 JavaScript 访问，只能通过 HTTP(S) 协议访问。这可以防止跨站脚本攻击（XSS）。
 
 ### 3.1.3 SQL注入
 
@@ -38,7 +39,10 @@ select *from user where user_name=';update user set money=99999 where id=10025'
 
 解决方案：
    1. 验证referer字段
+
    2. 在请求地址添加token并验证
+   
+   3. cookie设置SameSite，SameSite定义了 cookie 的跨站请求行为。可以设置为 Strict，用于防止跨站点请求伪造攻击（CSRF）。
 
 ### 3.1.5  HTTPS 中间人攻击
 
