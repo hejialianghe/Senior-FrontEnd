@@ -148,3 +148,5 @@ app.listen(3000)
 2. 当强缓存（Cache-Control: max-age）和 协商缓存（ETag / Last-Modified）都设置时，命中策略是什么？
 
 先检查强缓存，且资源仍在有效期内（没过 max-age 时间），直接使用本地缓存，不发请求，状态码 200 (from disk/memory cache)；如果 max-age 过期，则检查协商缓存，发送请求时，浏览器会带上 If-None-Match（对应 ETag）或 If-Modified-Since（对应 Last-Modified）；服务器检查后，若资源未修改，返回 304 Not Modified，浏览器继续使用缓存。若资源已修改，返回 200 OK 和新资源。
+
+

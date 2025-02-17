@@ -9,7 +9,7 @@
 ## 目录
 
 - Step0: Review(回顾)
-- Step1: The createElement Function(createElement 函数)
+* Step1: The createElement Function(createElement 函数)
 * Step2: render Function
 * Step3: Concurrent Mode (并行模式)
 * Step4: Fibers
@@ -199,9 +199,69 @@ function createTextElement(text) {
   }
 }
 ```
-
+React在没有子元素时不会包装原始值或创建空数组，但我们这样做是因为它能简化我们的代码，且对于我们的库来说，我们更倾向于简洁的代码而不是性能优化。
+我们仍在使用React的createElement。
+```javascript
+const element = React.createElement(
+  "div",
+  { id: "foo" },
+  React.createElement("a", null, "bar"),
+  React.createElement("b")
+)
+const container = document.getElementById("root")
+ReactDOM.render(element, container)
+```
+为了替换它，我们给我们的库取个名字；这个名字需要听起来像 React，同时又能暗示它的教学目的；我们将其称为 Didact.
+```javascript
+const Didact = {
+  createElement,
+}
+​
+const element = Didact.createElement(
+  "div",
+  { id: "foo" },
+  Didact.createElement("a", null, "bar"),
+  Didact.createElement("b")
+)
+const container = document.getElementById("root")
+ReactDOM.render(element, container)
+```
+但我们仍然希望在这里使用 JSX。我们如何告诉 babel 使用Didact的createElement而不是React的？
+如果我们有这样的注释，当 babel转译JSX 时，它将使用我们定义的函数。
+```js
+/** @jsx Didact.createElement */
+const element = (
+  <div id="foo">
+    <a>bar</a>
+    <b />
+  </div>
+)
+```
 ---
 ### Step2:render Function
+接下来，我们需要编写函数的ReactDOM.render版本;目前，我们只关心向DOM添加内容。我们稍后会处理更新和删除。
+我们首先使用element类型创建 DOM 节点，然后将新节点附加到容器中。
+```javascript
+function render(element, container) {
+  const dom = document.createElement(element.type)
+​
+  container.appendChild(dom)
+}
+```
+我们递归地为每个孩子做同样的事情。
+```diff
+function render(element, container) {
+  const dom = document.createElement(element.type)
+​
++ element.props.children.forEach(child =>
+    render(child, dom)
+  )
+​
+  container.appendChild(dom)
+}
+
+```
+
 ---
 ### Step3: Concurrent Mode (并行模式)
 ---
