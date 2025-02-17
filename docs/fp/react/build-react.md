@@ -254,6 +254,43 @@ function render(element, container) {
   const dom = document.createElement(element.type)
 ​
 + element.props.children.forEach(child =>
++    render(child, dom)
++  )
+​
+  container.appendChild(dom)
+}
+```
+我们还需要处理文本元素，如果元素类型为TEXT_ELEMENT，我们创建一个文本节点而不是常规节点。
+```diff
+function render(element, container) {
++  const dom =
++    element.type == "TEXT_ELEMENT"
++      ? document.createTextNode("")
++       : document.createElement(element.type)
+​
+​  element.props.children.forEach(child =>
+    render(child, dom)
+   )
+​
+  container.appendChild(dom)
+}
+```
+我们在这里需要做的最后一件事是将 element props 分配给节点。
+```diff
+function render(element, container) {
+  const dom =
+    element.type == "TEXT_ELEMENT"
+      ? document.createTextNode("")
+      : document.createElement(element.type)
+​
++ const isProperty = key => key !== "children"
++ Object.keys(element.props)
++    .filter(isProperty)
++   .forEach(name => {
++     dom[name] = element.props[name]
++   })
+​
+  element.props.children.forEach(child =>
     render(child, dom)
   )
 ​
@@ -261,7 +298,7 @@ function render(element, container) {
 }
 
 ```
-
+就是这样。我们现在有一个可以将 JSX渲染到DOM的库。
 ---
 ### Step3: Concurrent Mode (并行模式)
 ---
