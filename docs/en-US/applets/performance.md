@@ -141,8 +141,11 @@ window.postBridgeMessage('post?id=123')
 window.JSBridge.sendData('post?id=123')
 ```
 优点：
+
 - 执行效率相对较高
+
 缺点：
+
 - 数据格式灵活，但学习成本较高
 - 两端耦合性较强
 - 可能出现命名空间冲突（window对象）
